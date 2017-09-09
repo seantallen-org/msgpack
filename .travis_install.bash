@@ -22,12 +22,18 @@ download_pcre(){
   popd
 }
 
+install-ponyc-master(){
+  echo "Building ponyc..."
+  make CC="$CC1" CXX="$CXX1" install
+}
+
 echo "Installing ponyc build dependencies..."
 if [ "${TRAVIS_EVENT_TYPE}" = "cron" ]
 then
-  echo "\033[0;32mDaily cron job to test against ponyc master\033[0m"
+  echo "\033[0;32mInstalling ponyc master\033[0m"
   download_llvm
   download_pcre
+  install-ponyc-master
 else
   echo "\033[0;32mInstalling latest ponyc release\033[0m"
   sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "8756 C4F7 65C9 AC3C B6B8  5D62 379C E192 D401 AB61"

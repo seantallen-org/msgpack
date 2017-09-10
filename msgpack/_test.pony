@@ -3,6 +3,8 @@ use "ponytest"
 
 actor Main is TestList
   """
+  These tests include information from the [MessagePack specification](https://github.com/msgpack/msgpack/blob/master/spec.md).
+
   ### Notation in test diagrams.
 
     one byte:

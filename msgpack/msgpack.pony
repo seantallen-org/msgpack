@@ -206,6 +206,85 @@ primitive MessagePackEncoder
     b.u32_be(s)
 
   //
+  // ext format family
+  //
+
+  fun fixext_1(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() == _Size.fixext_1() then
+      _write_type(b, _FormatName.fixext_1())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  fun fixext_2(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() == _Size.fixext_2() then
+      _write_type(b, _FormatName.fixext_2())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  fun fixext_4(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() == _Size.fixext_4() then
+      _write_type(b, _FormatName.fixext_4())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  fun fixext_8(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() == _Size.fixext_8() then
+      _write_type(b, _FormatName.fixext_8())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  fun fixext_16(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() == _Size.fixext_16() then
+      _write_type(b, _FormatName.fixext_16())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  fun ext_8(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() <= U8.max_value().usize() then
+      _write_type(b, _FormatName.ext_8())
+      b.u8(v.size().u8())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  fun ext_16(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() <= U16.max_value().usize() then
+      _write_type(b, _FormatName.ext_16())
+      b.u16_be(v.size().u16())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  fun ext_32(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() <= U32.max_value().usize() then
+      _write_type(b, _FormatName.ext_32())
+      b.u32_be(v.size().u32())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  //
   // support methods
   //
 

@@ -17,6 +17,7 @@ limitations under the License.
 */
 
 use "buffered"
+use "collections"
 use "ponytest"
 
 actor Main is TestList
@@ -83,6 +84,20 @@ actor Main is TestList
     test(_TestEncodeFixmapTooLarge)
     test(_TestEncodeMap16)
     test(_TestEncodeMap32)
+    test(_TestEncodeFixext1)
+    test(_TestEncodeFixext1IncorrectSize)
+    test(_TestEncodeFixext2)
+    test(_TestEncodeFixext2IncorrectSize)
+    test(_TestEncodeFixext4)
+    test(_TestEncodeFixext4IncorrectSize)
+    test(_TestEncodeFixext8)
+    test(_TestEncodeFixext8IncorrectSize)
+    test(_TestEncodeExt8)
+    test(_TestEncodeExt8TooLarge)
+    test(_TestEncodeExt16)
+    test(_TestEncodeExt16TooLarge)
+    test(_TestEncodeExt32)
+    test(_TestEncodeExt32TooLarge)
 
 class _TestEncodeNil is UnitTest
   """
@@ -611,7 +626,7 @@ class _TestEncodeStr8 is UnitTest
 
 class _TestEncodeStr8TooLarge is UnitTest
   """
-  Verify that `str_8` and `bin_8` throw an error if supplied with a valid t
+  Verify that `str_8` and `bin_8` throw an error if supplied with a value
   too large to encode within the available space.
   """
   fun name(): String =>
@@ -661,7 +676,7 @@ class _TestEncodeStr16 is UnitTest
 
 class _TestEncodeStr16TooLarge is UnitTest
   """
-  Verify that `str_16` and `bin_16` throw an error if supplied with a valid t
+  Verify that `str_16` and `bin_16` throw an error if supplied with a value
   too large to encode within the available space.
   """
   fun name(): String =>
@@ -711,7 +726,7 @@ class _TestEncodeStr32 is UnitTest
 
 class _TestEncodeStr32TooLarge is UnitTest
   """
-  Verify that `str_32` and `bin_32` throw an error if supplied with a valid t
+  Verify that `str_32` and `bin_32` throw an error if supplied with a value
   too large to encode within the available space.
   """
   fun name(): String =>
@@ -1037,3 +1052,460 @@ class _TestEncodeMap32 is UnitTest
     h.assert_eq[USize](5, b.size())
     h.assert_eq[U8](_FormatName.map_32(), b.peek_u8()?)
     h.assert_eq[U32](size, b.peek_u32_be(1)?)
+
+class _TestEncodeFixext1 is UnitTest
+  """
+  fixext 1 stores an integer and a byte array whose length is 1 byte
+  +--------+--------+--------+
+  |  0xd4  |  type  |  data  |
+  +--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext1"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Size.fixext_1()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.fixext_1(w, user_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](2 + size, b.size())
+    h.assert_eq[U8](0xD4, b.peek_u8()?)
+    h.assert_eq[U8](user_type, b.peek_u8(1)?)
+    h.assert_eq[U8]('V', b.peek_u8(2)?)
+
+class _TestEncodeFixext1IncorrectSize is UnitTest
+  """
+  Verify that `fixext_1` throws an error if supplied with a value either
+  too large or too small to encode within the available space.
+
+  This would be ideal for a property based test rather than the standard
+  unit test it currently is.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext1IncorrectSize"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let user_type: U8 = 8
+    let too_big = recover val Array[U8].init('Z', _Size.fixext_1() + 1) end
+    let too_small = recover val Array[U8].init('a', _Size.fixext_1() - 1) end
+
+    try
+      MessagePackEncoder.fixext_1(w, user_type, too_big)?
+      h.fail()
+    end
+
+    try
+      MessagePackEncoder.fixext_1(w, user_type, too_small)?
+      h.fail()
+    end
+
+class _TestEncodeFixext2 is UnitTest
+  """
+  fixext 2 stores an integer and a byte array whose length is 2 bytes
+  +--------+--------+--------+
+  |  0xd5  |  type  |  data  |
+  +--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext2"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Size.fixext_2()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.fixext_2(w, user_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](2 + size, b.size())
+    h.assert_eq[U8](0xD5, b.peek_u8()?)
+    h.assert_eq[U8](user_type, b.peek_u8(1)?)
+    for i in Range(2, (2 + size)) do
+      h.assert_eq[U8]('V', b.peek_u8(i)?)
+    end
+
+class _TestEncodeFixext2IncorrectSize is UnitTest
+  """
+  Verify that `fixext_2` throws an error if supplied with a value either
+  too large or too small to encode within the available space.
+
+  This would be ideal for a property based test rather than the standard
+  unit test it currently is.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext2IncorrectSize"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let user_type: U8 = 8
+    let too_big = recover val Array[U8].init('Z', _Size.fixext_2() + 1) end
+    let too_small = recover val Array[U8].init('a', _Size.fixext_2() - 1) end
+
+    try
+      MessagePackEncoder.fixext_2(w, user_type, too_big)?
+      h.fail()
+    end
+
+    try
+      MessagePackEncoder.fixext_2(w, user_type, too_small)?
+      h.fail()
+    end
+
+class _TestEncodeFixext4 is UnitTest
+  """
+  fixext 4 stores an integer and a byte array whose length is 4 bytes
+  +--------+--------+--------+
+  |  0xd6  |  type  |  data  |
+  +--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext4"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Size.fixext_4()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.fixext_4(w, user_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](2 + size, b.size())
+    h.assert_eq[U8](0xD6, b.peek_u8()?)
+    h.assert_eq[U8](user_type, b.peek_u8(1)?)
+    for i in Range(2, (2 + size)) do
+      h.assert_eq[U8]('V', b.peek_u8(i)?)
+    end
+
+class _TestEncodeFixext4IncorrectSize is UnitTest
+  """
+  Verify that `fixext_4` throws an error if supplied with a value either
+  too large or too small to encode within the available space.
+
+  This would be ideal for a property based test rather than the standard
+  unit test it currently is.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext4IncorrectSize"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let user_type: U8 = 8
+    let too_big = recover val Array[U8].init('Z', _Size.fixext_4() + 1) end
+    let too_small = recover val Array[U8].init('a', _Size.fixext_4() - 1) end
+
+    try
+      MessagePackEncoder.fixext_4(w, user_type, too_big)?
+      h.fail()
+    end
+
+    try
+      MessagePackEncoder.fixext_4(w, user_type, too_small)?
+      h.fail()
+    end
+
+class _TestEncodeFixext8 is UnitTest
+  """
+  fixext 8 stores an integer and a byte array whose length is 8 bytes
+  +--------+--------+--------+
+  |  0xd7  |  type  |  data  |
+  +--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Size.fixext_8()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.fixext_8(w, user_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](2 + size, b.size())
+    h.assert_eq[U8](0xD7, b.peek_u8()?)
+    h.assert_eq[U8](user_type, b.peek_u8(1)?)
+    for i in Range(2, (2 + size)) do
+      h.assert_eq[U8]('V', b.peek_u8(i)?)
+    end
+
+class _TestEncodeFixext8IncorrectSize is UnitTest
+  """
+  Verify that `fixext_8` throws an error if supplied with a value either
+  too large or too small to encode within the available space.
+
+  This would be ideal for a property based test rather than the standard
+  unit test it currently is.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext8IncorrectSize"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let user_type: U8 = 8
+    let too_big = recover val Array[U8].init('Z', _Size.fixext_8() + 1) end
+    let too_small = recover val Array[U8].init('a', _Size.fixext_8() - 1) end
+
+    try
+      MessagePackEncoder.fixext_8(w, user_type, too_big)?
+      h.fail()
+    end
+
+    try
+      MessagePackEncoder.fixext_8(w, user_type, too_small)?
+      h.fail()
+    end
+
+class _TestEncodeFixext16 is UnitTest
+  """
+  fixext 16 stores an integer and a byte array whose length is 16 bytes
+  +--------+--------+--------+
+  |  0xd8  |  type  |  data  |
+  +--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Size.fixext_16()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.fixext_16(w, user_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](2 + size, b.size())
+    h.assert_eq[U8](0xD8, b.peek_u8()?)
+    h.assert_eq[U8](user_type, b.peek_u8(1)?)
+    for i in Range(2, (2 + size)) do
+      h.assert_eq[U8]('V', b.peek_u8(i)?)
+    end
+
+class _TestEncodeFixext16IncorrectSize is UnitTest
+  """
+  Verify that `fixext_16` throws an error if supplied with a value either
+  too large or too small to encode within the available space.
+
+  This would be ideal for a property based test rather than the standard
+  unit test it currently is.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext16IncorrectSize"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let user_type: U8 = 8
+    let too_big = recover val Array[U8].init('Z', _Size.fixext_16() + 1) end
+    let too_small = recover val Array[U8].init('a', _Size.fixext_16() - 1) end
+
+    try
+      MessagePackEncoder.fixext_16(w, user_type, too_big)?
+      h.fail()
+    end
+
+    try
+      MessagePackEncoder.fixext_16(w, user_type, too_small)?
+      h.fail()
+    end
+
+class _TestEncodeExt8 is UnitTest
+  """
+  ext 8 stores an integer and a byte array whose length is upto (2^8)-1 bytes:
+  +--------+--------+--------+========+
+  |  0xc7  |XXXXXXXX|  type  |  data  |
+  +--------+--------+--------+========+
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let ext_type: U8 = 99
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.ext_8(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_true(value.size() <= U8.max_value().usize())
+    h.assert_eq[USize](8, b.size())
+    h.assert_eq[U8](_FormatName.ext_8(), b.peek_u8()?)
+    h.assert_eq[U8](value.size().u8(), b.peek_u8(1)?)
+    h.assert_eq[U8](ext_type, b.peek_u8(2)?)
+    h.assert_eq[U8]('H', b.peek_u8(3)?)
+    h.assert_eq[U8]('e', b.peek_u8(4)?)
+    h.assert_eq[U8]('l', b.peek_u8(5)?)
+    h.assert_eq[U8]('l', b.peek_u8(6)?)
+    h.assert_eq[U8]('o', b.peek_u8(7)?)
+
+class _TestEncodeExt8TooLarge is UnitTest
+  """
+  Verify that `ext_8` throws an error if supplied with a value
+  too large to encode within the available space.
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt8TooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let size = U8.max_value().usize() + 1
+    let value = recover val Array[U8].init('Z', size) end
+    let ext_type: U8 = 99
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.ext_8(w, ext_type, value)?
+      h.fail()
+    end
+
+class _TestEncodeExt16 is UnitTest
+  """
+  ext 16 stores an integer and a byte array whose length is
+  upto (2^16)-1 bytes:
+  +--------+--------+--------+--------+========+
+  |  0xc8  |YYYYYYYY|YYYYYYYY|  type  |  data  |
+  +--------+--------+--------+--------+========+
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let ext_type: U8 = 99
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.ext_16(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_true(value.size() <= U8.max_value().usize())
+    h.assert_eq[USize](9, b.size())
+    h.assert_eq[U8](_FormatName.ext_16(), b.peek_u8()?)
+    h.assert_eq[U16](value.size().u16(), b.peek_u16_be(1)?)
+    h.assert_eq[U8](ext_type, b.peek_u8(3)?)
+    h.assert_eq[U8]('H', b.peek_u8(4)?)
+    h.assert_eq[U8]('e', b.peek_u8(5)?)
+    h.assert_eq[U8]('l', b.peek_u8(6)?)
+    h.assert_eq[U8]('l', b.peek_u8(7)?)
+    h.assert_eq[U8]('o', b.peek_u8(8)?)
+
+class _TestEncodeExt16TooLarge is UnitTest
+  """
+  Verify that `ext_16` throws an error if supplied with a value
+  too large to encode within the available space.
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt16TooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let size = U16.max_value().usize() + 1
+    let value = recover val Array[U8].init('Z', size) end
+    let ext_type: U8 = 99
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.ext_16(w, ext_type, value)?
+      h.fail()
+    end
+
+class _TestEncodeExt32 is UnitTest
+  """
+  ext 32 stores an integer and a byte array whose length is
+  upto (2^32)-1 bytes:
+  +--------+--------+--------+--------+--------+--------+========+
+  |  0xc9  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|  type  |  data  |
+  +--------+--------+--------+--------+--------+--------+========+
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let ext_type: U8 = 99
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.ext_32(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_true(value.size() <= U8.max_value().usize())
+    h.assert_eq[USize](11, b.size())
+    h.assert_eq[U8](_FormatName.ext_32(), b.peek_u8()?)
+    h.assert_eq[U32](value.size().u32(), b.peek_u32_be(1)?)
+    h.assert_eq[U8](ext_type, b.peek_u8(5)?)
+    h.assert_eq[U8]('H', b.peek_u8(6)?)
+    h.assert_eq[U8]('e', b.peek_u8(7)?)
+    h.assert_eq[U8]('l', b.peek_u8(8)?)
+    h.assert_eq[U8]('l', b.peek_u8(9)?)
+    h.assert_eq[U8]('o', b.peek_u8(10)?)
+
+class _TestEncodeExt32TooLarge is UnitTest
+  """
+  Verify that `ext_16` throws an error if supplied with a value
+  too large to encode within the available space.
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt32TooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let size = U32.max_value().usize() + 1
+    let value = recover val Array[U8].init('Z', size) end
+    let ext_type: U8 = 99
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.ext_32(w, ext_type, value)?
+      h.fail()
+    end

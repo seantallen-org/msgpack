@@ -83,6 +83,8 @@ actor Main is TestList
     test(_TestEncodeFixmapTooLarge)
     test(_TestEncodeMap16)
     test(_TestEncodeMap32)
+    test(_TestEncodeFixext1)
+    test(_TestEncodeFixext1TooLarge)
 
 class _TestEncodeNil is UnitTest
   """
@@ -1037,3 +1039,52 @@ class _TestEncodeMap32 is UnitTest
     h.assert_eq[USize](5, b.size())
     h.assert_eq[U8](_FormatName.map_32(), b.peek_u8()?)
     h.assert_eq[U32](size, b.peek_u32_be(1)?)
+
+class _TestEncodeFixext1 is UnitTest
+  """
+  fixext 1 stores an integer and a byte array whose length is 1 byte
+  +--------+--------+--------+
+  |  0xd4  |  type  |  data  |
+  +--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext1"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Limit.fixext_1()
+    let user_type: U8 = 8
+    let value = recover val [as U8: 'V'] end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.fixext_1(w, user_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](3, b.size())
+    h.assert_eq[U8](0xD4, b.peek_u8()?)
+    h.assert_eq[U8](user_type, b.peek_u8(1)?)
+    h.assert_eq[U8]('V', b.peek_u8(2)?)
+
+class _TestEncodeFixext1TooLarge is UnitTest
+  """
+  Verify that `fixext_1` throws an error if supplied with a value too large to
+  encode within the available space.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext1TooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let size = _Limit.fixext_1() + 1
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('Z', size) end
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.fixext_1(w, user_type, value)?
+      h.fail()
+    end

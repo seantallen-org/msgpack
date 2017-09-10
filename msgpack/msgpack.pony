@@ -206,6 +206,19 @@ primitive MessagePackEncoder
     b.u32_be(s)
 
   //
+  // ext format family
+  //
+
+  fun fixext_1(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() <= _Limit.fixext_1() then
+      _write_type(b, _FormatName.fixext_1())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  //
   // support methods
   //
 

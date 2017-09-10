@@ -41,35 +41,35 @@ primitive MessagePackEncoder
       error
     end
 
-  fun write_uint_8(b: Writer, v: U8) =>
+  fun uint_8(b: Writer, v: U8) =>
     _write_type(b, _FormatName.uint_8())
     b.u8(v)
 
-  fun write_uint_16(b: Writer, v: U16) =>
+  fun uint_16(b: Writer, v: U16) =>
     _write_type(b, _FormatName.uint_16())
     b.u16_be(v)
 
-  fun write_uint_32(b: Writer, v: U32) =>
+  fun uint_32(b: Writer, v: U32) =>
     _write_type(b, _FormatName.uint_32())
     b.u32_be(v)
 
-  fun write_uint_64(b: Writer, v: U64) =>
+  fun uint_64(b: Writer, v: U64) =>
     _write_type(b, _FormatName.uint_64())
     b.u64_be(v)
 
-  fun write_int_8(b: Writer, v: I8) =>
+  fun int_8(b: Writer, v: I8) =>
     _write_type(b, _FormatName.int_8())
     b.u8(v.u8())
 
-  fun write_int_16(b: Writer, v: I16) =>
+  fun int_16(b: Writer, v: I16) =>
     _write_type(b, _FormatName.int_16())
     b.i16_be(v)
 
-  fun write_int_32(b: Writer, v: I32) =>
+  fun int_32(b: Writer, v: I32) =>
     _write_type(b, _FormatName.int_32())
     b.i32_be(v)
 
-  fun write_int_64(b: Writer, v: I64) =>
+  fun int_64(b: Writer, v: I64) =>
     _write_type(b, _FormatName.int_64())
     b.i64_be(v)
 
@@ -77,11 +77,11 @@ primitive MessagePackEncoder
   // float format family
   //
 
-  fun write_float_32(b: Writer, v: F32) =>
+  fun float_32(b: Writer, v: F32) =>
     _write_type(b, _FormatName.float_32())
     b.f32_be(v)
 
-  fun write_float_64(b: Writer, v: F64) =>
+  fun float_64(b: Writer, v: F64) =>
     _write_type(b, _FormatName.float_64())
     b.f64_be(v)
 
@@ -89,7 +89,7 @@ primitive MessagePackEncoder
   // str format family
   //
 
-  fun write_fixstr(b: Writer, v: ByteSeq) ? =>
+  fun fixstr(b: Writer, v: ByteSeq) ? =>
     if v.size() <= _Limit.fixstr() then
       _write_type(b, (_FormatName.fixstr() or v.size().u8()))
       b.write(v)
@@ -97,26 +97,26 @@ primitive MessagePackEncoder
       error
     end
 
-  fun write_str_8(b: Writer, v: ByteSeq) ? =>
+  fun str_8(b: Writer, v: ByteSeq) ? =>
     _write_btye_array_8(b, v, _FormatName.str_8())?
 
-  fun write_str_16(b: Writer, v: ByteSeq) ? =>
+  fun str_16(b: Writer, v: ByteSeq) ? =>
     _write_btye_array_16(b, v, _FormatName.str_16())?
 
-   fun write_str_32(b: Writer, v: ByteSeq) ? =>
+   fun str_32(b: Writer, v: ByteSeq) ? =>
     _write_btye_array_32(b, v, _FormatName.str_32())?
 
   //
   // bin format family
   //
 
-  fun write_bin_8(b: Writer, v: ByteSeq) ? =>
+  fun bin_8(b: Writer, v: ByteSeq) ? =>
     _write_btye_array_8(b, v, _FormatName.bin_8())?
 
-  fun write_bin_16(b: Writer, v: ByteSeq) ? =>
+  fun bin_16(b: Writer, v: ByteSeq) ? =>
     _write_btye_array_16(b, v, _FormatName.bin_16())?
 
-   fun write_bin_32(b: Writer, v: ByteSeq) ? =>
+   fun bin_32(b: Writer, v: ByteSeq) ? =>
     _write_btye_array_32(b, v, _FormatName.bin_32())?
 
   //

@@ -75,6 +75,8 @@ actor Main is TestList
     test(_TestEncodeBin8)
     test(_TestEncodeBin16)
     test(_TestEncodeBin32)
+    test(_TestEncodeFixarray)
+    test(_TestEncodeFixarrayTooLarge)
 
 class _TestEncodeNil is UnitTest
   """
@@ -552,7 +554,7 @@ class _TestEncodeFixstr is UnitTest
 
 class _TestEncodeFixstrTooLarge is UnitTest
   """
-  Verify that `fixstr` throws an error if supplied with a valid too large to
+  Verify that `fixstr` throws an error if supplied with a value too large to
   encode within the available space.
   """
   fun name(): String =>
@@ -815,3 +817,48 @@ class _TestEncodeBin32 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(7)?)
     h.assert_eq[U8]('l', b.peek_u8(8)?)
     h.assert_eq[U8]('o', b.peek_u8(9)?)
+
+class _TestEncodeFixarray is UnitTest
+  """
+  fixarray stores an array whose length is upto 15 elements:
+  +--------+~~~~~~~~~~~~~~~~~+
+  |1001XXXX|    N objects    |
+  +--------+~~~~~~~~~~~~~~~~~+
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixarray"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    h.assert_true(value.size().u8() <= _Limit.fixarray())
+
+    MessagePackEncoder.fixarray(w, value.size().u8())?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](1, b.size())
+    h.assert_eq[U8](0x95, b.peek_u8()?)
+
+class _TestEncodeFixarrayTooLarge is UnitTest
+  """
+  Verify that `fixarray` throws an error if supplied with a value too large to
+  encode within the available space.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixarrayTooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let size = _Limit.fixarray() + 1
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.fixarray(w, size)?
+      h.fail()
+    end

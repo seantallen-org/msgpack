@@ -20,7 +20,8 @@ Pony-msgpack is currently alpha software. It implements a low-level API for enco
 ```json
 { 
   "type": "github",
-  "repo": "SeanTAllen/pony-msgpack"
+  "repo": "SeanTAllen/pony-msgpack",
+  "tag": "0.1"
 }
 ```
 

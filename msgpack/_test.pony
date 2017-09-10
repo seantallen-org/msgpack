@@ -78,6 +78,7 @@ actor Main is TestList
     test(_TestEncodeFixarray)
     test(_TestEncodeFixarrayTooLarge)
     test(_TestEncodeArray16)
+    test(_TestEncodeArray32)
 
 class _TestEncodeNil is UnitTest
   """
@@ -896,3 +897,33 @@ class _TestEncodeArray16 is UnitTest
     h.assert_eq[USize](3, b.size())
     h.assert_eq[U8](_FormatName.array_16(), b.peek_u8()?)
     h.assert_eq[U16](value.size().u16(), b.peek_u16_be(1)?)
+
+class _TestEncodeArray32 is UnitTest
+  """
+  array 32 stores an array whose length is upto (2^32)-1 elements:
+  +--------+--------+--------+--------+--------+~~~~~~~~~~~~~~~~~+
+  |  0xdd  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|    N objects    |
+  +--------+--------+--------+--------+--------+~~~~~~~~~~~~~~~~~+
+
+  This test is only verifying the header creation. Not the writing of
+  "N objects".
+  """
+  fun name(): String =>
+    "msgpack/EncodeArray32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.array_32(w, value.size().u32())
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](5, b.size())
+    h.assert_eq[U8](_FormatName.array_32(), b.peek_u8()?)
+    h.assert_eq[U32](value.size().u32(), b.peek_u32_be(1)?)

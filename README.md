@@ -2,9 +2,9 @@
 
 A pure Pony implementation of the [MessagePack serialization format](http://msgpack.org/).
 
-[![Build Status](https://travis-ci.org/SeanTAllen/pony-msgpack.svg?branch=master)](https://travis-ci.org/SeanTAllen/pony-msgpack)
-
 ## Status
+
+[![Build Status](https://travis-ci.org/SeanTAllen/pony-msgpack.svg?branch=master)](https://travis-ci.org/SeanTAllen/pony-msgpack)
 
 Pony-msgpack is currently alpha software. It implements a low-level API for encoding data. Still to do:
 

@@ -172,6 +172,40 @@ primitive MessagePackEncoder
     b.u32_be(s)
 
   //
+  // map format family
+  //
+
+  fun fixmap(b: Writer, s: U8) ? =>
+    """
+    Creates a header for a MessagePack "fixmap". This only creates the
+    header. `s` number of map items should be written via other methods
+    after this is called.
+    """
+    if s <= _Limit.fixmap() then
+      _write_type(b, (_FormatName.fixmap() or s))
+    else
+      error
+    end
+
+  fun map_16(b: Writer, s: U16) =>
+    """
+    Creates a header for a MessagePack "map_16". This only creates the
+    header. `s` number of map items should be written via other methods
+    after this is called.
+    """
+    _write_type(b, _FormatName.map_16())
+    b.u16_be(s)
+
+  fun map_32(b: Writer, s: U32) =>
+    """
+    Creates a header for a MessagePack "map_32". This only creates the
+    header. `s` number of map items should be written via other methods
+    after this is called.
+    """
+    _write_type(b, _FormatName.map_32())
+    b.u32_be(s)
+
+  //
   // support methods
   //
 

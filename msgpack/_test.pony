@@ -79,6 +79,10 @@ actor Main is TestList
     test(_TestEncodeFixarrayTooLarge)
     test(_TestEncodeArray16)
     test(_TestEncodeArray32)
+    test(_TestEncodeFixmap)
+    test(_TestEncodeFixmapTooLarge)
+    test(_TestEncodeMap16)
+    test(_TestEncodeMap32)
 
 class _TestEncodeNil is UnitTest
   """
@@ -927,3 +931,109 @@ class _TestEncodeArray32 is UnitTest
     h.assert_eq[USize](5, b.size())
     h.assert_eq[U8](_FormatName.array_32(), b.peek_u8()?)
     h.assert_eq[U32](value.size().u32(), b.peek_u32_be(1)?)
+
+class _TestEncodeFixmap is UnitTest
+  """
+  fixmap stores a map whose length is upto 15 elements
+  +--------+~~~~~~~~~~~~~~~~~+
+  |1000XXXX|   N*2 objects   |
+  +--------+~~~~~~~~~~~~~~~~~+
+
+  This test is only verifying the header creation. Not the writing of
+  "N*2 objects".
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixmap"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Limit.fixmap() - 1
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.fixmap(w, size)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](1, b.size())
+    h.assert_eq[U8](0x8E, b.peek_u8()?)
+
+class _TestEncodeFixmapTooLarge is UnitTest
+  """
+  Verify that `fixmap` throws an error if supplied with a value too large to
+  encode within the available space.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixmapTooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let size = _Limit.fixmap() + 1
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.fixmap(w, size)?
+      h.fail()
+    end
+
+class _TestEncodeMap16 is UnitTest
+  """
+  map 16 stores a map whose length is upto (2^16)-1 elements
+  +--------+--------+--------+~~~~~~~~~~~~~~~~~+
+  |  0xde  |YYYYYYYY|YYYYYYYY|   N*2 objects   |
+  +--------+--------+--------+~~~~~~~~~~~~~~~~~+
+
+  This test is only verifying the header creation. Not the writing of
+  "N*2 objects".
+  """
+  fun name(): String =>
+    "msgpack/EncodeMap16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size: U16 = 42
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.map_16(w, size)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](3, b.size())
+    h.assert_eq[U8](_FormatName.map_16(), b.peek_u8()?)
+    h.assert_eq[U16](size, b.peek_u16_be(1)?)
+
+class _TestEncodeMap32 is UnitTest
+  """
+  map 32 stores a map whose length is upto (2^32)-1 elements
+  +--------+--------+--------+--------+--------+~~~~~~~~~~~~~~~~~+
+  |  0xdf  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|   N*2 objects   |
+  +--------+--------+--------+--------+--------+~~~~~~~~~~~~~~~~~+
+
+  This test is only verifying the header creation. Not the writing of
+  "N*2 objects".
+  """
+  fun name(): String =>
+    "msgpack/EncodeMap32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size: U32 = 1492
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.map_32(w, size)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](5, b.size())
+    h.assert_eq[U8](_FormatName.map_32(), b.peek_u8()?)
+    h.assert_eq[U32](size, b.peek_u32_be(1)?)

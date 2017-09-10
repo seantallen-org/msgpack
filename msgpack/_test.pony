@@ -2,6 +2,24 @@ use "buffered"
 use "ponytest"
 
 actor Main is TestList
+  """
+  ### Notation in test diagrams.
+
+    one byte:
+    +--------+
+    |        |
+    +--------+
+
+    a variable number of bytes:
+    +========+
+    |        |
+    +========+
+
+    variable number of objects stored in MessagePack format:
+    +~~~~~~~~~~~~~~~~~+
+    |                 |
+    +~~~~~~~~~~~~~~~~~+
+  """
   new create(env: Env) =>
     PonyTest(env, this)
 
@@ -40,6 +58,12 @@ actor Main is TestList
 
 class _TestEncodeNil is UnitTest
   """
+  Nil format stores nil in 1 byte.
+
+  nil:
+  +--------+
+  |  0xc0  |
+  +--------+
   """
   fun name(): String =>
     "msgpack/EncodeNil"
@@ -61,6 +85,12 @@ class _TestEncodeNil is UnitTest
 
 class _TestEncodeTrue is UnitTest
   """
+  Bool format family stores false or true in 1 byte.
+
+  true:
+  +--------+
+  |  0xc3  |
+  +--------+
   """
   fun name(): String =>
     "msgpack/EncodeTrue"
@@ -82,6 +112,12 @@ class _TestEncodeTrue is UnitTest
 
 class _TestEncodeFalse is UnitTest
   """
+  Bool format family stores false or true in 1 byte.
+
+  false:
+  +--------+
+  |  0xc2  |
+  +--------+
   """
   fun name(): String =>
     "msgpack/EncodeFalse"
@@ -103,6 +139,10 @@ class _TestEncodeFalse is UnitTest
 
 class _TestEncodePositiveFixint is UnitTest
   """
+  positive fixnum stores 7-bit positive integer
+  +--------+
+  |0XXXXXXX|
+  +--------+
   """
   fun name(): String =>
     "msgpack/EncodePositiveFixint"
@@ -126,6 +166,8 @@ class _TestEncodePositiveFixint is UnitTest
 
 class _TestEncodePositiveFixintTooLarge is UnitTest
   """
+  Verify an exception is thrown if the user attempts to encode a value in a
+  positive fixnum that is too large.
   """
   fun name(): String =>
     "msgpack/EncodePositiveFixintTooLarge"
@@ -141,6 +183,10 @@ class _TestEncodePositiveFixintTooLarge is UnitTest
 
 class _TestEncodeNegativeFixint is UnitTest
   """
+  negative fixnum stores 5-bit negative integer
+  +--------+
+  |111YYYYY|
+  +--------+
   """
   fun name(): String =>
     "msgpack/EncodeNegativeFixint"
@@ -165,6 +211,8 @@ class _TestEncodeNegativeFixint is UnitTest
 
 class _TestEncodeNegativeFixintOutOfRange is UnitTest
   """
+  Verify an exception is thrown if the user attempts to encode a value in a
+  negative fixnum is outside the valid range.
   """
   fun name(): String =>
     "msgpack/EncodeNegativeFixintOutOfRange"
@@ -180,6 +228,10 @@ class _TestEncodeNegativeFixintOutOfRange is UnitTest
 
 class _TestEncodeUint8 is UnitTest
   """
+  uint 8 stores a 8-bit unsigned integer
+  +--------+--------+
+  |  0xcc  |ZZZZZZZZ|
+  +--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeUint8"
@@ -203,6 +255,10 @@ class _TestEncodeUint8 is UnitTest
 
 class _TestEncodeUint16 is UnitTest
   """
+  uint 16 stores a 16-bit big-endian unsigned integer
+  +--------+--------+--------+
+  |  0xcd  |ZZZZZZZZ|ZZZZZZZZ|
+  +--------+--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeUint16"
@@ -226,6 +282,10 @@ class _TestEncodeUint16 is UnitTest
 
 class _TestEncodeUint32 is UnitTest
   """
+  uint 32 stores a 32-bit big-endian unsigned integer
+  +--------+--------+--------+--------+--------+
+  |  0xce  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+  +--------+--------+--------+--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeUint32"
@@ -249,6 +309,10 @@ class _TestEncodeUint32 is UnitTest
 
 class _TestEncodeUint64 is UnitTest
   """
+  uint 64 stores a 64-bit big-endian unsigned integer
+  +--------+--------+--------+--------+--------+--------+--------+--------+--------+
+  |  0xcf  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+  +--------+--------+--------+--------+--------+--------+--------+--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeUint64"
@@ -272,6 +336,10 @@ class _TestEncodeUint64 is UnitTest
 
 class _TestEncodeInt8 is UnitTest
   """
+  int 8 stores a 8-bit signed integer
+  +--------+--------+
+  |  0xd0  |ZZZZZZZZ|
+  +--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeInt8"
@@ -295,6 +363,10 @@ class _TestEncodeInt8 is UnitTest
 
 class _TestEncodeInt16 is UnitTest
   """
+  int 16 stores a 16-bit big-endian signed integer
+  +--------+--------+--------+
+  |  0xd1  |ZZZZZZZZ|ZZZZZZZZ|
+  +--------+--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeInt16"
@@ -318,6 +390,10 @@ class _TestEncodeInt16 is UnitTest
 
 class _TestEncodeInt32 is UnitTest
   """
+  int 32 stores a 32-bit big-endian signed integer
+  +--------+--------+--------+--------+--------+
+  |  0xd2  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+  +--------+--------+--------+--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeInt32"
@@ -341,6 +417,10 @@ class _TestEncodeInt32 is UnitTest
 
 class _TestEncodeInt64 is UnitTest
   """
+  int 64 stores a 64-bit big-endian signed integer
+  +--------+--------+--------+--------+--------+--------+--------+--------+--------+
+  |  0xd3  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+  +--------+--------+--------+--------+--------+--------+--------+--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeInt64"
@@ -364,6 +444,11 @@ class _TestEncodeInt64 is UnitTest
 
 class _TestEncodeFloat32 is UnitTest
   """
+  float 32 stores a floating point number in IEEE 754 single precision
+  floating point number format:
+  +--------+--------+--------+--------+--------+
+  |  0xca  |XXXXXXXX|XXXXXXXX|XXXXXXXX|XXXXXXXX|
+  +--------+--------+--------+--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeFloat32"
@@ -387,6 +472,11 @@ class _TestEncodeFloat32 is UnitTest
 
 class _TestEncodeFloat64 is UnitTest
   """
+  float 64 stores a floating point number in IEEE 754 double precision
+  floating point number format:
+  +--------+--------+--------+--------+--------+--------+--------+--------+--------+
+  |  0xcb  |YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|
+  +--------+--------+--------+--------+--------+--------+--------+--------+--------+
   """
   fun name(): String =>
     "msgpack/EncodeFloat64"
@@ -410,6 +500,10 @@ class _TestEncodeFloat64 is UnitTest
 
 class _TestEncodeFixstr is UnitTest
   """
+  fixstr stores a byte array whose length is upto 31 bytes:
+  +--------+========+
+  |101XXXXX|  data  |
+  +--------+========+
   """
   fun name(): String =>
     "msgpack/EncodeFixstr"
@@ -438,6 +532,8 @@ class _TestEncodeFixstr is UnitTest
 
 class _TestEncodeFixstrTooLarge is UnitTest
   """
+  Verify that `fixstr` throws an error if supplied with a valid too large to
+  encode within the available space.
   """
   fun name(): String =>
     "msgpack/EncodeFixstrTooLarge"
@@ -454,6 +550,10 @@ class _TestEncodeFixstrTooLarge is UnitTest
 
 class _TestEncodeStr8 is UnitTest
   """
+  str 8 stores a byte array whose length is upto (2^8)-1 bytes:
+  +--------+--------+========+
+  |  0xd9  |YYYYYYYY|  data  |
+  +--------+--------+========+
   """
   fun name(): String =>
     "msgpack/EncodeStr8"
@@ -483,7 +583,8 @@ class _TestEncodeStr8 is UnitTest
 
 class _TestEncodeStr8TooLarge is UnitTest
   """
-  Covers both str_8 and bin_8.
+  Verify that `str_8` and `bin_8` throw an error if supplied with a valid t
+  too large to encode within the available space.
   """
   fun name(): String =>
     "msgpack/EncodeStr8TooLarge"
@@ -500,6 +601,10 @@ class _TestEncodeStr8TooLarge is UnitTest
 
 class _TestEncodeStr16 is UnitTest
   """
+  str 16 stores a byte array whose length is upto (2^16)-1 bytes:
+  +--------+--------+--------+========+
+  |  0xda  |ZZZZZZZZ|ZZZZZZZZ|  data  |
+  +--------+--------+--------+========+
   """
   fun name(): String =>
     "msgpack/EncodeStr16"
@@ -528,7 +633,8 @@ class _TestEncodeStr16 is UnitTest
 
 class _TestEncodeStr16TooLarge is UnitTest
   """
-  Covers both str_16 and bin_16.
+  Verify that `str_16` and `bin_16` throw an error if supplied with a valid t
+  too large to encode within the available space.
   """
   fun name(): String =>
     "msgpack/EncodeStr16TooLarge"
@@ -545,6 +651,10 @@ class _TestEncodeStr16TooLarge is UnitTest
 
 class _TestEncodeStr32 is UnitTest
   """
+  str 32 stores a byte array whose length is upto (2^32)-1 bytes:
+  +--------+--------+--------+--------+--------+========+
+  |  0xdb  |AAAAAAAA|AAAAAAAA|AAAAAAAA|AAAAAAAA|  data  |
+  +--------+--------+--------+--------+--------+========+
   """
   fun name(): String =>
     "msgpack/EncodeStr32"
@@ -573,7 +683,8 @@ class _TestEncodeStr32 is UnitTest
 
 class _TestEncodeStr32TooLarge is UnitTest
   """
-  Covers both str_32 and bin_32.
+  Verify that `str_32` and `bin_32` throw an error if supplied with a valid t
+  too large to encode within the available space.
   """
   fun name(): String =>
     "msgpack/EncodeStr32TooLarge"
@@ -590,6 +701,10 @@ class _TestEncodeStr32TooLarge is UnitTest
 
 class _TestEncodeBin8 is UnitTest
   """
+  bin 8 stores a byte array whose length is upto (2^8)-1 bytes:
+  +--------+--------+========+
+  |  0xc4  |XXXXXXXX|  data  |
+  +--------+--------+========+
   """
   fun name(): String =>
     "msgpack/EncodeBin8"
@@ -619,6 +734,10 @@ class _TestEncodeBin8 is UnitTest
 
 class _TestEncodeBin16 is UnitTest
   """
+  bin 16 stores a byte array whose length is upto (2^16)-1 bytes:
+  +--------+--------+--------+========+
+  |  0xc5  |YYYYYYYY|YYYYYYYY|  data  |
+  +--------+--------+--------+========+
   """
   fun name(): String =>
     "msgpack/EncodeBin16"
@@ -647,6 +766,10 @@ class _TestEncodeBin16 is UnitTest
 
 class _TestEncodeBin32 is UnitTest
   """
+  bin 32 stores a byte array whose length is upto (2^32)-1 bytes:
+  +--------+--------+--------+--------+--------+========+
+  |  0xc6  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|  data  |
+  +--------+--------+--------+--------+--------+========+
   """
   fun name(): String =>
     "msgpack/EncodeBin32"

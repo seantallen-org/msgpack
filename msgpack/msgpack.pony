@@ -162,6 +162,15 @@ primitive MessagePackEncoder
     _write_type(b, _FormatName.array_16())
     b.u16_be(s)
 
+  fun array_32(b: Writer, s: U32) =>
+    """
+    Creates a header for a MessagePack "array_32". This only creates the
+    header. `s` number of array items should be written via other methods
+    after this is called.
+    """
+    _write_type(b, _FormatName.array_32())
+    b.u32_be(s)
+
   //
   // support methods
   //

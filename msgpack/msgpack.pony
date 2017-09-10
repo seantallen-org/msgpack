@@ -210,8 +210,17 @@ primitive MessagePackEncoder
   //
 
   fun fixext_1(b: Writer, t: U8, v: ByteSeq) ? =>
-    if v.size() <= _Limit.fixext_1() then
+    if v.size() == _Size.fixext_1() then
       _write_type(b, _FormatName.fixext_1())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
+  fun fixext_2(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() == _Size.fixext_2() then
+      _write_type(b, _FormatName.fixext_2())
       b.u8(t)
       b.write(v)
     else

@@ -17,6 +17,7 @@ limitations under the License.
 */
 
 use "buffered"
+use "collections"
 use "ponytest"
 
 actor Main is TestList
@@ -85,6 +86,8 @@ actor Main is TestList
     test(_TestEncodeMap32)
     test(_TestEncodeFixext1)
     test(_TestEncodeFixext1IncorrectSize)
+    test(_TestEncodeFixext2)
+    test(_TestEncodeFixext2IncorrectSize)
 
 class _TestEncodeNil is UnitTest
   """
@@ -1065,7 +1068,7 @@ class _TestEncodeFixext1 is UnitTest
       end
     end
 
-    h.assert_eq[USize](3, b.size())
+    h.assert_eq[USize](2 + size, b.size())
     h.assert_eq[U8](0xD4, b.peek_u8()?)
     h.assert_eq[U8](user_type, b.peek_u8(1)?)
     h.assert_eq[U8]('V', b.peek_u8(2)?)
@@ -1079,7 +1082,7 @@ class _TestEncodeFixext1IncorrectSize is UnitTest
   unit test it currently is.
   """
   fun name(): String =>
-    "msgpack/EncodeFixext1TooLarge"
+    "msgpack/EncodeFixext1IncorrectSize"
 
   fun ref apply(h: TestHelper) =>
     let w: Writer ref = Writer
@@ -1094,5 +1097,64 @@ class _TestEncodeFixext1IncorrectSize is UnitTest
 
     try
       MessagePackEncoder.fixext_1(w, user_type, too_small)?
+      h.fail()
+    end
+
+class _TestEncodeFixext2 is UnitTest
+  """
+  fixext 2 stores an integer and a byte array whose length is 2 bytes
+  +--------+--------+--------+
+  |  0xd5  |  type  |  data  |
+  +--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext2"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Size.fixext_2()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.fixext_2(w, user_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](2 + size, b.size())
+    h.assert_eq[U8](0xD5, b.peek_u8()?)
+    h.assert_eq[U8](user_type, b.peek_u8(1)?)
+    for i in Range(2, (2 + size)) do
+      h.assert_eq[U8]('V', b.peek_u8(i)?)
+    end
+
+class _TestEncodeFixext2IncorrectSize is UnitTest
+  """
+  Verify that `fixext_2` throws an error if supplied with a value either
+  too large or too small to encode within the available space.
+
+  This would be ideal for a property based test rather than the standard
+  unit test it currently is.
+  """
+  fun name(): String =>
+    "msgpack/EncodeFixext2IncorrectSize"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let user_type: U8 = 8
+    let too_big = recover val Array[U8].init('Z', _Size.fixext_2() + 1) end
+    let too_small = recover val Array[U8].init('a', _Size.fixext_2() - 1) end
+
+    try
+      MessagePackEncoder.fixext_2(w, user_type, too_big)?
+      h.fail()
+    end
+
+    try
+      MessagePackEncoder.fixext_2(w, user_type, too_small)?
       h.fail()
     end

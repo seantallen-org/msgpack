@@ -96,6 +96,8 @@ actor Main is TestList
     test(_TestEncodeExt8TooLarge)
     test(_TestEncodeExt16)
     test(_TestEncodeExt16TooLarge)
+    test(_TestEncodeExt32)
+    test(_TestEncodeExt32TooLarge)
 
 class _TestEncodeNil is UnitTest
   """
@@ -1450,5 +1452,60 @@ class _TestEncodeExt16TooLarge is UnitTest
 
     try
       MessagePackEncoder.ext_16(w, ext_type, value)?
+      h.fail()
+    end
+
+class _TestEncodeExt32 is UnitTest
+  """
+  ext 32 stores an integer and a byte array whose length is
+  upto (2^32)-1 bytes:
+  +--------+--------+--------+--------+--------+--------+========+
+  |  0xc9  |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|  type  |  data  |
+  +--------+--------+--------+--------+--------+--------+========+
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let ext_type: U8 = 99
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.ext_32(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_true(value.size() <= U8.max_value().usize())
+    h.assert_eq[USize](11, b.size())
+    h.assert_eq[U8](_FormatName.ext_32(), b.peek_u8()?)
+    h.assert_eq[U32](value.size().u32(), b.peek_u32_be(1)?)
+    h.assert_eq[U8](ext_type, b.peek_u8(5)?)
+    h.assert_eq[U8]('H', b.peek_u8(6)?)
+    h.assert_eq[U8]('e', b.peek_u8(7)?)
+    h.assert_eq[U8]('l', b.peek_u8(8)?)
+    h.assert_eq[U8]('l', b.peek_u8(9)?)
+    h.assert_eq[U8]('o', b.peek_u8(10)?)
+
+class _TestEncodeExt32TooLarge is UnitTest
+  """
+  Verify that `ext_16` throws an error if supplied with a value
+  too large to encode within the available space.
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt32TooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let size = U32.max_value().usize() + 1
+    let value = recover val Array[U8].init('Z', size) end
+    let ext_type: U8 = 99
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.ext_32(w, ext_type, value)?
       h.fail()
     end

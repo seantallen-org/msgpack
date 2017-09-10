@@ -274,6 +274,16 @@ primitive MessagePackEncoder
       error
     end
 
+  fun ext_32(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() <= U32.max_value().usize() then
+      _write_type(b, _FormatName.ext_32())
+      b.u32_be(v.size().u32())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
   //
   // support methods
   //

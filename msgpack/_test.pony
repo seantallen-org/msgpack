@@ -94,6 +94,8 @@ actor Main is TestList
     test(_TestEncodeFixext8IncorrectSize)
     test(_TestEncodeExt8)
     test(_TestEncodeExt8TooLarge)
+    test(_TestEncodeExt16)
+    test(_TestEncodeExt16TooLarge)
 
 class _TestEncodeNil is UnitTest
   """
@@ -1393,5 +1395,60 @@ class _TestEncodeExt8TooLarge is UnitTest
 
     try
       MessagePackEncoder.ext_8(w, ext_type, value)?
+      h.fail()
+    end
+
+class _TestEncodeExt16 is UnitTest
+  """
+  ext 16 stores an integer and a byte array whose length is
+  upto (2^16)-1 bytes:
+  +--------+--------+--------+--------+========+
+  |  0xc8  |YYYYYYYY|YYYYYYYY|  type  |  data  |
+  +--------+--------+--------+--------+========+
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let ext_type: U8 = 99
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.ext_16(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_true(value.size() <= U8.max_value().usize())
+    h.assert_eq[USize](9, b.size())
+    h.assert_eq[U8](_FormatName.ext_16(), b.peek_u8()?)
+    h.assert_eq[U16](value.size().u16(), b.peek_u16_be(1)?)
+    h.assert_eq[U8](ext_type, b.peek_u8(3)?)
+    h.assert_eq[U8]('H', b.peek_u8(4)?)
+    h.assert_eq[U8]('e', b.peek_u8(5)?)
+    h.assert_eq[U8]('l', b.peek_u8(6)?)
+    h.assert_eq[U8]('l', b.peek_u8(7)?)
+    h.assert_eq[U8]('o', b.peek_u8(8)?)
+
+class _TestEncodeExt16TooLarge is UnitTest
+  """
+  Verify that `ext_16` throws an error if supplied with a value
+  too large to encode within the available space.
+  """
+  fun name(): String =>
+    "msgpack/EncodeExt16TooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let size = U16.max_value().usize() + 1
+    let value = recover val Array[U8].init('Z', size) end
+    let ext_type: U8 = 99
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.ext_16(w, ext_type, value)?
       h.fail()
     end

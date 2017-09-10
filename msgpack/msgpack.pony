@@ -245,6 +245,15 @@ primitive MessagePackEncoder
       error
     end
 
+  fun fixext_16(b: Writer, t: U8, v: ByteSeq) ? =>
+    if v.size() == _Size.fixext_16() then
+      _write_type(b, _FormatName.fixext_16())
+      b.u8(t)
+      b.write(v)
+    else
+      error
+    end
+
   //
   // support methods
   //

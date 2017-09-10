@@ -17,6 +17,7 @@ limitations under the License.
 */
 
 primitive _Limit
+  fun fixarray(): U8 => 15
   fun fixstr(): USize => 31
   fun positive_fixint(): U8 => 127
   fun negative_fixint_low(): I8 => -32

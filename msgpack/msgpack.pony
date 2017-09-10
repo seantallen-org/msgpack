@@ -138,6 +138,22 @@ primitive MessagePackEncoder
     _write_btye_array_32(b, v, _FormatName.bin_32())?
 
   //
+  // array format family
+  //
+
+  fun fixarray(b: Writer, s: U8) ?=>
+    """
+    Creates a header for a MessagePack "fixarray". This only creates the
+    header. `s` number of array items should be written via other methods
+    after this is called.
+    """
+    if s <= _Limit.fixarray() then
+      _write_type(b, (_FormatName.fixarray() or s))
+    else
+      error
+    end
+
+  //
   // support methods
   //
 

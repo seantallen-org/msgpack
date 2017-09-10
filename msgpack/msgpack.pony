@@ -141,7 +141,7 @@ primitive MessagePackEncoder
   // array format family
   //
 
-  fun fixarray(b: Writer, s: U8) ?=>
+  fun fixarray(b: Writer, s: U8) ? =>
     """
     Creates a header for a MessagePack "fixarray". This only creates the
     header. `s` number of array items should be written via other methods
@@ -152,6 +152,15 @@ primitive MessagePackEncoder
     else
       error
     end
+
+  fun array_16(b: Writer, s: U16) =>
+    """
+    Creates a header for a MessagePack "array_16". This only creates the
+    header. `s` number of array items should be written via other methods
+    after this is called.
+    """
+    _write_type(b, _FormatName.array_16())
+    b.u16_be(s)
 
   //
   // support methods

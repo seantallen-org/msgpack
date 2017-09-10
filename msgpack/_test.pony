@@ -77,6 +77,7 @@ actor Main is TestList
     test(_TestEncodeBin32)
     test(_TestEncodeFixarray)
     test(_TestEncodeFixarrayTooLarge)
+    test(_TestEncodeArray16)
 
 class _TestEncodeNil is UnitTest
   """
@@ -824,6 +825,9 @@ class _TestEncodeFixarray is UnitTest
   +--------+~~~~~~~~~~~~~~~~~+
   |1001XXXX|    N objects    |
   +--------+~~~~~~~~~~~~~~~~~+
+
+  This test is only verifying the header creation. Not the writing of
+  "N objects".
   """
   fun name(): String =>
     "msgpack/EncodeFixarray"
@@ -862,3 +866,33 @@ class _TestEncodeFixarrayTooLarge is UnitTest
       MessagePackEncoder.fixarray(w, size)?
       h.fail()
     end
+
+class _TestEncodeArray16 is UnitTest
+  """
+  array 16 stores an array whose length is upto (2^16)-1 elements:
+  +--------+--------+--------+~~~~~~~~~~~~~~~~~+
+  |  0xdc  |YYYYYYYY|YYYYYYYY|    N objects    |
+  +--------+--------+--------+~~~~~~~~~~~~~~~~~+
+
+  This test is only verifying the header creation. Not the writing of
+  "N objects".
+  """
+  fun name(): String =>
+    "msgpack/EncodeArray16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.array_16(w, value.size().u16())
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[USize](3, b.size())
+    h.assert_eq[U8](_FormatName.array_16(), b.peek_u8()?)
+    h.assert_eq[U16](value.size().u16(), b.peek_u16_be(1)?)

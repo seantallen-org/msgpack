@@ -1,5 +1,5 @@
 build/msgpack: build msgpack/*.pony
-	ponyc msgpack -o build
+	ponyc msgpack -o build --debug
 
 build:
 	mkdir build

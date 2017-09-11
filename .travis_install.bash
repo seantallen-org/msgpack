@@ -24,7 +24,7 @@ download_pcre(){
 
 install-ponyc-master(){
   echo "Installing ponyc master..."
-  git clone git@github.com:WallarooLabs/ponyc.git
+  git clone https://github.com/ponylang/ponyc.git
   pushd ponyc
   echo "Building ponyc..."
   make CC="$CC1" CXX="$CXX1" install

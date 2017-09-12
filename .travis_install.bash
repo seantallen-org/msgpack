@@ -27,7 +27,7 @@ install-ponyc-master(){
   git clone https://github.com/ponylang/ponyc.git
   pushd ponyc
   echo "Building ponyc..."
-  make CC="$CC1" CXX="$CXX1" install
+  sudo make CC="$CC1" CXX="$CXX1" install
   popd
 }
 

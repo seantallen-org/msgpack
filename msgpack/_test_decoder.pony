@@ -31,6 +31,10 @@ actor _TestDecoder is TestList
     test(_TestDecodeU16)
     test(_TestDecodeU32)
     test(_TestDecodeU64)
+    test(_TestDecodeI8)
+    test(_TestDecodeI16)
+    test(_TestDecodeI32)
+    test(_TestDecodeI64)
 
 class _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -158,3 +162,74 @@ class _TestDecodeU64 is UnitTest
 
     h.assert_eq[U64](65, MessagePackDecoder.u64(b)?)
 
+class _TestDecodeI8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeI8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.int_8(w, 9)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[I8](9, MessagePackDecoder.i8(b)?)
+
+class _TestDecodeI16 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeI16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.int_16(w, 17)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[I16](17, MessagePackDecoder.i16(b)?)
+
+class _TestDecodeI32 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeI32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.int_32(w, 33)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[I32](33, MessagePackDecoder.i32(b)?)
+
+class _TestDecodeI64 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeI64"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.int_64(w, 65)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[I64](65, MessagePackDecoder.i64(b)?)

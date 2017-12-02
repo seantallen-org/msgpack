@@ -77,10 +77,37 @@ primitive MessagePackDecoder
 
     b.u64_be()?
 
+  //
+  // signed integer family
+  //
+
+  fun i8(b: Reader ref): I8 ? =>
+    if _read_type(b)? != _FormatName.int_8() then
+      error
+    end
+
+    b.i8()?
+
+  fun i16(b: Reader ref): I16 ? =>
+    if _read_type(b)? != _FormatName.int_16() then
+      error
+    end
+
+    b.i16_be()?
+
+  fun i32(b: Reader ref): I32 ? =>
+    if _read_type(b)? != _FormatName.int_32() then
+      error
+    end
+
+    b.i32_be()?
+
+  fun i64(b: Reader ref): I64 ? =>
+    if _read_type(b)? != _FormatName.int_64() then
+      error
+    end
+
+    b.i64_be()?
+
   fun _read_type(b: Reader ref): MessagePackType ? =>
     b.u8()?
-
-
-
-
-

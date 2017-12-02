@@ -25,16 +25,10 @@ actor _TestDecoder is TestList
 
   fun tag tests(test: PonyTest) =>
     test(_TestDecodeNil)
+    test(_TestDecodeTrue)
+    test(_TestDecodeFalse)
 
 class _TestDecodeNil is UnitTest
-  """
-  Nil format stores nil in 1 byte.
-
-  nil:
-  +--------+
-  |  0xc0  |
-  +--------+
-  """
   fun name(): String =>
     "msgpack/DecodeNil"
 
@@ -52,4 +46,38 @@ class _TestDecodeNil is UnitTest
 
     MessagePackDecoder.nil(consume b)?
 
+class _TestDecodeTrue is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeTrue"
 
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.bool(w, true)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_true(MessagePackDecoder.bool(consume b)?)
+
+class _TestDecodeFalse is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFalse"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.bool(w, false)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_false(MessagePackDecoder.bool(consume b)?)

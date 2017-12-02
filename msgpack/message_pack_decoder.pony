@@ -33,6 +33,18 @@ primitive MessagePackDecoder
       error
     end
 
+  //
+  // bool format family
+  //
+
+  fun bool(b: Reader): Bool ? =>
+    match _read_type(b)?
+    | _FormatName.truthy() => true
+    | _FormatName.falsey() => false
+    else
+      error
+    end
+
   fun _read_type(b: Reader): MessagePackType ? =>
     b.u8()?
 

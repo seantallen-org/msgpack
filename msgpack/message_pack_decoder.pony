@@ -46,6 +46,16 @@ primitive MessagePackDecoder
     end
 
   //
+  // fixed number family
+  //
+
+  fun positive_fixint(b: Reader ref): U8 ? =>
+    b.u8()?
+
+  fun negative_fixint(b: Reader ref): I8 ? =>
+    b.i8()?
+
+  //
   // unsigned int family
   //
 

@@ -39,6 +39,10 @@ actor _TestDecoder is TestList
     test(_TestDecodeNegativeFixint)
     test(_TestDecodeF32)
     test(_TestDecodeF64)
+    test(_TestDecodeFixstr)
+    test(_TestDecodeStr8)
+    test(_TestDecodeStr16)
+    test(_TestDecodeStr32)
 
 class _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -309,3 +313,67 @@ class _TestDecodeF64 is UnitTest
     end
 
     h.assert_eq[F64](65.65, MessagePackDecoder.f64(b)?)
+
+class _TestDecodeFixstr is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixstr"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.fixstr(w, "fixstr")?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String]("fixstr", MessagePackDecoder.fixstr(b)?)
+
+class _TestDecodeStr8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str_8(w, "str8")?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String]("str8", MessagePackDecoder.str(b)?)
+
+class _TestDecodeStr16 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str_16(w, "str16")?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String]("str16", MessagePackDecoder.str(b)?)
+
+class _TestDecodeStr32 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str_32(w, "str32")?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String]("str32", MessagePackDecoder.str(b)?)

@@ -139,3 +139,26 @@ primitive MessagePackDecoder
 
   fun _read_type(b: Reader ref): MessagePackType ? =>
     b.u8()?
+
+  //
+  // str family
+  //
+
+  fun fixstr(b: Reader): String ? =>
+    let len = (b.u8()?.usize() and _Limit.fixstr())
+    String.from_iso_array(b.block(len)?)
+
+  fun str(b: Reader): String ? =>
+    let t = _read_type(b)?
+
+    let len = if t == _FormatName.str_8() then
+      b.u8()?
+    elseif t == _FormatName.str_16() then
+      b.u16_be()?.usize()
+    elseif t == _FormatName.str_32() then
+      b.u32_be()?.usize()
+    else
+      error
+    end
+
+    String.from_iso_array(b.block(len.usize())?)

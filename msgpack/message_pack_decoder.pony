@@ -45,6 +45,38 @@ primitive MessagePackDecoder
       error
     end
 
+  //
+  // unsigned int family
+  //
+
+  fun u8(b: Reader ref): U8 ? =>
+    if _read_type(b)? != _FormatName.uint_8() then
+      error
+    end
+
+    b.u8()?
+
+  fun u16(b: Reader ref): U16 ? =>
+    if _read_type(b)? != _FormatName.uint_16() then
+      error
+    end
+
+    b.u16_be()?
+
+  fun u32(b: Reader ref): U32 ? =>
+    if _read_type(b)? != _FormatName.uint_32() then
+      error
+    end
+
+    b.u32_be()?
+
+  fun u64(b: Reader ref): U64 ? =>
+    if _read_type(b)? != _FormatName.uint_64() then
+      error
+    end
+
+    b.u64_be()?
+
   fun _read_type(b: Reader ref): MessagePackType ? =>
     b.u8()?
 

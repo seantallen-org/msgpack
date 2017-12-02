@@ -37,6 +37,8 @@ actor _TestDecoder is TestList
     test(_TestDecodeI64)
     test(_TestDecodePositiveFixint)
     test(_TestDecodeNegativeFixint)
+    test(_TestDecodeF32)
+    test(_TestDecodeF64)
 
 class _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -271,3 +273,39 @@ class _TestDecodeNegativeFixint is UnitTest
     end
 
     h.assert_eq[I8](-17, MessagePackDecoder.negative_fixint(b)?)
+
+class _TestDecodeF32 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeF32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.float_32(w, 33.33)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[F32](33.33, MessagePackDecoder.f32(b)?)
+
+class _TestDecodeF64 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeF64"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.float_64(w, 65.65)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    h.assert_eq[F64](65.65, MessagePackDecoder.f64(b)?)

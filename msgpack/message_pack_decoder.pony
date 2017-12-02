@@ -119,5 +119,23 @@ primitive MessagePackDecoder
 
     b.i64_be()?
 
+  //
+  // float format family
+  //
+
+  fun f32(b: Reader ref): F32 ? =>
+    if _read_type(b)? != _FormatName.float_32() then
+      error
+    end
+
+    b.f32_be()?
+
+  fun f64(b: Reader ref): F64 ? =>
+    if _read_type(b)? != _FormatName.float_64() then
+      error
+    end
+
+    b.f64_be()?
+
   fun _read_type(b: Reader ref): MessagePackType ? =>
     b.u8()?

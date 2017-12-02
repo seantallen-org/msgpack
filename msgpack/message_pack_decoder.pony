@@ -137,9 +137,6 @@ primitive MessagePackDecoder
 
     b.f64_be()?
 
-  fun _read_type(b: Reader ref): MessagePackType ? =>
-    b.u8()?
-
   //
   // str family
   //
@@ -181,3 +178,46 @@ primitive MessagePackDecoder
     end
 
     b.block(len.usize())?
+
+  //
+  // array format family
+  //
+
+  fun fixarray(b: Reader): U8 ? =>
+    """
+    Reads a header for a MessgePack "fixarray". This only reads the
+    header. The number of array items returned by this method needs
+    to be read via other methods after this is called.
+    """
+    (b.u8()? and _Limit.fixarray())
+
+  fun array_16(b: Reader): U16 ? =>
+    """
+    Reads a header for a MessgePack "array_16". This only reads the
+    header. The number of array items returned by this method needs
+    to be read via other methods after this is called.
+    """
+    if _read_type(b)? != _FormatName.array_16() then
+      error
+    end
+
+    b.u16_be()?
+
+  fun array_32(b: Reader): U32 ? =>
+    """
+    Reads a header for a MessgePack "array_32". This only reads the
+    header. The number of array items returned by this method needs
+    to be read via other methods after this is called.
+    """
+    if _read_type(b)? != _FormatName.array_32() then
+      error
+    end
+
+    b.u32_be()?
+
+  //
+  // support functions
+  //
+
+  fun _read_type(b: Reader ref): MessagePackType ? =>
+    b.u8()?

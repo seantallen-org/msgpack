@@ -49,6 +49,9 @@ actor _TestDecoder is TestList
     test(_TestDecodeFixarray)
     test(_TestDecodeArray16)
     test(_TestDecodeArray32)
+    test(_TestDecodeFixmap)
+    test(_TestDecodeMap16)
+    test(_TestDecodeMap32)
 
 class _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -497,3 +500,51 @@ class _TestDecodeArray32 is UnitTest
     end
 
     h.assert_eq[U32](33, MessagePackDecoder.array_32(b)?)
+
+class _TestDecodeFixmap is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixmap"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.fixmap(w, 8)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U8](8, MessagePackDecoder.fixmap(b)?)
+
+class _TestDecodeMap16 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeMap16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.map_16(w, 17)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U16](17, MessagePackDecoder.map_16(b)?)
+
+class _TestDecodeMap32 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeMap32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.map_32(w, 33)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U32](33, MessagePackDecoder.map_32(b)?)

@@ -216,6 +216,42 @@ primitive MessagePackDecoder
     b.u32_be()?
 
   //
+  // map format family
+  //
+
+  fun fixmap(b: Reader): U8 ? =>
+    """
+    Reads a header for a MessgePack "fixmap". This only reads the
+    header. The number of map items returned by this method needs
+    to be read via other methods after this is called.
+    """
+    (b.u8()? and _Limit.fixmap())
+
+  fun map_16(b: Reader): U16 ? =>
+    """
+    Reads a header for a MessgePack "map_16". This only reads the
+    header. The number of map items returned by this method needs
+    to be read via other methods after this is called.
+    """
+    if _read_type(b)? != _FormatName.map_16() then
+      error
+    end
+
+    b.u16_be()?
+
+  fun map_32(b: Reader): U32 ? =>
+    """
+    Reads a header for a MessgePack "map_32". This only reads the
+    header. The number of map items returned by this method needs
+    to be read via other methods after this is called.
+    """
+    if _read_type(b)? != _FormatName.map_32() then
+      error
+    end
+
+    b.u32_be()?
+
+  //
   // support functions
   //
 

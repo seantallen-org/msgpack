@@ -252,6 +252,37 @@ primitive MessagePackDecoder
     b.u32_be()?
 
   //
+  // ext format family
+  //
+
+  fun fixext(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Allows for the reading of user supplies extensions to the MessagePack
+    format.
+
+    fixext * types return a tuple representing:
+
+    (user supplied type indentifier, data byte array)
+    """
+    let t = _read_type(b)?
+
+    let size: USize = if t == _FormatName.fixext_1() then
+      1
+    elseif t == _FormatName.fixext_2() then
+      2
+    elseif t == _FormatName.fixext_4() then
+      4
+    elseif t == _FormatName.fixext_8() then
+      8
+    elseif t == _FormatName.fixext_16() then
+      16
+    else
+      error
+    end
+
+    (b.u8()?, b.block(size)?)
+
+  //
   // support functions
   //
 

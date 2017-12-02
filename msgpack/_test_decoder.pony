@@ -17,6 +17,7 @@ limitations under the License.
 */
 
 use "buffered"
+use "collections"
 use "ponytest"
 
 actor _TestDecoder is TestList
@@ -52,6 +53,11 @@ actor _TestDecoder is TestList
     test(_TestDecodeFixmap)
     test(_TestDecodeMap16)
     test(_TestDecodeMap32)
+    test(_TestDecodeFixext1)
+    test(_TestDecodeFixext2)
+    test(_TestDecodeFixext4)
+    test(_TestDecodeFixext8)
+    test(_TestDecodeFixext16)
 
 class _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -548,3 +554,128 @@ class _TestDecodeMap32 is UnitTest
     end
 
     h.assert_eq[U32](33, MessagePackDecoder.map_32(b)?)
+
+class _TestDecodeFixext1 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixext1"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    let size = _Size.fixext_1()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+
+    MessagePackEncoder.fixext_1(w, user_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    h.assert_eq[U8](user_type, decoded_type)
+    h.assert_eq[USize](size, decoded_value.size())
+    for i in Range(0, size) do
+      h.assert_eq[U8]('V', decoded_value(i)?)
+    end
+
+class _TestDecodeFixext2 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixext2"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    let size = _Size.fixext_2()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+
+    MessagePackEncoder.fixext_2(w, user_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    h.assert_eq[U8](user_type, decoded_type)
+    h.assert_eq[USize](size, decoded_value.size())
+    for i in Range(0, size) do
+      h.assert_eq[U8]('V', decoded_value(i)?)
+    end
+
+class _TestDecodeFixext4 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixext4"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    let size = _Size.fixext_4()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+
+    MessagePackEncoder.fixext_4(w, user_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    h.assert_eq[U8](user_type, decoded_type)
+    h.assert_eq[USize](size, decoded_value.size())
+    for i in Range(0, size) do
+      h.assert_eq[U8]('V', decoded_value(i)?)
+    end
+
+class _TestDecodeFixext8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixext8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    let size = _Size.fixext_8()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+
+    MessagePackEncoder.fixext_8(w, user_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    h.assert_eq[U8](user_type, decoded_type)
+    h.assert_eq[USize](size, decoded_value.size())
+    for i in Range(0, size) do
+      h.assert_eq[U8]('V', decoded_value(i)?)
+    end
+
+class _TestDecodeFixext16 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixext16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    let size = _Size.fixext_16()
+    let user_type: U8 = 8
+    let value = recover val Array[U8].init('V', size) end
+
+    MessagePackEncoder.fixext_16(w, user_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    h.assert_eq[U8](user_type, decoded_type)
+    h.assert_eq[USize](size, decoded_value.size())
+    for i in Range(0, size) do
+      h.assert_eq[U8]('V', decoded_value(i)?)
+    end

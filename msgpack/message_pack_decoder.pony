@@ -16,15 +16,27 @@ limitations under the License.
 
 */
 
-use "ponytest"
+use "buffered"
 
-actor Main is TestList
-  new create(env: Env) =>
-    PonyTest(env, this)
+type MessagePackType is U8
 
-  new make() =>
-    None
+primitive MessagePackDecoder
+  """
+  Implements low-level decoding from the [MessagePack serialization format](https://github.com/msgpack/msgpack/blob/master/spec.md).
+  """
+  //
+  // nil format family
+  //
 
-  fun tag tests(test: PonyTest) =>
-    _TestDecoder.make().tests(test)
-    _TestEncoder.make().tests(test)
+  fun nil(b: Reader): None ? =>
+    if _read_type(b)? != _FormatName.nil() then
+      error
+    end
+
+  fun _read_type(b: Reader): MessagePackType ? =>
+    b.u8()?
+
+
+
+
+

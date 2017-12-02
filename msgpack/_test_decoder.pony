@@ -16,15 +16,40 @@ limitations under the License.
 
 */
 
+use "buffered"
 use "ponytest"
 
-actor Main is TestList
-  new create(env: Env) =>
-    PonyTest(env, this)
-
+actor _TestDecoder is TestList
   new make() =>
     None
 
   fun tag tests(test: PonyTest) =>
-    _TestDecoder.make().tests(test)
-    _TestEncoder.make().tests(test)
+    test(_TestDecodeNil)
+
+class _TestDecodeNil is UnitTest
+  """
+  Nil format stores nil in 1 byte.
+
+  nil:
+  +--------+
+  |  0xc0  |
+  +--------+
+  """
+  fun name(): String =>
+    "msgpack/DecodeNil"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.nil(w)
+
+    for bs in w.done().values() do
+      try
+        b.append(bs as Array[U8] val)
+      end
+    end
+
+    MessagePackDecoder.nil(consume b)?
+
+

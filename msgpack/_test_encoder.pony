@@ -115,9 +115,7 @@ class _TestEncodeNil is UnitTest
     MessagePackEncoder.nil(w)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](1, b.size())
@@ -142,9 +140,7 @@ class _TestEncodeTrue is UnitTest
     MessagePackEncoder.bool(w, true)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](1, b.size())
@@ -169,9 +165,7 @@ class _TestEncodeFalse is UnitTest
     MessagePackEncoder.bool(w, false)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](1, b.size())
@@ -195,9 +189,7 @@ class _TestEncodePositiveFixint is UnitTest
     MessagePackEncoder.positive_fixint(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_true(value <= _Limit.positive_fixint())
@@ -239,9 +231,7 @@ class _TestEncodeNegativeFixint is UnitTest
     MessagePackEncoder.negative_fixint(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_true(value <= _Limit.negative_fixint_high())
@@ -284,9 +274,7 @@ class _TestEncodeUint8 is UnitTest
     MessagePackEncoder.uint_8(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](2, b.size())
@@ -311,9 +299,7 @@ class _TestEncodeUint16 is UnitTest
     MessagePackEncoder.uint_16(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](3, b.size())
@@ -338,9 +324,7 @@ class _TestEncodeUint32 is UnitTest
     MessagePackEncoder.uint_32(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](5, b.size())
@@ -365,9 +349,7 @@ class _TestEncodeUint64 is UnitTest
     MessagePackEncoder.uint_64(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](9, b.size())
@@ -392,9 +374,7 @@ class _TestEncodeInt8 is UnitTest
     MessagePackEncoder.int_8(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](2, b.size())
@@ -419,9 +399,7 @@ class _TestEncodeInt16 is UnitTest
     MessagePackEncoder.int_16(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](3, b.size())
@@ -446,9 +424,7 @@ class _TestEncodeInt32 is UnitTest
     MessagePackEncoder.int_32(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](5, b.size())
@@ -473,9 +449,7 @@ class _TestEncodeInt64 is UnitTest
     MessagePackEncoder.int_64(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](9, b.size())
@@ -501,9 +475,7 @@ class _TestEncodeFloat32 is UnitTest
     MessagePackEncoder.float_32(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](5, b.size())
@@ -529,9 +501,7 @@ class _TestEncodeFloat64 is UnitTest
     MessagePackEncoder.float_64(w, value)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](9, b.size())
@@ -556,9 +526,7 @@ class _TestEncodeFixstr is UnitTest
     MessagePackEncoder.fixstr(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_true(value.size() <= _Limit.fixstr())
@@ -606,9 +574,7 @@ class _TestEncodeStr8 is UnitTest
     MessagePackEncoder.str_8(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_true(value.size() <= U8.max_value().usize())
@@ -657,9 +623,7 @@ class _TestEncodeStr16 is UnitTest
     MessagePackEncoder.str_16(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](8, b.size())
@@ -707,9 +671,7 @@ class _TestEncodeStr32 is UnitTest
     MessagePackEncoder.str_32(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](10, b.size())
@@ -757,9 +719,7 @@ class _TestEncodeBin8 is UnitTest
     MessagePackEncoder.bin_8(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_true(value.size() <= U8.max_value().usize())
@@ -790,9 +750,7 @@ class _TestEncodeBin16 is UnitTest
     MessagePackEncoder.bin_16(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](8, b.size())
@@ -822,9 +780,7 @@ class _TestEncodeBin32 is UnitTest
     MessagePackEncoder.bin_32(w, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](10, b.size())
@@ -859,9 +815,7 @@ class _TestEncodeFixarray is UnitTest
     MessagePackEncoder.fixarray(w, value.size().u8())?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](1, b.size())
@@ -905,9 +859,7 @@ class _TestEncodeArray16 is UnitTest
     MessagePackEncoder.array_16(w, value.size().u16())
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](3, b.size())
@@ -935,9 +887,7 @@ class _TestEncodeArray32 is UnitTest
     MessagePackEncoder.array_32(w, value.size().u32())
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](5, b.size())
@@ -965,9 +915,7 @@ class _TestEncodeFixmap is UnitTest
     MessagePackEncoder.fixmap(w, size)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](1, b.size())
@@ -1011,9 +959,7 @@ class _TestEncodeMap16 is UnitTest
     MessagePackEncoder.map_16(w, size)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](3, b.size())
@@ -1041,9 +987,7 @@ class _TestEncodeMap32 is UnitTest
     MessagePackEncoder.map_32(w, size)
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](5, b.size())
@@ -1070,9 +1014,7 @@ class _TestEncodeFixext1 is UnitTest
     MessagePackEncoder.fixext_1(w, user_type, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](2 + size, b.size())
@@ -1127,9 +1069,7 @@ class _TestEncodeFixext2 is UnitTest
     MessagePackEncoder.fixext_2(w, user_type, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](2 + size, b.size())
@@ -1186,9 +1126,7 @@ class _TestEncodeFixext4 is UnitTest
     MessagePackEncoder.fixext_4(w, user_type, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](2 + size, b.size())
@@ -1245,9 +1183,7 @@ class _TestEncodeFixext8 is UnitTest
     MessagePackEncoder.fixext_8(w, user_type, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](2 + size, b.size())
@@ -1304,9 +1240,7 @@ class _TestEncodeFixext16 is UnitTest
     MessagePackEncoder.fixext_16(w, user_type, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_eq[USize](2 + size, b.size())
@@ -1362,9 +1296,7 @@ class _TestEncodeExt8 is UnitTest
     MessagePackEncoder.ext_8(w, ext_type, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_true(value.size() <= U8.max_value().usize())
@@ -1417,9 +1349,7 @@ class _TestEncodeExt16 is UnitTest
     MessagePackEncoder.ext_16(w, ext_type, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_true(value.size() <= U8.max_value().usize())
@@ -1472,9 +1402,7 @@ class _TestEncodeExt32 is UnitTest
     MessagePackEncoder.ext_32(w, ext_type, value)?
 
     for bs in w.done().values() do
-      try
-        b.append(bs as Array[U8] val)
-      end
+      b.append(bs)
     end
 
     h.assert_true(value.size() <= U8.max_value().usize())

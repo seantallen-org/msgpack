@@ -144,11 +144,11 @@ primitive MessagePackDecoder
   // str family
   //
 
-  fun fixstr(b: Reader): String ? =>
+  fun fixstr(b: Reader): String iso^ ? =>
     let len = (b.u8()?.usize() and _Limit.fixstr())
     String.from_iso_array(b.block(len)?)
 
-  fun str(b: Reader): String ? =>
+  fun str(b: Reader): String iso^ ? =>
     let t = _read_type(b)?
 
     let len = if t == _FormatName.str_8() then

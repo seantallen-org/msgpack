@@ -34,7 +34,7 @@ class _TestDecodeNil is UnitTest
 
   fun ref apply(h: TestHelper) ? =>
     let w: Writer ref = Writer
-    let b = Reader
+    let b: Reader ref = Reader
 
     MessagePackEncoder.nil(w)
 
@@ -44,7 +44,7 @@ class _TestDecodeNil is UnitTest
       end
     end
 
-    MessagePackDecoder.nil(consume b)?
+    MessagePackDecoder.nil(b)?
 
 class _TestDecodeTrue is UnitTest
   fun name(): String =>
@@ -52,7 +52,7 @@ class _TestDecodeTrue is UnitTest
 
   fun ref apply(h: TestHelper) ? =>
     let w: Writer ref = Writer
-    let b = Reader
+    let b: Reader ref = Reader
 
     MessagePackEncoder.bool(w, true)
 
@@ -62,7 +62,7 @@ class _TestDecodeTrue is UnitTest
       end
     end
 
-    h.assert_true(MessagePackDecoder.bool(consume b)?)
+    h.assert_true(MessagePackDecoder.bool(b)?)
 
 class _TestDecodeFalse is UnitTest
   fun name(): String =>
@@ -70,7 +70,7 @@ class _TestDecodeFalse is UnitTest
 
   fun ref apply(h: TestHelper) ? =>
     let w: Writer ref = Writer
-    let b = Reader
+    let b: Reader ref = Reader
 
     MessagePackEncoder.bool(w, false)
 
@@ -80,4 +80,4 @@ class _TestDecodeFalse is UnitTest
       end
     end
 
-    h.assert_false(MessagePackDecoder.bool(consume b)?)
+    h.assert_false(MessagePackDecoder.bool(b)?)

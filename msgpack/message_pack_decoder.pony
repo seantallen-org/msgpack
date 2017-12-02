@@ -28,7 +28,7 @@ primitive MessagePackDecoder
   // nil format family
   //
 
-  fun nil(b: Reader): None ? =>
+  fun nil(b: Reader ref): None ? =>
     if _read_type(b)? != _FormatName.nil() then
       error
     end
@@ -37,7 +37,7 @@ primitive MessagePackDecoder
   // bool format family
   //
 
-  fun bool(b: Reader): Bool ? =>
+  fun bool(b: Reader ref): Bool ? =>
     match _read_type(b)?
     | _FormatName.truthy() => true
     | _FormatName.falsey() => false
@@ -45,7 +45,7 @@ primitive MessagePackDecoder
       error
     end
 
-  fun _read_type(b: Reader): MessagePackType ? =>
+  fun _read_type(b: Reader ref): MessagePackType ? =>
     b.u8()?
 
 

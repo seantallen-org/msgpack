@@ -162,3 +162,22 @@ primitive MessagePackDecoder
     end
 
     String.from_iso_array(b.block(len.usize())?)
+
+  //
+  // byte array family
+  //
+
+  fun byte_array(b: Reader): Array[U8] iso^ ? =>
+    let t = _read_type(b)?
+
+    let len = if t == _FormatName.bin_8() then
+      b.u8()?
+    elseif t == _FormatName.bin_16() then
+      b.u16_be()?.usize()
+    elseif t == _FormatName.bin_32() then
+      b.u32_be()?.usize()
+    else
+      error
+    end
+
+    b.block(len.usize())?

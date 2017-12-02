@@ -43,6 +43,9 @@ actor _TestDecoder is TestList
     test(_TestDecodeStr8)
     test(_TestDecodeStr16)
     test(_TestDecodeStr32)
+    test(_TestDecodeBin8)
+    test(_TestDecodeBin16)
+    test(_TestDecodeBin32)
 
 class _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -377,3 +380,69 @@ class _TestDecodeStr32 is UnitTest
     end
 
     h.assert_eq[String]("str32", MessagePackDecoder.str(b)?)
+
+class _TestDecodeBin8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeBin8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    MessagePackEncoder.bin_8(w, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    let decoded = MessagePackDecoder.byte_array(b)?
+    h.assert_eq[U8]('H', decoded(0)?)
+    h.assert_eq[U8]('e', decoded(1)?)
+    h.assert_eq[U8]('l', decoded(2)?)
+    h.assert_eq[U8]('l', decoded(3)?)
+    h.assert_eq[U8]('o', decoded(4)?)
+
+class _TestDecodeBin16 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeBin16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    MessagePackEncoder.bin_16(w, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    let decoded = MessagePackDecoder.byte_array(b)?
+    h.assert_eq[U8]('H', decoded(0)?)
+    h.assert_eq[U8]('e', decoded(1)?)
+    h.assert_eq[U8]('l', decoded(2)?)
+    h.assert_eq[U8]('l', decoded(3)?)
+    h.assert_eq[U8]('o', decoded(4)?)
+
+class _TestDecodeBin32 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeBin32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    MessagePackEncoder.bin_32(w, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    let decoded = MessagePackDecoder.byte_array(b)?
+    h.assert_eq[U8]('H', decoded(0)?)
+    h.assert_eq[U8]('e', decoded(1)?)
+    h.assert_eq[U8]('l', decoded(2)?)
+    h.assert_eq[U8]('l', decoded(3)?)
+    h.assert_eq[U8]('o', decoded(4)?)

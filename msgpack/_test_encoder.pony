@@ -89,6 +89,8 @@ actor _TestEncoder is TestList
     test(_TestEncodeFixext4IncorrectSize)
     test(_TestEncodeFixext8)
     test(_TestEncodeFixext8IncorrectSize)
+    test(_TestEncodeFixext16)
+    test(_TestEncodeFixext16IncorrectSize)
     test(_TestEncodeExt8)
     test(_TestEncodeExt8TooLarge)
     test(_TestEncodeExt16)

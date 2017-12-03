@@ -255,9 +255,9 @@ primitive MessagePackDecoder
   // ext format family
   //
 
-  fun fixext(b: Reader): (U8, Array[U8] val) ? =>
+  fun ext(b: Reader): (U8, Array[U8] val) ? =>
     """
-    Allows for the reading of user supplies extensions to the MessagePack
+    Allows for the reading of user supplied extensions to the MessagePack
     format.
 
     fixext * types return a tuple representing:
@@ -276,6 +276,12 @@ primitive MessagePackDecoder
       8
     elseif t == _FormatName.fixext_16() then
       16
+    elseif t == _FormatName.ext_8() then
+      b.u8()?.usize()
+    elseif t == _FormatName.ext_16() then
+      b.u16_be()?.usize()
+    elseif t == _FormatName.ext_32() then
+      b.u32_be()?.usize()
     else
       error
     end

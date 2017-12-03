@@ -58,6 +58,9 @@ actor _TestDecoder is TestList
     test(_TestDecodeFixext4)
     test(_TestDecodeFixext8)
     test(_TestDecodeFixext16)
+    test(_TestDecodeExt8)
+    test(_TestDecodeExt16)
+    test(_TestDecodeExt32)
 
 class _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -573,7 +576,7 @@ class _TestDecodeFixext1 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -598,7 +601,7 @@ class _TestDecodeFixext2 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -623,7 +626,7 @@ class _TestDecodeFixext4 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -648,7 +651,7 @@ class _TestDecodeFixext8 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -673,9 +676,81 @@ class _TestDecodeFixext16 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.fixext(b)?
+    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
       h.assert_eq[U8]('V', decoded_value(i)?)
     end
+
+class _TestDecodeExt8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeExt8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'Y'; 'e'; 'l'; 'l'; 'o'] end
+    let ext_type: U8 = 18
+    let b: Reader ref = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.ext_8(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    h.assert_eq[U8](ext_type, decoded_type)
+    h.assert_eq[U8]('Y', decoded_value(0)?)
+    h.assert_eq[U8]('e', decoded_value(1)?)
+    h.assert_eq[U8]('l', decoded_value(2)?)
+    h.assert_eq[U8]('l', decoded_value(3)?)
+    h.assert_eq[U8]('o', decoded_value(4)?)
+
+class _TestDecodeExt16 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeExt16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'H'; 'e'; 'l'; 'l'; 'o'] end
+    let ext_type: U8 = 99
+    let b: Reader ref = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.ext_16(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    h.assert_eq[U8](ext_type, decoded_type)
+    h.assert_eq[U8]('H', decoded_value(0)?)
+    h.assert_eq[U8]('e', decoded_value(1)?)
+    h.assert_eq[U8]('l', decoded_value(2)?)
+    h.assert_eq[U8]('l', decoded_value(3)?)
+    h.assert_eq[U8]('o', decoded_value(4)?)
+
+class _TestDecodeExt32 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeExt32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = recover val [as U8: 'Y'; 'e'; 'x'; 'x'; 'o'] end
+    let ext_type: U8 = 127
+    let b: Reader ref = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.ext_32(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    h.assert_eq[U8](ext_type, decoded_type)
+    h.assert_eq[U8]('Y', decoded_value(0)?)
+    h.assert_eq[U8]('e', decoded_value(1)?)
+    h.assert_eq[U8]('x', decoded_value(2)?)
+    h.assert_eq[U8]('x', decoded_value(3)?)
+    h.assert_eq[U8]('o', decoded_value(4)?)

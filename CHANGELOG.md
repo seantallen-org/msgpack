@@ -10,7 +10,7 @@ All notable changes this project will be documented in this file. This project a
 
 ### Added
 
-
+* Added low level decoding methods
 
 ### Changed
 

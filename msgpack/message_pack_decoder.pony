@@ -23,12 +23,20 @@ type MessagePackType is U8
 primitive MessagePackDecoder
   """
   Implements low-level decoding from the [MessagePack serialization format](https://github.com/msgpack/msgpack/blob/master/spec.md).
+
+  You should be familiar with how MessagePack encodes messages if you use this
+  API directly. There are very few guardrails preventing you from incorrectly
+  decoding documents. This is particularly true when using the `array` and
+  `map` format family encoding methods.
   """
   //
   // nil format family
   //
 
   fun nil(b: Reader ref): None ? =>
+    """
+    Returns nothing. Throws an error if the next byte isn't a MessagePack nil.
+    """
     if _read_type(b)? != _FormatName.nil() then
       error
     end

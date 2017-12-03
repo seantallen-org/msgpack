@@ -24,6 +24,6 @@ Pure Pony package to support encoding to and decoding from the
 
 ## Usage
 
-Currently, the only API available is a low-level encoding API. See
-`MessagePackEncoder` for more details.
+Currently, the only API available is low-level encoding and decoding APIs. See
+`MessagePackEncoder` and `MessagePackDecoder` for more details.
 """

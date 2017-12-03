@@ -6,9 +6,8 @@ A pure Pony implementation of the [MessagePack serialization format](http://msgp
 
 [![Build Status](https://travis-ci.org/SeanTAllen/pony-msgpack.svg?branch=master)](https://travis-ci.org/SeanTAllen/pony-msgpack)
 
-Pony-msgpack is currently alpha software. It implements a low-level API for encoding data. Still to do:
+Pony-msgpack is currently alpha software. It implements a low-level API for encoding and decoding data. Still to do:
 
-- Decoding of encoded MessagePack data
 - High-level API for a better programming experience
 - Timestamp extension type
 

@@ -24,4 +24,6 @@ All notable changes this project will be documented in this file. This project a
 
 ## [0.1] - 2017-09-10
 
+### Added
+
 Initial version

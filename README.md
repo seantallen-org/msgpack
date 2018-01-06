@@ -4,7 +4,7 @@ A pure Pony implementation of the [MessagePack serialization format](http://msgp
 
 ## Status
 
-[![Build Status](https://circleci.com/gh/seantallen/pony-msgpack.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/SeanTAllen/pony-msgpack)
+[![CircleCI](https://circleci.com/gh/SeanTAllen/pony-msgpack.svg?style=svg)](https://circleci.com/gh/SeanTAllen/pony-msgpack)
 
 Pony-msgpack is currently alpha software. It implements a low-level API for encoding and decoding data. Still to do:
 

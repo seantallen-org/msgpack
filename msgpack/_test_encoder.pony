@@ -67,9 +67,7 @@ actor _TestEncoder is TestList
     test(_TestEncodeStr8)
     test(_TestEncodeStr8TooLarge)
     test(_TestEncodeStr16)
-    test(_TestEncodeStr16TooLarge)
     test(_TestEncodeStr32)
-    test(_TestEncodeStr32TooLarge)
     test(_TestEncodeBin8)
     test(_TestEncodeBin16)
     test(_TestEncodeBin32)
@@ -94,9 +92,17 @@ actor _TestEncoder is TestList
     test(_TestEncodeExt8)
     test(_TestEncodeExt8TooLarge)
     test(_TestEncodeExt16)
-    test(_TestEncodeExt16TooLarge)
     test(_TestEncodeExt32)
+ifdef not "ci" then
+    // These 2 tests take up a lot of memory.
+    // CircleCI where CI is run only has 4 gigs of memory
+    // The make "test-ci" target for the Makefile defines "ci" so that
+    // these won't run and trigger the OOM killer
+    test(_TestEncodeStr16TooLarge)
+    test(_TestEncodeStr32TooLarge)
+    test(_TestEncodeExt16TooLarge)
     test(_TestEncodeExt32TooLarge)
+end
 
 class _TestEncodeNil is UnitTest
   """

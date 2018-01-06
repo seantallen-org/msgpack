@@ -66,7 +66,7 @@ If you aren't sure how to squash multiple commits into one, Steve Klabnik wrote 
 
 Once those conditions are met, the PR can be merged.
 
-Please note, if your changes are purely to things like README, CHANGELOG etc, you can add [skip ci] as the last line of your commit message and your PR won't be run through our continuous integration systems. I ask that you use [skip ci] where appropriate as it helps to get changes through CI faster and doesn't waste resources that TravisCI is kindly donating to the Open Source community.
+Please note, if your changes are purely to things like README, CHANGELOG etc, you can add [skip ci] as the last line of your commit message and your PR won't be run through our continuous integration systems. I ask that you use [skip ci] where appropriate as it helps to get changes through CI faster and doesn't waste resources that CircleCI is kindly donating to the Open Source community.
 
 ## Documentation formatting
 

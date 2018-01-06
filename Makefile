@@ -1,13 +1,15 @@
-build/msgpack: build msgpack/*.pony
+test: build msgpack/*.pony
 	ponyc msgpack -o build --debug
+	build/msgpack
 
-build:
-	mkdir build
-
-test: build/msgpack
+test-ci: build msgpack/*.pony
+	ponyc msgpack -o build --debug -Dci
 	build/msgpack
 
 clean:
 	rm -rf build
+
+build:
+	mkdir build
 
 .PHONY: clean test

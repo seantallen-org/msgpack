@@ -18,6 +18,9 @@ limitations under the License.
 
 use "buffered"
 use "collections"
+
+foo
+
 use "ponytest"
 
 actor _TestDecoder is TestList

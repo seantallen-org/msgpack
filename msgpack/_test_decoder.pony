@@ -16,6 +16,8 @@ limitations under the License.
 
 */
 
+foo
+
 use "buffered"
 use "collections"
 use "ponytest"

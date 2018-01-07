@@ -28,9 +28,6 @@ workflows:
   foo:
     jobs:
       - verify-changelog
-          filters:
-            branches:
-              only: foo
   nightly:
     triggers:
       - schedule:

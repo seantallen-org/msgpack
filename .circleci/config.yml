@@ -27,7 +27,11 @@ workflows:
       - vs-ponyc-release
   foo:
     jobs:
-      - verify-changelog
+      - verify-changelog:
+          filters:
+            branches:
+              only:
+                - foo
   nightly:
     triggers:
       - schedule:

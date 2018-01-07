@@ -23,12 +23,12 @@ workflows:
   version: 2
   commit:
     jobs:
-      - verify-changelog
+      - verify-changelog:
           filters:
             branches:
               only:
                 - master
-      - vs-ponyc-release
+      - vs-ponyc-release:
            filters:
             branches:
               only:

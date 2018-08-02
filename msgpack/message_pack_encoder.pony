@@ -187,7 +187,7 @@ primitive MessagePackEncoder
     Attempting to encode a `ByteSeq` larger than (2^8)-1 bytes will result in
     an `error`.
     """
-    _write_btye_array_8(b, v, _FormatName.str_8())?
+    _write_byte_array_8(b, v, _FormatName.str_8())?
 
   fun str_16(b: Writer, v: ByteSeq) ? =>
     """
@@ -196,7 +196,7 @@ primitive MessagePackEncoder
     Attempting to encode a `ByteSeq` larger than (2^16)-1 bytes will result in
     an `error`.
     """
-    _write_btye_array_16(b, v, _FormatName.str_16())?
+    _write_byte_array_16(b, v, _FormatName.str_16())?
 
    fun str_32(b: Writer, v: ByteSeq) ? =>
     """
@@ -205,7 +205,7 @@ primitive MessagePackEncoder
     Attempting to encode a `ByteSeq` larger than (2^32)-1 bytes will result in
     an `error`.
     """
-    _write_btye_array_32(b, v, _FormatName.str_32())?
+    _write_byte_array_32(b, v, _FormatName.str_32())?
 
   //
   // bin format family
@@ -218,7 +218,7 @@ primitive MessagePackEncoder
     Attempting to encode a `ByteSeq` larger than (2^8)-1 bytes will result in
     an `error`.
     """
-    _write_btye_array_8(b, v, _FormatName.bin_8())?
+    _write_byte_array_8(b, v, _FormatName.bin_8())?
 
   fun bin_16(b: Writer, v: ByteSeq) ? =>
     """
@@ -227,7 +227,7 @@ primitive MessagePackEncoder
     Attempting to encode a `ByteSeq` larger than (2^16)-1 bytes will result in
     an `error`.
     """
-    _write_btye_array_16(b, v, _FormatName.bin_16())?
+    _write_byte_array_16(b, v, _FormatName.bin_16())?
 
    fun bin_32(b: Writer, v: ByteSeq) ? =>
      """
@@ -236,7 +236,7 @@ primitive MessagePackEncoder
      Attempting to encode a `ByteSeq` larger than (2^32)-1 bytes will result in
      an `error`.
      """
-    _write_btye_array_32(b, v, _FormatName.bin_32())?
+    _write_byte_array_32(b, v, _FormatName.bin_32())?
 
   //
   // array format family
@@ -538,7 +538,7 @@ primitive MessagePackEncoder
   fun _write_fixed_value(b: Writer, v: U8) =>
     b.u8(v)
 
-  fun _write_btye_array_8(b: Writer, v: ByteSeq, t: U8) ? =>
+  fun _write_byte_array_8(b: Writer, v: ByteSeq, t: U8) ? =>
     if v.size() <= U8.max_value().usize() then
       _write_type(b, t)
       b.u8(v.size().u8())
@@ -547,7 +547,7 @@ primitive MessagePackEncoder
       error
     end
 
-  fun _write_btye_array_16(b: Writer, v: ByteSeq, t: U8) ? =>
+  fun _write_byte_array_16(b: Writer, v: ByteSeq, t: U8) ? =>
     if v.size() <= U16.max_value().usize() then
       _write_type(b, t)
       b.u16_be(v.size().u16())
@@ -556,7 +556,7 @@ primitive MessagePackEncoder
       error
     end
 
-  fun _write_btye_array_32(b: Writer, v: ByteSeq, t: U8) ? =>
+  fun _write_byte_array_32(b: Writer, v: ByteSeq, t: U8) ? =>
     if v.size() <= U32.max_value().usize() then
       _write_type(b, t)
       b.u32_be(v.size().u32())

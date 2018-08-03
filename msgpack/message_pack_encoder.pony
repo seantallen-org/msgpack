@@ -529,6 +529,64 @@ primitive MessagePackEncoder
     end
 
   //
+  // timestamp format family
+  //
+
+  fun timestamp_32(b: Writer, sec: U32) =>
+    """
+    timestamp 32 stores the number of seconds that have elapsed since 1970-01-01
+    00:00:00 UTC in a 32-bit unsigned integer.
+
+    It can represent a timestamp in [1970-01-01 00:00:00 UTC, 2106-02-07
+    06:28:16 UTC).
+
+    Nanoseconds part is 0.
+    """
+    _write_type(b, _FormatName.fixext_4())
+    b.u8(-1)
+    b.u32_be(sec)
+
+  fun timestamp_64(b: Writer, sec: U64, nsec: U32) ? =>
+    """
+    timestamp 64 stores the number of seconds and nanoseconds that have elapsed
+    since 1970-01-01 00:00:00 UTC in 32-bit unsigned integers.
+
+    It can represent a timestamp in [1970-01-01 00:00:00.000000000 UTC,
+    2514-05-30 01:53:04.000000000 UTC).
+
+    `nsec` must not be larger than 999999999. `sec` must not be larger than
+    (2^34 - 1).
+    """
+    if (nsec <= _Limit.nsec()) and (sec <= _Limit.sec_34()) then
+      _write_type(b, _FormatName.fixext_8())
+      b.u8(-1)
+      b.u64_be((nsec.u64() << 34) + sec)
+    else
+      error
+    end
+
+  fun timestamp_96(b: Writer, sec: I64, nsec: U32) ? =>
+    """
+    timestamp 96 stores the number of seconds and nanoseconds that have elapsed
+    since 1970-01-01 00:00:00 UTC in 64-bit signed integer and 32-bit unsigned
+    integer.
+
+    It can represent a timestamp in [-584554047284-02-23 16:59:44 UTC,
+    584554051223-11-09 07:00:16.000000000 UTC).
+
+    `nsec` must not be larger than 999999999.
+    """
+    if nsec <= _Limit.nsec() then
+      _write_type(b, _FormatName.ext_8())
+      b.u8(12)
+      b.u8(-1)
+      b.u32_be(nsec)
+      b.i64_be(sec)
+    else
+      error
+    end
+
+  //
   // support methods
   //
 

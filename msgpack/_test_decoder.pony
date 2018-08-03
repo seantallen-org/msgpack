@@ -61,6 +61,9 @@ actor _TestDecoder is TestList
     test(_TestDecodeExt8)
     test(_TestDecodeExt16)
     test(_TestDecodeExt32)
+    test(_TestDecodeTimestamp32)
+    test(_TestDecodeTimestamp64)
+    test(_TestDecodeTimestamp96)
 
 class _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -754,3 +757,62 @@ class _TestDecodeExt32 is UnitTest
     h.assert_eq[U8]('x', decoded_value(2)?)
     h.assert_eq[U8]('x', decoded_value(3)?)
     h.assert_eq[U8]('o', decoded_value(4)?)
+
+class _TestDecodeTimestamp32 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeTimestamp32"
+
+  fun ref apply(h: TestHelper)? =>
+    let encoded_sec: U32 = 500
+    let b: Reader ref = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.timestamp_32(w, encoded_sec)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_sec, let decoded_nsec) = MessagePackDecoder.timestamp(b)?
+    h.assert_eq[I64](decoded_sec, encoded_sec.i64())
+    h.assert_eq[I64](decoded_nsec, I64(0))
+
+class _TestDecodeTimestamp64 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeTimestamp64"
+
+  fun ref apply(h: TestHelper)? =>
+    let encoded_sec = U64(_Limit.sec_34())
+    let encoded_nsec = U32(_Limit.nsec())
+    let b: Reader ref = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.timestamp_64(w, encoded_sec, encoded_nsec)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_sec, let decoded_nsec) = MessagePackDecoder.timestamp(b)?
+    h.assert_eq[I64](decoded_sec, _Limit.sec_34().i64())
+    h.assert_eq[I64](decoded_nsec, _Limit.nsec().i64())
+
+class _TestDecodeTimestamp96 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeTimestamp96"
+
+  fun ref apply(h: TestHelper)? =>
+    let encoded_sec = 0 - _Limit.sec_34().i64()
+    let encoded_nsec = _Limit.nsec()
+    let b: Reader ref = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.timestamp_96(w, encoded_sec, encoded_nsec)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let decoded_sec, let decoded_nsec) = MessagePackDecoder.timestamp(b)?
+    h.assert_eq[I64](decoded_sec, 0 - _Limit.sec_34().i64())
+    h.assert_eq[I64](decoded_nsec, _Limit.nsec().i64())

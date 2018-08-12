@@ -10,7 +10,7 @@ All notable changes this project will be documented in this file. This project a
 
 ### Added
 
-
+- Added support for the [timestamp extension type](https://github.com/msgpack/msgpack/blob/master/spec.md#timestamp-extension-type)
 
 ### Changed
 

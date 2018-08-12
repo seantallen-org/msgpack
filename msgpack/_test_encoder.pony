@@ -93,6 +93,12 @@ actor _TestEncoder is TestList
     test(_TestEncodeExt8TooLarge)
     test(_TestEncodeExt16)
     test(_TestEncodeExt32)
+    test(_TestEncodeTimestamp32)
+    test(_TestEncodeTimestamp64)
+    test(_TestEncodeTimestamp64SecsTooLarge)
+    test(_TestEncodeTimestamp64NsecsTooLarge)
+    test(_TestEncodeTimestamp96)
+    test(_TestEncodeTimestamp96NsecsTooLarge)
 ifdef not "ci" then
     // These 2 tests take up a lot of memory.
     // CircleCI where CI is run only has 4 gigs of memory
@@ -1440,5 +1446,149 @@ class _TestEncodeExt32TooLarge is UnitTest
 
     try
       MessagePackEncoder.ext_32(w, ext_type, value)?
+      h.fail()
+    end
+
+class _TestEncodeTimestamp32 is UnitTest
+  """
+  timestamp 32 stores the number of seconds that have elapsed since 1970-01-01
+  00:00:00 UTC in an 32-bit unsigned integer:
+  +--------+--------+--------+--------+--------+--------+
+  |  0xd6  |   -1   |   seconds in 32-bit unsigned int  |
+  +--------+--------+--------+--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeTimestamp32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Size.fixext_4()
+    let secs: U32 = 500
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.timestamp_32(w, secs)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](2 + size, b.size())
+    h.assert_eq[U8](0xD6, b.u8()?)
+    h.assert_eq[I8](-1, b.i8()?)
+    h.assert_eq[U32](secs, b.u32_be()?)
+
+class _TestEncodeTimestamp64 is UnitTest
+  """
+  timestamp 64 stores the number of seconds and nanoseconds that have elapsed
+  since 1970-01-01 00:00:00 UTC in 32-bit unsigned integers:
+  +--------+--------+--------+--------+--------+--------+
+  |  0xd7  |   -1   |nanoseconds in 30-bit unsigned int |
+  +--------+--------+--------+--------+--------+--------+
+  +--------+--------+--------+--------+
+     seconds in 34-bit unsigned int   |
+  +--------+--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeTimestamp64"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size = _Size.fixext_8()
+    let secs: U64 = 500
+    let nsecs: U32 = 600
+    let expect: U64 = (nsecs.u64() << 34) + secs
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.timestamp_64(w, secs, nsecs)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](2 + size, b.size())
+    h.assert_eq[U8](0xD7, b.u8()?)
+    h.assert_eq[I8](-1, b.i8()?)
+    h.assert_eq[U64](expect, b.u64_be()?)
+
+class _TestEncodeTimestamp64SecsTooLarge is UnitTest
+  """
+  Verify that `timestamp_64` throws an error if supplied a seconds value larger
+  than what can fit within 34 bits.
+  """
+  fun name(): String =>
+    "msgpack/EncodeTimestamp64SecsTooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.timestamp_64(w, (_Limit.sec_34().u64() + 1), 0)?
+      h.fail()
+    end
+
+class _TestEncodeTimestamp64NsecsTooLarge is UnitTest
+  """
+  Verify that `timestamp_64` throws an error if supplied a nanoseconds value
+  larger than 99999999.
+  """
+  fun name(): String =>
+    "msgpack/EncodeTimestamp64NsecsTooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.timestamp_64(w, 0, (_Limit.nsec() + 1))?
+      h.fail()
+    end
+
+class _TestEncodeTimestamp96 is UnitTest
+  """
+  timestamp 96 stores the number of seconds and nanoseconds that have elapsed
+  since 1970-01-01 00:00:00 UTC in 64-bit signed integer and 32-bit unsigned
+  integer:
+  +--------+--------+--------+--------+--------+--------+--------+
+  |  0xc7  |   12   |   -1   |nanoseconds in 32-bit unsigned int |
+  +--------+--------+--------+--------+--------+--------+--------+
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+                      seconds in 64-bit signed int                        |
+  +--------+--------+--------+--------+--------+--------+--------+--------+
+  """
+  fun name(): String =>
+    "msgpack/EncodeTimestamp96"
+
+  fun ref apply(h: TestHelper) ? =>
+    let size: USize = 12
+    let secs: I64 = 500
+    let nsecs: U32 = 600
+    let b = Reader
+    let w: Writer ref = Writer
+
+    MessagePackEncoder.timestamp_96(w, secs, nsecs)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](3 + size, b.size())
+    h.assert_eq[U8](0xC7, b.u8()?)
+    h.assert_eq[U8](12, b.u8()?)
+    h.assert_eq[I8](-1, b.i8()?)
+    h.assert_eq[U32](nsecs, b.u32_be()?)
+    h.assert_eq[I64](secs, b.i64_be()?)
+
+class _TestEncodeTimestamp96NsecsTooLarge is UnitTest
+  """
+  Verify that `timestamp_96` throws an error if supplied a nanoseconds value larger
+  than 99999999.
+  """
+  fun name(): String =>
+    "msgpack/EncodeTimestamp96NsecsTooLarge"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+
+    try
+      MessagePackEncoder.timestamp_96(w, 0, (_Limit.nsec() + 1))?
       h.fail()
     end

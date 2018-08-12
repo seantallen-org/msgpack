@@ -297,6 +297,32 @@ primitive MessagePackDecoder
     (b.u8()?, b.block(size)?)
 
   //
+  // timestamp format family
+  //
+
+  fun timestamp(b: Reader): (I64, I64) ? =>
+    let t = _read_type(b)?
+
+    b.i8()?
+    var nsec: I64 = 0
+    var sec: I64 = 0
+    if t == _FormatName.fixext_4() then
+      sec = b.u32_be()?.i64()
+    elseif t == _FormatName.fixext_8() then
+      let u: U64 = b.u64_be()?
+      nsec = (u >> 34).i64()
+      sec = (u - (nsec.u64() << 34)).i64()
+    elseif t == _FormatName.ext_8() then
+      b.u8()?
+      nsec = b.u32_be()?.i64()
+      sec = b.i64_be()?
+    else
+      error
+    end
+
+    (sec, nsec)
+
+  //
   // support functions
   //
 

@@ -2,18 +2,11 @@
 
 All notable changes this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a CHANGELOG](http://keepachangelog.com/).
 
-## [unreleased] - unreleased
-
-### Fixed
-
-
+## [0.2.1] - 2019-07-22
 
 ### Added
 
 - Added support for the [timestamp extension type](https://github.com/msgpack/msgpack/blob/master/spec.md#timestamp-extension-type)
-
-### Changed
-
 
 
 ## [0.2.0] - 2017-12-02

@@ -6,25 +6,44 @@ jobs:
     steps:
       - checkout
       - run: changelog-tool verify CHANGELOG.md
-  vs-ponyc-release:
+
+  release-vs-ponyc-release:
     docker:
       - image: ponylang/ponyc:release
     steps:
       - checkout
-      - run: make test-ci
-  vs-ponyc-master:
+      - run: make test config=release ci=true
+
+  release-vs-ponyc-master:
     docker:
       - image: ponylang/ponyc:latest
     steps:
       - checkout
-      - run: make test-ci
+      - run: make test config=release ci=true
+
+  debug-vs-ponyc-release:
+    docker:
+      - image: ponylang/ponyc:release
+    steps:
+      - checkout
+      - run: make test config=debug ci=true
+
+  debug-vs-ponyc-master:
+    docker:
+      - image: ponylang/ponyc:latest
+    steps:
+      - checkout
+      - run: make test config=debug ci=true
+      
 
 workflows:
   version: 2
   commit:
     jobs:
       - verify-changelog
-      - vs-ponyc-release
+      - release-vs-ponyc-release
+      - debug-vs-ponyc-release
+
   nightly:
     triggers:
       - schedule:
@@ -33,4 +52,5 @@ workflows:
             branches:
               only: master
     jobs:
-      - vs-ponyc-master
+      - release-vs-ponyc-master
+      - debug-vs-ponyc-master

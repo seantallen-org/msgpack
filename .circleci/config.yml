@@ -5,7 +5,7 @@ jobs:
       - image: ponylang/changelog-tool:release
     steps:
       - checkout
-      - run: changelog-tool verify CHANGELOG.md
+      - run: changelog-tool verify
 
   release-vs-ponyc-release:
     docker:

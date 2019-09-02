@@ -45,7 +45,7 @@ realclean:
 
 $(docs_dir): $(GEN_FILES) $(SOURCE_FILES)
 	rm -rf $(docs_dir)
-	${PONYC} --docs-public --pass=docs --output $(docs_dir) $(SRC_DIR)
+	${PONYC} --docs-public --pass=docs --output build $(SRC_DIR)
 
 docs: $(docs_dir)
 

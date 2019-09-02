@@ -9,15 +9,10 @@ All notable changes this project will be documented in this file. This project a
 
 ### Added
 
+- Automated release process
 
 ### Changed
 
-
-## [0.2.2] - 2019-09-02
-
-### Added
-
-- Automated release process
 
 ## [0.2.1] - 2019-07-22
 

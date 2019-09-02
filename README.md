@@ -9,7 +9,6 @@ A pure Pony implementation of the [MessagePack serialization format](http://msgp
 Pony-msgpack is currently alpha software. It implements a low-level API for encoding and decoding data. Still to do:
 
 - High-level API for a better programming experience
-- Timestamp extension type
 
 ## Installation
 

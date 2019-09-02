@@ -1,4 +1,5 @@
-version: 2
+version: 2.1
+
 jobs:
   verify-changelog:
     docker:
@@ -34,17 +35,54 @@ jobs:
     steps:
       - checkout
       - run: make test config=debug ci=true
-      
+
+  cut-release:
+    docker:
+      - image: ponylang/shared-docker-ci-release-a-library:release
+    steps:
+      - checkout
+      - run: bash .ci-scripts/release.bash "$CIRCLE_TAG" "$GITHUB_TOKEN" "$ZULIP_TOKEN"
+
+  generate-documentation-pr-for-main-dot-actor:
+    docker:
+      - image: ponylang/shared-docker-ci-release-a-library:release
+    steps:
+      - checkout
+      - run: bash .ci-scripts/documentation.bash "$CIRCLE_TAG" "$GITHUB_TOKEN"
 
 workflows:
-  version: 2
-  commit:
-    jobs:
-      - verify-changelog
-      - release-vs-ponyc-release
-      - debug-vs-ponyc-release
+  version: 2.1
 
-  nightly:
+  on-every-commit:
+    jobs:
+      - verify-changelog:
+          context: org-global
+      - release-vs-ponyc-release:
+          context: org-global
+      - debug-vs-ponyc-release:
+          context: org-global
+
+  create-release:
+    jobs:
+      - cut-release:
+          context: org-global
+          filters:
+            tags:
+              only: /^release-\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
+
+  on-release-being-tagged:
+    jobs:
+      - generate-documentation-pr-for-main-dot-actor:
+          context: org-global
+          filters:
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
+
+  daily-check-for-breakage:
     triggers:
       - schedule:
           cron: "0 0 * * *"
@@ -52,5 +90,7 @@ workflows:
             branches:
               only: master
     jobs:
-      - release-vs-ponyc-master
-      - debug-vs-ponyc-master
+      - release-vs-ponyc-master:
+          context: org-global
+      - debug-vs-ponyc-master:
+          context: org-global

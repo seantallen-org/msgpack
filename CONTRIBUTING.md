@@ -1,6 +1,6 @@
 # Contributing
 
-You want to contribute to Pony-msgpack? Awesome.
+You want to contribute to pony-msgpack? Awesome.
 
 There are a number of ways to contribute. As this document is a little long, feel free to jump to the section that applies to you currently:
 
@@ -12,11 +12,11 @@ Additional notes regarding formatting:
 
 * [Documentation formatting](#documentation-formatting)
 * [Code formatting](#code-formatting)
-* [File Naming](#standard-library-file-naming)
+* [File naming](#file-naming)
 
 ## Bug report
 
-First of all please [search existing issues](https://github.com/SeanTAllen/pony-msgpack/issues) to make sure your issue hasn't already been reported. If you cannot find a suitable issue — [create a new one](https://github.com/SeanTAllen/pony-msgpack/issues/new).
+First of all please [search existing issues](https://github.com/seantallen/pony-msgpack/issues) to make sure your issue hasn't already been reported. If you cannot find a suitable issue — [create a new one](https://github.com/seantallen/pony-msgpack/issues/new).
 
 Provide the following details:
 
@@ -28,17 +28,17 @@ Provide the following details:
 
 If possible, try to isolate the problem and provide just enough code to demonstrate it. Add any related information which might help to fix the issue.
 
-## How to Contribute
+## How to contribute
 
 This project uses a fairly standard GitHub pull request workflow. If you have already contributed to a project via GitHub pull request, you can skip this section and proceed to the [specific details of what we ask for in a pull request](#pull-request). If this is your first time contributing to a project via GitHub, read on.
 
 Here is the basic GitHub workflow:
 
-1. Fork this repo. you can do this via the GitHub website. This will result in you having your own copy of the repo under your GitHub account. 
+1. Fork this repo. you can do this via the GitHub website. This will result in you having your own copy of the repo under your GitHub account.
 2. Clone your forked repo to your local machine
 3. Make a branch for your change
 4. Make your change on that branch
-5. Push your change to your repo 
+5. Push your change to your repo
 6. Use the github ui to open a PR
 
 Some things to note that aren't immediately obvious to folks just starting out:
@@ -47,9 +47,7 @@ Some things to note that aren't immediately obvious to folks just starting out:
 2. Any changes you make on your branch that you used for one PR will automatically appear in another PR so if you have more than 1 PR, be sure to always create different branches for them.
 3. Weird things happen with commit history if you don't create your PR branches off of `master` so always make sure you have the `master` branch checked out before creating a branch for a PR
 
-If you feel overwhelmed at any point, don't worry, it can be a lot to learn when you get started. You can usually find me on the [Pony IRC](https://webchat.freenode.net/?channels=%ponylang) if you need help.
-
-You can get help using GitHub via [the official documentation](https://help.github.com/). Some hightlights include:
+You can get help using GitHub via [the official documentation](https://help.github.com/). Some highlights include:
 
 - [Fork A Repo](https://help.github.com/articles/fork-a-repo/)
 - [Creating a pull request](https://help.github.com/articles/creating-a-pull-request/)
@@ -57,7 +55,7 @@ You can get help using GitHub via [the official documentation](https://help.gith
 
 ## Pull request
 
-Before issuing a pull request I ask that you squash all your commits into a single logical commit. While your PR is in review, I may ask for additional changes, please do not squash those commits while the review is underway. Once everything is good, I'll then ask you to further squash those commits before merging. I ask that you not squash while a review is underway as it can make it hard to follow what is going on. Additionally, I ask that you:
+Before issuing a pull request we ask that you squash all your commits into a single logical commit. While your PR is in review, we may ask for additional changes, please do not squash those commits while the review is underway. Once everything is good, I'll then ask you to further squash those commits before merging. We ask that you not squash while a review is underway as it can make it hard to follow what is going on. Additionally, we ask that you:
 
 * [Write a good commit message](http://chris.beams.io/posts/git-commit/)
 * Issue 1 Pull Request per feature. Don't lump unrelated changes together.
@@ -66,7 +64,7 @@ If you aren't sure how to squash multiple commits into one, Steve Klabnik wrote 
 
 Once those conditions are met, the PR can be merged.
 
-Please note, if your changes are purely to things like README, CHANGELOG etc, you can add [skip ci] as the last line of your commit message and your PR won't be run through our continuous integration systems. I ask that you use [skip ci] where appropriate as it helps to get changes through CI faster and doesn't waste resources that CircleCI is kindly donating to the Open Source community.
+Please note, if your changes are purely to things like README, CHANGELOG etc, you can add [skip ci] as the last line of your commit message and your PR won't be run through our continuous integration systems. We ask that you use [skip ci] where appropriate as it helps to get changes through CI faster and doesn't waste resources that CircleCI is kindly donating to the Open Source community.
 
 ## Documentation formatting
 
@@ -78,19 +76,19 @@ Documentation is not "source code." As such, it should not be wrapped at 80 colu
 
 All code examples in documentation should be formatted in a fashion appropriate to the language in question.
 
-All command line examples in documentation should be presented in a copy and paste friendly fashion. Assume the user is using the `bash` shell. GitHub formatting on long command lines can be unfriendly to copy-and-paste. Long command lines should be broken up using `\` so that each line is no more than 80 columns. Wrapping at 80 columns should result in a good display experience in GitHub. Additionally, continuation lines should be indented two spaces. 
+All command line examples in documentation should be presented in a copy and paste friendly fashion. Assume the user is using the `bash` shell. GitHub formatting on long command lines can be unfriendly to copy-and-paste. Long command lines should be broken up using `\` so that each line is no more than 80 columns. Wrapping at 80 columns should result in a good display experience in GitHub. Additionally, continuation lines should be indented two spaces.
 
 OK:
 
 ```bash
-my_command --some-option foo --path-to-file ../../wallaroo/long/line/foo \
+my_command --some-option foo --path-to-file ../../project/long/line/foo \
   --some-other-option bar
 ```
 
 Not OK:
 
 ```bash
-my_command --some-option foo --path-to-file ../../wallaroo/long/line/foo --some-other-option bar
+my_command --some-option foo --path-to-file ../../project/long/line/foo --some-other-option bar
 ```
 
 Wherever possible when writing documentation, favor full command options rather than short versions. Full flags are usually much easier to modify because the meaning is clearer.
@@ -131,6 +129,6 @@ The details:
 
 All Pony sources should follow the [Pony standard library style guide](https://github.com/ponylang/ponyc/blob/master/STYLE_GUIDE.md).
 
-##  File naming
+## File naming
 
 Pony code follows the [Pony standard library file naming guidelines](https://github.com/ponylang/ponyc/blob/master/STYLE_GUIDE.md#naming).

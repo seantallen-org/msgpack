@@ -1,1 +1,4 @@
 build/*
+TAGS
+tags
+.deps/*

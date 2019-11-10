@@ -10,28 +10,28 @@ jobs:
 
   release-vs-ponyc-release:
     docker:
-      - image: ponylang/ponyc:release
+      - image: ponylang/shared-docker-ci-x86-64-unknown-linux-builder:release
     steps:
       - checkout
       - run: make test config=release ci=true
 
   release-vs-ponyc-master:
     docker:
-      - image: ponylang/ponyc:latest
+      - image: ponylang/shared-docker-ci-x86-64-unknown-linux-builder:latest
     steps:
       - checkout
       - run: make test config=release ci=true
 
   debug-vs-ponyc-release:
     docker:
-      - image: ponylang/ponyc:release
+      - image: ponylang/shared-docker-ci-x86-64-unknown-linux-builder:release
     steps:
       - checkout
       - run: make test config=debug ci=true
 
   debug-vs-ponyc-master:
     docker:
-      - image: ponylang/ponyc:latest
+      - image: ponylang/shared-docker-ci-x86-64-unknown-linux-builder:latest
     steps:
       - checkout
       - run: make test config=debug ci=true

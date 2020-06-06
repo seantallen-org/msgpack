@@ -1,0 +1,22 @@
+name: Announce a release
+
+on:
+  push:
+    tags: announce-*.*.*
+
+jobs:
+  announce-a-release:
+    name: Announce a release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Announce
+        uses: ponylang/release-bot-action@0.1.0
+        with:
+          step: announce-a-release
+          git_user_name: "Sean T. Allen"
+          git_user_email: "sean@seantallen.com"
+        env:
+          ASSET_NAME: "pony-msgpack"
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          ZULIP_TOKEN: ${{ secrets.ZULIP_TOKEN }}

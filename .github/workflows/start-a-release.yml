@@ -1,0 +1,20 @@
+name: Start a release
+
+on:
+  push:
+    tags: release-*.*.*
+
+jobs:
+  start-a-release:
+    name: Start a release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Start
+        uses: ponylang/release-bot-action@0.1.0
+        with:
+          step: start-a-release
+          git_user_name: "Sean T. Allen"
+          git_user_email: "sean@seantallen.com"
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}

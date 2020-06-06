@@ -1,0 +1,21 @@
+name: Changelog Bot
+
+on:
+  push:
+    paths-ignore:
+      - CHANGELOG.md
+    branches:
+      - master
+
+jobs:
+  changelog-bot:
+    runs-on: ubuntu-latest
+    name: Update CHANGELOG.md
+    steps:
+      - name: Update Changelog
+        uses: ponylang/changelog-bot-action@0.2.1
+        with:
+          git_user_name: "Sean T. Allen"
+          git_user_email: "sean@seantallen.com"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

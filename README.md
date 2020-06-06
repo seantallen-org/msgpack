@@ -12,17 +12,8 @@ Pony-msgpack is currently alpha software. It implements a low-level API for enco
 
 ## Installation
 
-* Install [pony-stable](https://github.com/ponylang/pony-stable)
-* Update your `bundle.json`
-
-```json
-{ 
-  "type": "github",
-  "repo": "SeanTAllen/pony-msgpack",
-  "tag": "0.2.3"
-}
-```
-
-* `stable fetch` to fetch your dependencies
-* `use "msgpack"` to include this package
-* `stable env ponyc` to compile your application
+* Install [corral](https://github.com/ponylang/corral)
+* `corral add github.com/seantallen/pony-msgpack.git`
+* `corral fetch` to fetch your dependencies
+* `use "pony-msgpack"` to include this package
+* `corral run -- ponyc` to compile your application

@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Generate documentation and upload
-        uses: ponylang/library-documentation-action@0.1.0
+        uses: ponylang/library-documentation-action@0.1.1
         with:
           library_name: "msgpack"
           docs_build_dir: "build/msgpack-docs"

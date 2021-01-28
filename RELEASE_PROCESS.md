@@ -1,6 +1,6 @@
 # How to cut a pony-msgpack release
 
-This document is aimed at members of the Pony team who might be cutting a release of Pony. It serves as a checklist that can take you through doing a release step-by-step.
+This document is aimed at anyone looking to do a release of pony-msgpack. It serves as a checklist that can take you through doing a release step-by-step.
 
 ## Prerequisites
 

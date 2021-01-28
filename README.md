@@ -6,7 +6,7 @@ A pure Pony implementation of the [MessagePack serialization format](http://msgp
 
 Pony-msgpack is currently beta software. It implements a low-level API for encoding and decoding data. Still to do:
 
-- High-level API for a better programming experience
+* High-level API for a better programming experience
 
 ## Installation
 

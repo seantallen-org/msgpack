@@ -1,6 +1,6 @@
 # Contributing
 
-You want to contribute to pony-msgpack? Awesome.
+You want to contribute to msgpack? Awesome.
 
 There are a number of ways to contribute. As this document is a little long, feel free to jump to the section that applies to you currently:
 
@@ -16,7 +16,7 @@ Additional notes regarding formatting:
 
 ## Bug report
 
-First of all please [search existing issues](https://github.com/seantallen/pony-msgpack/issues) to make sure your issue hasn't already been reported. If you cannot find a suitable issue — [create a new one](https://github.com/seantallen/pony-msgpack/issues/new).
+First of all please [search existing issues](https://github.com/seantallen-org/msgpack/issues) to make sure your issue hasn't already been reported. If you cannot find a suitable issue — [create a new one](https://github.com/seantallen-org/msgpack/issues/new).
 
 Provide the following details:
 

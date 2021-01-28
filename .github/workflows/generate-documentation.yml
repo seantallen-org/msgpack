@@ -12,9 +12,9 @@ jobs:
       - name: Generate documentation and upload
         uses: ponylang/library-documentation-action@0.1.0
         with:
-          site_url: "https://seantallen-org.github.io/pony-msgpack/"
-          library_name: "pony-msgpack"
-          docs_build_dir: "build/pony-msgpack-docs"
+          site_url: "https://seantallen-org.github.io/msgpack/"
+          library_name: "msgpack"
+          docs_build_dir: "build/msgpack-docs"
           git_user_name: "Sean T. Allen"
           git_user_email: "sean@seantallen.com"
         env:

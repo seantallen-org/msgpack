@@ -23,7 +23,7 @@ All notable changes this project will be documented in this file. This project a
 
 ### Added
 
-- Added support for the [timestamp extension type](https://github.com/msgpack/msgpack/blob/master/spec.md#timestamp-extension-type)
+- Added support for the [timestamp extension type](https://github.com/msgpack/msgpack/blob/main/spec.md#timestamp-extension-type)
 
 ## [0.2.0] - 2017-12-02
 

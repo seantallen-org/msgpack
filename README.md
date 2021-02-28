@@ -15,3 +15,7 @@ msgpack is currently beta software. It implements a low-level API for encoding a
 * `corral fetch` to fetch your dependencies
 * `use "msgpack"` to include this package
 * `corral run -- ponyc` to compile your application
+
+## API Documentation
+
+[https://seantallen-org.github.io/msgpack/](https://seantallen-org.github.io/msgpack/)

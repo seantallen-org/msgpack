@@ -1,4 +1,14 @@
 {
   "deps": [],
-  "info": {}
+  "packages": [
+    "msgpack"
+  ],
+  "info": {
+    "description": "Pure Pony implementation of the MessagePack serialization format.",
+    "homepage": "https://github.com/seantallen-org/msgpack",
+    "license": "BSD-2-Clause",
+    "documentation_url": "https://seantallen-org.github.io/msgpack/",
+    "version": "0.2.3",
+    "name": "msgpack"
+  }
 }

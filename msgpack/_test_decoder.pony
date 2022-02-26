@@ -18,7 +18,7 @@ limitations under the License.
 
 use "buffered"
 use "collections"
-use "ponytest"
+use "pony_test"
 
 actor _TestDecoder is TestList
   new make() =>

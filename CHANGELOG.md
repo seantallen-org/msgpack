@@ -6,6 +6,7 @@ All notable changes this project will be documented in this file. This project a
 
 ### Fixed
 
+- Update to work with Pony 0.49.0 ([PR #41](https://github.com/seantallen-org/msgpack/pull/41))
 
 ### Added
 

@@ -11,7 +11,7 @@
       <meta http-equiv="x-ua-compatible" content="ie=edge">
       
       
-        <link rel="canonical" href="https://seantallen-org.github.io/msgpack/">
+        <link rel="canonical" href="https://seantallen-org.github.io/msgpack/src/msgpack/_test/">
       
       
       
@@ -33,20 +33,20 @@
       
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
-      <link rel="shortcut icon" href="assets/images/logo.png">
+      <link rel="shortcut icon" href="../../../assets/images/logo.png">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-ponylang-0.2.8">
     
     
       
-        <title>msgpack</title>
+        <title> test - msgpack</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/application.b80b25f7.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/application.b80b25f7.css">
       
     
     
-      <script src="assets/javascripts/modernizr.0b5df86e.js"></script>
+      <script src="../../../assets/javascripts/modernizr.0b5df86e.js"></script>
     
     
       <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
@@ -79,7 +79,7 @@
       <div class="md-flex__cell md-flex__cell--shrink">
           <a href="https://seantallen-org.github.io/msgpack/" title="msgpack" class="md-header-nav__button md-logo">
           
-            <img src="assets/images/logo.png" width="24" height="24">
+            <img src="../../../assets/images/logo.png" width="24" height="24">
           
         </a>
       </div>
@@ -90,7 +90,12 @@
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
             
-              msgpack
+              <span class="md-header-nav__topic">
+                msgpack
+              </span>
+              <span class="md-header-nav__topic">
+                 test
+              </span>
             
           
         </div>
@@ -146,7 +151,7 @@
   <label class="md-nav__title md-nav__title--site" for="__drawer">
     <span class="md-nav__button md-logo">
       
-        <img src="./assets/images/logo.png" width="48" height="48">
+        <img src="../../../assets/images/logo.png" width="48" height="48">
       
     </span>
     msgpack
@@ -158,18 +163,11 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-    <a href="." title="msgpack" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../../.." title="msgpack" class="md-nav__link">
       msgpack
     </a>
-    
   </li>
 
     
@@ -198,7 +196,7 @@
 
 
   <li class="md-nav__item">
-    <a href="msgpack--index/" title="Package" class="md-nav__link">
+    <a href="../../../msgpack--index/" title="Package" class="md-nav__link">
       Package
     </a>
   </li>
@@ -210,7 +208,7 @@
 
 
   <li class="md-nav__item">
-    <a href="msgpack-MessagePackEncoder/" title="primitive MessagePackEncoder" class="md-nav__link">
+    <a href="../../../msgpack-MessagePackEncoder/" title="primitive MessagePackEncoder" class="md-nav__link">
       primitive MessagePackEncoder
     </a>
   </li>
@@ -222,7 +220,7 @@
 
 
   <li class="md-nav__item">
-    <a href="msgpack-MessagePackType/" title="type MessagePackType" class="md-nav__link">
+    <a href="../../../msgpack-MessagePackType/" title="type MessagePackType" class="md-nav__link">
       type MessagePackType
     </a>
   </li>
@@ -234,7 +232,7 @@
 
 
   <li class="md-nav__item">
-    <a href="msgpack-MessagePackDecoder/" title="primitive MessagePackDecoder" class="md-nav__link">
+    <a href="../../../msgpack-MessagePackDecoder/" title="primitive MessagePackDecoder" class="md-nav__link">
       primitive MessagePackDecoder
     </a>
   </li>
@@ -246,7 +244,7 @@
 
 
   <li class="md-nav__item">
-    <a href="msgpack-Main/" title="actor Main" class="md-nav__link">
+    <a href="../../../msgpack-Main/" title="actor Main" class="md-nav__link">
       actor Main
     </a>
   </li>
@@ -270,12 +268,40 @@
               
                 
                 
-                  <h1>msgpack</h1>
+                  <h1> test</h1>
                 
-                <p>Packages</p>
-<ul>
-<li><a href="msgpack--index/">msgpack</a></li>
-</ul>
+                <pre><code class="language-pony-full-source">/*
+
+Copyright 2017 The Pony MessagePack Developers
+
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
+
+use &quot;pony_test&quot;
+
+actor Main is TestList
+  new create(env: Env) =&gt;
+    PonyTest(env, this)
+
+  new make() =&gt;
+    None
+
+  fun tag tests(test: PonyTest) =&gt;
+    _TestDecoder.make().tests(test)
+    _TestEncoder.make().tests(test)
+
+</code></pre>
                 
                   
                 
@@ -292,27 +318,6 @@
       
         
 <footer class="md-footer">
-  
-    <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid">
-        
-        
-          <a href="msgpack--index/" title="Package" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
-                Package
-              </span>
-            </div>
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
-            </div>
-          </a>
-        
-      </nav>
-    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -333,9 +338,9 @@
       
     </div>
     
-    <script src="assets/javascripts/application.cb37bb38.js"></script>
+    <script src="../../../assets/javascripts/application.cb37bb38.js"></script>
       
-      <script>app.initialize({version:"1.2.3",url:{base:"."}})</script>
+      <script>app.initialize({version:"1.2.3",url:{base:"../../.."}})</script>
       
     
     

@@ -11,7 +11,7 @@ msgpack is currently beta software. It implements a low-level API for encoding a
 ## Installation
 
 * Install [corral](https://github.com/ponylang/corral)
-* `corral add github.com/seantallen-org/msgpack.git --version 0.2.3`
+* `corral add github.com/seantallen-org/msgpack.git --version 0.2.4`
 * `corral fetch` to fetch your dependencies
 * `use "msgpack"` to include this package
 * `corral run -- ponyc` to compile your application

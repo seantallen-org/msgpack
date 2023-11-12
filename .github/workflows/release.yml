@@ -21,7 +21,7 @@ jobs:
           ref: "main"
           token: ${{ secrets.RELEASE_TOKEN }}
       - name: Validate CHANGELOG
-        uses: ponylang/release-bot-action@0.6.1
+        uses: docker://ghcr.io/ponylang/release-bot-action:0.6.3
         with:
           entrypoint: pre-artefact-changelog-check
 
@@ -37,7 +37,7 @@ jobs:
           ref: "main"
           token: ${{ secrets.RELEASE_TOKEN }}
       - name: Generate documentation and upload
-        uses: docker://ponylang/library-documentation-action:release
+        uses: docker://ghcr.io/ponylang/library-documentation-action:release
         with:
           site_url: "https://seantallen-org.github.io/msgpack/"
           library_name: "msgpack"
@@ -58,7 +58,7 @@ jobs:
           ref: "main"
           token: ${{ secrets.RELEASE_TOKEN }}
       - name: Trigger
-        uses: ponylang/release-bot-action@0.6.1
+        uses: docker://ghcr.io/ponylang/release-bot-action:0.6.3
         with:
           entrypoint: trigger-release-announcement
         env:

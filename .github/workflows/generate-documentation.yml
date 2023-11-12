@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Generate documentation and upload
-        uses: docker://ponylang/library-documentation-action:release
+        uses: docker://ghcr.io/ponylang/library-documentation-action:release
         with:
           site_url: "https://seantallen-org.github.io/msgpack/"
           library_name: "msgpack"

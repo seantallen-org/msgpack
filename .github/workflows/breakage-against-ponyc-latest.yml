@@ -9,7 +9,7 @@ jobs:
     name: Verify in release mode on Linux with most recent ponyc
     runs-on: ubuntu-latest
     container:
-      image: ponylang/shared-docker-ci-x86-64-unknown-linux-builder:latest
+      image: ghcr.io/ponylang/shared-docker-ci-x86-64-unknown-linux-builder:latest
     steps:
       - uses: actions/checkout@v1
       - name: Test with the most recent ponyc
@@ -19,7 +19,7 @@ jobs:
     name: Verify in debug mode on Linux with most recent ponyc
     runs-on: ubuntu-latest
     container:
-      image: ponylang/shared-docker-ci-x86-64-unknown-linux-builder:latest
+      image: ghcr.io/ponylang/shared-docker-ci-x86-64-unknown-linux-builder:latest
     steps:
       - uses: actions/checkout@v1
       - name: Test with the most recent ponyc

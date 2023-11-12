@@ -20,7 +20,7 @@ jobs:
     name: Verify CHANGELOG is valid
     runs-on: ubuntu-latest
     container:
-      image: ponylang/changelog-tool:release
+      image: ghcr.io/ponylang/changelog-tool:release
     steps:
       - uses: actions/checkout@v1
       - name: Verify CHANGELOG
@@ -30,7 +30,7 @@ jobs:
     name: Verify release mode on Linux with most recent ponyc release
     runs-on: ubuntu-latest
     container:
-      image: ponylang/shared-docker-ci-x86-64-unknown-linux-builder:release
+      image: ghcr.io/ponylang/shared-docker-ci-x86-64-unknown-linux-builder:release
     steps:
       - uses: actions/checkout@v1
       - name: Test with the most recent ponyc release
@@ -40,7 +40,7 @@ jobs:
     name: Verify debug mode on Linux with most recent ponyc release
     runs-on: ubuntu-latest
     container:
-      image: ponylang/shared-docker-ci-x86-64-unknown-linux-builder:release
+      image: ghcr.io/ponylang/shared-docker-ci-x86-64-unknown-linux-builder:release
     steps:
       - uses: actions/checkout@v1
       - name: Test with the most recent ponyc release

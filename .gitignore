@@ -2,3 +2,4 @@ build/*
 TAGS
 tags
 .deps/*
+lock.json

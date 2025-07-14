@@ -2,47 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://seantallen-org.github.io/msgpack/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack--index/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-Main/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackDecoder/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackEncoder/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackType/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/src/msgpack/_test/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_decoder/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_encoder/</loc>
-         <lastmod>2022-02-26</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-07-14</lastmod>
     </url>
 </urlset>

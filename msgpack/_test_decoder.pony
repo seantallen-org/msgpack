@@ -20,7 +20,7 @@ use "buffered"
 use "collections"
 use "pony_test"
 
-actor _TestDecoder is TestList
+actor \nodoc\ _TestDecoder is TestList
   new make() =>
     None
 
@@ -65,7 +65,7 @@ actor _TestDecoder is TestList
     test(_TestDecodeTimestamp64)
     test(_TestDecodeTimestamp96)
 
-class _TestDecodeNil is UnitTest
+class \nodoc\ _TestDecodeNil is UnitTest
   fun name(): String =>
     "msgpack/DecodeNil"
 
@@ -83,7 +83,7 @@ class _TestDecodeNil is UnitTest
 
     MessagePackDecoder.nil(b)?
 
-class _TestDecodeTrue is UnitTest
+class \nodoc\ _TestDecodeTrue is UnitTest
   fun name(): String =>
     "msgpack/DecodeTrue"
 
@@ -101,7 +101,7 @@ class _TestDecodeTrue is UnitTest
 
     h.assert_true(MessagePackDecoder.bool(b)?)
 
-class _TestDecodeFalse is UnitTest
+class \nodoc\ _TestDecodeFalse is UnitTest
   fun name(): String =>
     "msgpack/DecodeFalse"
 
@@ -119,7 +119,7 @@ class _TestDecodeFalse is UnitTest
 
     h.assert_false(MessagePackDecoder.bool(b)?)
 
-class _TestDecodeU8 is UnitTest
+class \nodoc\ _TestDecodeU8 is UnitTest
   fun name(): String =>
     "msgpack/DecodeU8"
 
@@ -137,7 +137,7 @@ class _TestDecodeU8 is UnitTest
 
     h.assert_eq[U8](9, MessagePackDecoder.u8(b)?)
 
-class _TestDecodeU16 is UnitTest
+class \nodoc\ _TestDecodeU16 is UnitTest
   fun name(): String =>
     "msgpack/DecodeU16"
 
@@ -155,7 +155,7 @@ class _TestDecodeU16 is UnitTest
 
     h.assert_eq[U16](17, MessagePackDecoder.u16(b)?)
 
-class _TestDecodeU32 is UnitTest
+class \nodoc\ _TestDecodeU32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeU32"
 
@@ -173,7 +173,7 @@ class _TestDecodeU32 is UnitTest
 
     h.assert_eq[U32](33, MessagePackDecoder.u32(b)?)
 
-class _TestDecodeU64 is UnitTest
+class \nodoc\ _TestDecodeU64 is UnitTest
   fun name(): String =>
     "msgpack/DecodeU64"
 
@@ -191,7 +191,7 @@ class _TestDecodeU64 is UnitTest
 
     h.assert_eq[U64](65, MessagePackDecoder.u64(b)?)
 
-class _TestDecodeI8 is UnitTest
+class \nodoc\ _TestDecodeI8 is UnitTest
   fun name(): String =>
     "msgpack/DecodeI8"
 
@@ -209,7 +209,7 @@ class _TestDecodeI8 is UnitTest
 
     h.assert_eq[I8](9, MessagePackDecoder.i8(b)?)
 
-class _TestDecodeI16 is UnitTest
+class \nodoc\ _TestDecodeI16 is UnitTest
   fun name(): String =>
     "msgpack/DecodeI16"
 
@@ -227,7 +227,7 @@ class _TestDecodeI16 is UnitTest
 
     h.assert_eq[I16](17, MessagePackDecoder.i16(b)?)
 
-class _TestDecodeI32 is UnitTest
+class \nodoc\ _TestDecodeI32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeI32"
 
@@ -245,7 +245,7 @@ class _TestDecodeI32 is UnitTest
 
     h.assert_eq[I32](33, MessagePackDecoder.i32(b)?)
 
-class _TestDecodeI64 is UnitTest
+class \nodoc\ _TestDecodeI64 is UnitTest
   fun name(): String =>
     "msgpack/DecodeI64"
 
@@ -263,7 +263,7 @@ class _TestDecodeI64 is UnitTest
 
     h.assert_eq[I64](65, MessagePackDecoder.i64(b)?)
 
-class _TestDecodePositiveFixint is UnitTest
+class \nodoc\ _TestDecodePositiveFixint is UnitTest
   fun name(): String =>
     "msgpack/DecodePositiveFixint"
 
@@ -281,7 +281,7 @@ class _TestDecodePositiveFixint is UnitTest
 
     h.assert_eq[U8](17, MessagePackDecoder.positive_fixint(b)?)
 
-class _TestDecodeNegativeFixint is UnitTest
+class \nodoc\ _TestDecodeNegativeFixint is UnitTest
   fun name(): String =>
     "msgpack/DecodeNegativeFixint"
 
@@ -299,7 +299,7 @@ class _TestDecodeNegativeFixint is UnitTest
 
     h.assert_eq[I8](-17, MessagePackDecoder.negative_fixint(b)?)
 
-class _TestDecodeF32 is UnitTest
+class \nodoc\ _TestDecodeF32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeF32"
 
@@ -317,7 +317,7 @@ class _TestDecodeF32 is UnitTest
 
     h.assert_eq[F32](33.33, MessagePackDecoder.f32(b)?)
 
-class _TestDecodeF64 is UnitTest
+class \nodoc\ _TestDecodeF64 is UnitTest
   fun name(): String =>
     "msgpack/DecodeF64"
 
@@ -335,7 +335,7 @@ class _TestDecodeF64 is UnitTest
 
     h.assert_eq[F64](65.65, MessagePackDecoder.f64(b)?)
 
-class _TestDecodeFixstr is UnitTest
+class \nodoc\ _TestDecodeFixstr is UnitTest
   fun name(): String =>
     "msgpack/DecodeFixstr"
 
@@ -351,7 +351,7 @@ class _TestDecodeFixstr is UnitTest
 
     h.assert_eq[String]("fixstr", MessagePackDecoder.fixstr(b)?)
 
-class _TestDecodeStr8 is UnitTest
+class \nodoc\ _TestDecodeStr8 is UnitTest
   fun name(): String =>
     "msgpack/DecodeStr8"
 
@@ -367,7 +367,7 @@ class _TestDecodeStr8 is UnitTest
 
     h.assert_eq[String]("str8", MessagePackDecoder.str(b)?)
 
-class _TestDecodeStr16 is UnitTest
+class \nodoc\ _TestDecodeStr16 is UnitTest
   fun name(): String =>
     "msgpack/DecodeStr16"
 
@@ -383,7 +383,7 @@ class _TestDecodeStr16 is UnitTest
 
     h.assert_eq[String]("str16", MessagePackDecoder.str(b)?)
 
-class _TestDecodeStr32 is UnitTest
+class \nodoc\ _TestDecodeStr32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeStr32"
 
@@ -399,7 +399,7 @@ class _TestDecodeStr32 is UnitTest
 
     h.assert_eq[String]("str32", MessagePackDecoder.str(b)?)
 
-class _TestDecodeBin8 is UnitTest
+class \nodoc\ _TestDecodeBin8 is UnitTest
   fun name(): String =>
     "msgpack/DecodeBin8"
 
@@ -421,7 +421,7 @@ class _TestDecodeBin8 is UnitTest
     h.assert_eq[U8]('l', decoded(3)?)
     h.assert_eq[U8]('o', decoded(4)?)
 
-class _TestDecodeBin16 is UnitTest
+class \nodoc\ _TestDecodeBin16 is UnitTest
   fun name(): String =>
     "msgpack/DecodeBin16"
 
@@ -443,7 +443,7 @@ class _TestDecodeBin16 is UnitTest
     h.assert_eq[U8]('l', decoded(3)?)
     h.assert_eq[U8]('o', decoded(4)?)
 
-class _TestDecodeBin32 is UnitTest
+class \nodoc\ _TestDecodeBin32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeBin32"
 
@@ -465,7 +465,7 @@ class _TestDecodeBin32 is UnitTest
     h.assert_eq[U8]('l', decoded(3)?)
     h.assert_eq[U8]('o', decoded(4)?)
 
-class _TestDecodeFixarray is UnitTest
+class \nodoc\ _TestDecodeFixarray is UnitTest
   fun name(): String =>
     "msgpack/DecodeFixarray"
 
@@ -481,7 +481,7 @@ class _TestDecodeFixarray is UnitTest
 
     h.assert_eq[U8](8, MessagePackDecoder.fixarray(b)?)
 
-class _TestDecodeArray16 is UnitTest
+class \nodoc\ _TestDecodeArray16 is UnitTest
   fun name(): String =>
     "msgpack/DecodeArray16"
 
@@ -497,7 +497,7 @@ class _TestDecodeArray16 is UnitTest
 
     h.assert_eq[U16](17, MessagePackDecoder.array_16(b)?)
 
-class _TestDecodeArray32 is UnitTest
+class \nodoc\ _TestDecodeArray32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeArray32"
 
@@ -513,7 +513,7 @@ class _TestDecodeArray32 is UnitTest
 
     h.assert_eq[U32](33, MessagePackDecoder.array_32(b)?)
 
-class _TestDecodeFixmap is UnitTest
+class \nodoc\ _TestDecodeFixmap is UnitTest
   fun name(): String =>
     "msgpack/DecodeFixmap"
 
@@ -529,7 +529,7 @@ class _TestDecodeFixmap is UnitTest
 
     h.assert_eq[U8](8, MessagePackDecoder.fixmap(b)?)
 
-class _TestDecodeMap16 is UnitTest
+class \nodoc\ _TestDecodeMap16 is UnitTest
   fun name(): String =>
     "msgpack/DecodeMap16"
 
@@ -545,7 +545,7 @@ class _TestDecodeMap16 is UnitTest
 
     h.assert_eq[U16](17, MessagePackDecoder.map_16(b)?)
 
-class _TestDecodeMap32 is UnitTest
+class \nodoc\ _TestDecodeMap32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeMap32"
 
@@ -561,7 +561,7 @@ class _TestDecodeMap32 is UnitTest
 
     h.assert_eq[U32](33, MessagePackDecoder.map_32(b)?)
 
-class _TestDecodeFixext1 is UnitTest
+class \nodoc\ _TestDecodeFixext1 is UnitTest
   fun name(): String =>
     "msgpack/DecodeFixext1"
 
@@ -586,7 +586,7 @@ class _TestDecodeFixext1 is UnitTest
       h.assert_eq[U8]('V', decoded_value(i)?)
     end
 
-class _TestDecodeFixext2 is UnitTest
+class \nodoc\ _TestDecodeFixext2 is UnitTest
   fun name(): String =>
     "msgpack/DecodeFixext2"
 
@@ -611,7 +611,7 @@ class _TestDecodeFixext2 is UnitTest
       h.assert_eq[U8]('V', decoded_value(i)?)
     end
 
-class _TestDecodeFixext4 is UnitTest
+class \nodoc\ _TestDecodeFixext4 is UnitTest
   fun name(): String =>
     "msgpack/DecodeFixext4"
 
@@ -636,7 +636,7 @@ class _TestDecodeFixext4 is UnitTest
       h.assert_eq[U8]('V', decoded_value(i)?)
     end
 
-class _TestDecodeFixext8 is UnitTest
+class \nodoc\ _TestDecodeFixext8 is UnitTest
   fun name(): String =>
     "msgpack/DecodeFixext8"
 
@@ -661,7 +661,7 @@ class _TestDecodeFixext8 is UnitTest
       h.assert_eq[U8]('V', decoded_value(i)?)
     end
 
-class _TestDecodeFixext16 is UnitTest
+class \nodoc\ _TestDecodeFixext16 is UnitTest
   fun name(): String =>
     "msgpack/DecodeFixext16"
 
@@ -686,7 +686,7 @@ class _TestDecodeFixext16 is UnitTest
       h.assert_eq[U8]('V', decoded_value(i)?)
     end
 
-class _TestDecodeExt8 is UnitTest
+class \nodoc\ _TestDecodeExt8 is UnitTest
   fun name(): String =>
     "msgpack/DecodeExt8"
 
@@ -710,7 +710,7 @@ class _TestDecodeExt8 is UnitTest
     h.assert_eq[U8]('l', decoded_value(3)?)
     h.assert_eq[U8]('o', decoded_value(4)?)
 
-class _TestDecodeExt16 is UnitTest
+class \nodoc\ _TestDecodeExt16 is UnitTest
   fun name(): String =>
     "msgpack/DecodeExt16"
 
@@ -734,7 +734,7 @@ class _TestDecodeExt16 is UnitTest
     h.assert_eq[U8]('l', decoded_value(3)?)
     h.assert_eq[U8]('o', decoded_value(4)?)
 
-class _TestDecodeExt32 is UnitTest
+class \nodoc\ _TestDecodeExt32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeExt32"
 
@@ -758,7 +758,7 @@ class _TestDecodeExt32 is UnitTest
     h.assert_eq[U8]('x', decoded_value(3)?)
     h.assert_eq[U8]('o', decoded_value(4)?)
 
-class _TestDecodeTimestamp32 is UnitTest
+class \nodoc\ _TestDecodeTimestamp32 is UnitTest
   fun name(): String =>
     "msgpack/DecodeTimestamp32"
 
@@ -777,7 +777,7 @@ class _TestDecodeTimestamp32 is UnitTest
     h.assert_eq[I64](decoded_sec, encoded_sec.i64())
     h.assert_eq[I64](decoded_nsec, I64(0))
 
-class _TestDecodeTimestamp64 is UnitTest
+class \nodoc\ _TestDecodeTimestamp64 is UnitTest
   fun name(): String =>
     "msgpack/DecodeTimestamp64"
 
@@ -797,7 +797,7 @@ class _TestDecodeTimestamp64 is UnitTest
     h.assert_eq[I64](decoded_sec, _Limit.sec_34().i64())
     h.assert_eq[I64](decoded_nsec, _Limit.nsec().i64())
 
-class _TestDecodeTimestamp96 is UnitTest
+class \nodoc\ _TestDecodeTimestamp96 is UnitTest
   fun name(): String =>
     "msgpack/DecodeTimestamp96"
 

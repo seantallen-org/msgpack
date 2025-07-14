@@ -20,7 +20,7 @@ use "buffered"
 use "collections"
 use "pony_test"
 
-actor _TestEncoder is TestList
+actor \nodoc\ _TestEncoder is TestList
   """
   These tests include information from the [MessagePack specification](https://github.com/msgpack/msgpack/blob/master/spec.md).
 
@@ -110,7 +110,7 @@ ifdef not "ci" then
     test(_TestEncodeExt32TooLarge)
 end
 
-class _TestEncodeNil is UnitTest
+class \nodoc\ _TestEncodeNil is UnitTest
   """
   Nil format stores nil in 1 byte.
 
@@ -135,7 +135,7 @@ class _TestEncodeNil is UnitTest
     h.assert_eq[USize](1, b.size())
     h.assert_eq[U8](_FormatName.nil(), b.peek_u8()?)
 
-class _TestEncodeTrue is UnitTest
+class \nodoc\ _TestEncodeTrue is UnitTest
   """
   Bool format family stores false or true in 1 byte.
 
@@ -160,7 +160,7 @@ class _TestEncodeTrue is UnitTest
     h.assert_eq[USize](1, b.size())
     h.assert_eq[U8](_FormatName.truthy(), b.peek_u8()?)
 
-class _TestEncodeFalse is UnitTest
+class \nodoc\ _TestEncodeFalse is UnitTest
   """
   Bool format family stores false or true in 1 byte.
 
@@ -185,7 +185,7 @@ class _TestEncodeFalse is UnitTest
     h.assert_eq[USize](1, b.size())
     h.assert_eq[U8](_FormatName.falsey(), b.peek_u8()?)
 
-class _TestEncodePositiveFixint is UnitTest
+class \nodoc\ _TestEncodePositiveFixint is UnitTest
   """
   positive fixnum stores 7-bit positive integer
   +--------+
@@ -210,7 +210,7 @@ class _TestEncodePositiveFixint is UnitTest
     h.assert_eq[USize](1, b.size())
     h.assert_eq[U8](0x0a, b.peek_u8()?)
 
-class _TestEncodePositiveFixintTooLarge is UnitTest
+class \nodoc\ _TestEncodePositiveFixintTooLarge is UnitTest
   """
   Verify an exception is thrown if the user attempts to encode a value in a
   positive fixnum that is too large.
@@ -227,7 +227,7 @@ class _TestEncodePositiveFixintTooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeNegativeFixint is UnitTest
+class \nodoc\ _TestEncodeNegativeFixint is UnitTest
   """
   negative fixnum stores 5-bit negative integer
   +--------+
@@ -253,7 +253,7 @@ class _TestEncodeNegativeFixint is UnitTest
     h.assert_eq[USize](1, b.size())
     h.assert_eq[U8](0xF6, b.peek_u8()?)
 
-class _TestEncodeNegativeFixintOutOfRange is UnitTest
+class \nodoc\ _TestEncodeNegativeFixintOutOfRange is UnitTest
   """
   Verify an exception is thrown if the user attempts to encode a value in a
   negative fixnum is outside the valid range.
@@ -270,7 +270,7 @@ class _TestEncodeNegativeFixintOutOfRange is UnitTest
       h.fail()
     end
 
-class _TestEncodeUint8 is UnitTest
+class \nodoc\ _TestEncodeUint8 is UnitTest
   """
   uint 8 stores a 8-bit unsigned integer
   +--------+--------+
@@ -295,7 +295,7 @@ class _TestEncodeUint8 is UnitTest
     h.assert_eq[U8](_FormatName.uint_8(), b.peek_u8()?)
     h.assert_eq[U8](value, b.peek_u8(1)?)
 
-class _TestEncodeUint16 is UnitTest
+class \nodoc\ _TestEncodeUint16 is UnitTest
   """
   uint 16 stores a 16-bit big-endian unsigned integer
   +--------+--------+--------+
@@ -320,7 +320,7 @@ class _TestEncodeUint16 is UnitTest
     h.assert_eq[U8](_FormatName.uint_16(), b.peek_u8()?)
     h.assert_eq[U16](value, b.peek_u16_be(1)?)
 
-class _TestEncodeUint32 is UnitTest
+class \nodoc\ _TestEncodeUint32 is UnitTest
   """
   uint 32 stores a 32-bit big-endian unsigned integer
   +--------+--------+--------+--------+--------+
@@ -345,7 +345,7 @@ class _TestEncodeUint32 is UnitTest
     h.assert_eq[U8](_FormatName.uint_32(), b.peek_u8()?)
     h.assert_eq[U32](value, b.peek_u32_be(1)?)
 
-class _TestEncodeUint64 is UnitTest
+class \nodoc\ _TestEncodeUint64 is UnitTest
   """
   uint 64 stores a 64-bit big-endian unsigned integer
   +--------+--------+--------+--------+--------+--------+--------+--------+--------+
@@ -370,7 +370,7 @@ class _TestEncodeUint64 is UnitTest
     h.assert_eq[U8](_FormatName.uint_64(), b.peek_u8()?)
     h.assert_eq[U64](value, b.peek_u64_be(1)?)
 
-class _TestEncodeInt8 is UnitTest
+class \nodoc\ _TestEncodeInt8 is UnitTest
   """
   int 8 stores a 8-bit signed integer
   +--------+--------+
@@ -395,7 +395,7 @@ class _TestEncodeInt8 is UnitTest
     h.assert_eq[U8](_FormatName.int_8(), b.peek_u8()?)
     h.assert_eq[I8](value, b.peek_i8(1)?)
 
-class _TestEncodeInt16 is UnitTest
+class \nodoc\ _TestEncodeInt16 is UnitTest
   """
   int 16 stores a 16-bit big-endian signed integer
   +--------+--------+--------+
@@ -420,7 +420,7 @@ class _TestEncodeInt16 is UnitTest
     h.assert_eq[U8](_FormatName.int_16(), b.peek_u8()?)
     h.assert_eq[I16](value, b.peek_i16_be(1)?)
 
-class _TestEncodeInt32 is UnitTest
+class \nodoc\ _TestEncodeInt32 is UnitTest
   """
   int 32 stores a 32-bit big-endian signed integer
   +--------+--------+--------+--------+--------+
@@ -445,7 +445,7 @@ class _TestEncodeInt32 is UnitTest
     h.assert_eq[U8](_FormatName.int_32(), b.peek_u8()?)
     h.assert_eq[I32](value, b.peek_i32_be(1)?)
 
-class _TestEncodeInt64 is UnitTest
+class \nodoc\ _TestEncodeInt64 is UnitTest
   """
   int 64 stores a 64-bit big-endian signed integer
   +--------+--------+--------+--------+--------+--------+--------+--------+--------+
@@ -470,7 +470,7 @@ class _TestEncodeInt64 is UnitTest
     h.assert_eq[U8](_FormatName.int_64(), b.peek_u8()?)
     h.assert_eq[I64](value, b.peek_i64_be(1)?)
 
-class _TestEncodeFloat32 is UnitTest
+class \nodoc\ _TestEncodeFloat32 is UnitTest
   """
   float 32 stores a floating point number in IEEE 754 single precision
   floating point number format:
@@ -496,7 +496,7 @@ class _TestEncodeFloat32 is UnitTest
     h.assert_eq[U8](_FormatName.float_32(), b.peek_u8()?)
     h.assert_eq[F32](value, b.peek_f32_be(1)?)
 
-class _TestEncodeFloat64 is UnitTest
+class \nodoc\ _TestEncodeFloat64 is UnitTest
   """
   float 64 stores a floating point number in IEEE 754 double precision
   floating point number format:
@@ -522,7 +522,7 @@ class _TestEncodeFloat64 is UnitTest
     h.assert_eq[U8](_FormatName.float_64(), b.peek_u8()?)
     h.assert_eq[F64](value, b.peek_f64_be(1)?)
 
-class _TestEncodeFixstr is UnitTest
+class \nodoc\ _TestEncodeFixstr is UnitTest
   """
   fixstr stores a byte array whose length is upto 31 bytes:
   +--------+========+
@@ -552,7 +552,7 @@ class _TestEncodeFixstr is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(4)?)
     h.assert_eq[U8]('o', b.peek_u8(5)?)
 
-class _TestEncodeFixstrTooLarge is UnitTest
+class \nodoc\ _TestEncodeFixstrTooLarge is UnitTest
   """
   Verify that `fixstr` throws an error if supplied with a value too large to
   encode within the available space.
@@ -570,7 +570,7 @@ class _TestEncodeFixstrTooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeStr8 is UnitTest
+class \nodoc\ _TestEncodeStr8 is UnitTest
   """
   str 8 stores a byte array whose length is upto (2^8)-1 bytes:
   +--------+--------+========+
@@ -601,7 +601,7 @@ class _TestEncodeStr8 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(5)?)
     h.assert_eq[U8]('o', b.peek_u8(6)?)
 
-class _TestEncodeStr8TooLarge is UnitTest
+class \nodoc\ _TestEncodeStr8TooLarge is UnitTest
   """
   Verify that `str_8` and `bin_8` throw an error if supplied with a value
   too large to encode within the available space.
@@ -619,7 +619,7 @@ class _TestEncodeStr8TooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeStr16 is UnitTest
+class \nodoc\ _TestEncodeStr16 is UnitTest
   """
   str 16 stores a byte array whose length is upto (2^16)-1 bytes:
   +--------+--------+--------+========+
@@ -649,7 +649,7 @@ class _TestEncodeStr16 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(6)?)
     h.assert_eq[U8]('o', b.peek_u8(7)?)
 
-class _TestEncodeStr16TooLarge is UnitTest
+class \nodoc\ _TestEncodeStr16TooLarge is UnitTest
   """
   Verify that `str_16` and `bin_16` throw an error if supplied with a value
   too large to encode within the available space.
@@ -667,7 +667,7 @@ class _TestEncodeStr16TooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeStr32 is UnitTest
+class \nodoc\ _TestEncodeStr32 is UnitTest
   """
   str 32 stores a byte array whose length is upto (2^32)-1 bytes:
   +--------+--------+--------+--------+--------+========+
@@ -697,7 +697,7 @@ class _TestEncodeStr32 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(8)?)
     h.assert_eq[U8]('o', b.peek_u8(9)?)
 
-class _TestEncodeStr32TooLarge is UnitTest
+class \nodoc\ _TestEncodeStr32TooLarge is UnitTest
   """
   Verify that `str_32` and `bin_32` throw an error if supplied with a value
   too large to encode within the available space.
@@ -715,7 +715,7 @@ class _TestEncodeStr32TooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeBin8 is UnitTest
+class \nodoc\ _TestEncodeBin8 is UnitTest
   """
   bin 8 stores a byte array whose length is upto (2^8)-1 bytes:
   +--------+--------+========+
@@ -746,7 +746,7 @@ class _TestEncodeBin8 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(5)?)
     h.assert_eq[U8]('o', b.peek_u8(6)?)
 
-class _TestEncodeBin16 is UnitTest
+class \nodoc\ _TestEncodeBin16 is UnitTest
   """
   bin 16 stores a byte array whose length is upto (2^16)-1 bytes:
   +--------+--------+--------+========+
@@ -776,7 +776,7 @@ class _TestEncodeBin16 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(6)?)
     h.assert_eq[U8]('o', b.peek_u8(7)?)
 
-class _TestEncodeBin32 is UnitTest
+class \nodoc\ _TestEncodeBin32 is UnitTest
   """
   bin 32 stores a byte array whose length is upto (2^32)-1 bytes:
   +--------+--------+--------+--------+--------+========+
@@ -806,7 +806,7 @@ class _TestEncodeBin32 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(8)?)
     h.assert_eq[U8]('o', b.peek_u8(9)?)
 
-class _TestEncodeFixarray is UnitTest
+class \nodoc\ _TestEncodeFixarray is UnitTest
   """
   fixarray stores an array whose length is upto 15 elements:
   +--------+~~~~~~~~~~~~~~~~~+
@@ -835,7 +835,7 @@ class _TestEncodeFixarray is UnitTest
     h.assert_eq[USize](1, b.size())
     h.assert_eq[U8](0x95, b.peek_u8()?)
 
-class _TestEncodeFixarrayTooLarge is UnitTest
+class \nodoc\ _TestEncodeFixarrayTooLarge is UnitTest
   """
   Verify that `fixarray` throws an error if supplied with a value too large to
   encode within the available space.
@@ -852,7 +852,7 @@ class _TestEncodeFixarrayTooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeArray16 is UnitTest
+class \nodoc\ _TestEncodeArray16 is UnitTest
   """
   array 16 stores an array whose length is upto (2^16)-1 elements:
   +--------+--------+--------+~~~~~~~~~~~~~~~~~+
@@ -880,7 +880,7 @@ class _TestEncodeArray16 is UnitTest
     h.assert_eq[U8](_FormatName.array_16(), b.peek_u8()?)
     h.assert_eq[U16](value.size().u16(), b.peek_u16_be(1)?)
 
-class _TestEncodeArray32 is UnitTest
+class \nodoc\ _TestEncodeArray32 is UnitTest
   """
   array 32 stores an array whose length is upto (2^32)-1 elements:
   +--------+--------+--------+--------+--------+~~~~~~~~~~~~~~~~~+
@@ -908,7 +908,7 @@ class _TestEncodeArray32 is UnitTest
     h.assert_eq[U8](_FormatName.array_32(), b.peek_u8()?)
     h.assert_eq[U32](value.size().u32(), b.peek_u32_be(1)?)
 
-class _TestEncodeFixmap is UnitTest
+class \nodoc\ _TestEncodeFixmap is UnitTest
   """
   fixmap stores a map whose length is upto 15 elements
   +--------+~~~~~~~~~~~~~~~~~+
@@ -935,7 +935,7 @@ class _TestEncodeFixmap is UnitTest
     h.assert_eq[USize](1, b.size())
     h.assert_eq[U8](0x8E, b.peek_u8()?)
 
-class _TestEncodeFixmapTooLarge is UnitTest
+class \nodoc\ _TestEncodeFixmapTooLarge is UnitTest
   """
   Verify that `fixmap` throws an error if supplied with a value too large to
   encode within the available space.
@@ -952,7 +952,7 @@ class _TestEncodeFixmapTooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeMap16 is UnitTest
+class \nodoc\ _TestEncodeMap16 is UnitTest
   """
   map 16 stores a map whose length is upto (2^16)-1 elements
   +--------+--------+--------+~~~~~~~~~~~~~~~~~+
@@ -980,7 +980,7 @@ class _TestEncodeMap16 is UnitTest
     h.assert_eq[U8](_FormatName.map_16(), b.peek_u8()?)
     h.assert_eq[U16](size, b.peek_u16_be(1)?)
 
-class _TestEncodeMap32 is UnitTest
+class \nodoc\ _TestEncodeMap32 is UnitTest
   """
   map 32 stores a map whose length is upto (2^32)-1 elements
   +--------+--------+--------+--------+--------+~~~~~~~~~~~~~~~~~+
@@ -1008,7 +1008,7 @@ class _TestEncodeMap32 is UnitTest
     h.assert_eq[U8](_FormatName.map_32(), b.peek_u8()?)
     h.assert_eq[U32](size, b.peek_u32_be(1)?)
 
-class _TestEncodeFixext1 is UnitTest
+class \nodoc\ _TestEncodeFixext1 is UnitTest
   """
   fixext 1 stores an integer and a byte array whose length is 1 byte
   +--------+--------+--------+
@@ -1036,7 +1036,7 @@ class _TestEncodeFixext1 is UnitTest
     h.assert_eq[U8](user_type, b.peek_u8(1)?)
     h.assert_eq[U8]('V', b.peek_u8(2)?)
 
-class _TestEncodeFixext1IncorrectSize is UnitTest
+class \nodoc\ _TestEncodeFixext1IncorrectSize is UnitTest
   """
   Verify that `fixext_1` throws an error if supplied with a value either
   too large or too small to encode within the available space.
@@ -1063,7 +1063,7 @@ class _TestEncodeFixext1IncorrectSize is UnitTest
       h.fail()
     end
 
-class _TestEncodeFixext2 is UnitTest
+class \nodoc\ _TestEncodeFixext2 is UnitTest
   """
   fixext 2 stores an integer and a byte array whose length is 2 bytes
   +--------+--------+--------+
@@ -1093,7 +1093,7 @@ class _TestEncodeFixext2 is UnitTest
       h.assert_eq[U8]('V', b.peek_u8(i)?)
     end
 
-class _TestEncodeFixext2IncorrectSize is UnitTest
+class \nodoc\ _TestEncodeFixext2IncorrectSize is UnitTest
   """
   Verify that `fixext_2` throws an error if supplied with a value either
   too large or too small to encode within the available space.
@@ -1120,7 +1120,7 @@ class _TestEncodeFixext2IncorrectSize is UnitTest
       h.fail()
     end
 
-class _TestEncodeFixext4 is UnitTest
+class \nodoc\ _TestEncodeFixext4 is UnitTest
   """
   fixext 4 stores an integer and a byte array whose length is 4 bytes
   +--------+--------+--------+
@@ -1150,7 +1150,7 @@ class _TestEncodeFixext4 is UnitTest
       h.assert_eq[U8]('V', b.peek_u8(i)?)
     end
 
-class _TestEncodeFixext4IncorrectSize is UnitTest
+class \nodoc\ _TestEncodeFixext4IncorrectSize is UnitTest
   """
   Verify that `fixext_4` throws an error if supplied with a value either
   too large or too small to encode within the available space.
@@ -1177,7 +1177,7 @@ class _TestEncodeFixext4IncorrectSize is UnitTest
       h.fail()
     end
 
-class _TestEncodeFixext8 is UnitTest
+class \nodoc\ _TestEncodeFixext8 is UnitTest
   """
   fixext 8 stores an integer and a byte array whose length is 8 bytes
   +--------+--------+--------+
@@ -1207,7 +1207,7 @@ class _TestEncodeFixext8 is UnitTest
       h.assert_eq[U8]('V', b.peek_u8(i)?)
     end
 
-class _TestEncodeFixext8IncorrectSize is UnitTest
+class \nodoc\ _TestEncodeFixext8IncorrectSize is UnitTest
   """
   Verify that `fixext_8` throws an error if supplied with a value either
   too large or too small to encode within the available space.
@@ -1234,7 +1234,7 @@ class _TestEncodeFixext8IncorrectSize is UnitTest
       h.fail()
     end
 
-class _TestEncodeFixext16 is UnitTest
+class \nodoc\ _TestEncodeFixext16 is UnitTest
   """
   fixext 16 stores an integer and a byte array whose length is 16 bytes
   +--------+--------+--------+
@@ -1264,7 +1264,7 @@ class _TestEncodeFixext16 is UnitTest
       h.assert_eq[U8]('V', b.peek_u8(i)?)
     end
 
-class _TestEncodeFixext16IncorrectSize is UnitTest
+class \nodoc\ _TestEncodeFixext16IncorrectSize is UnitTest
   """
   Verify that `fixext_16` throws an error if supplied with a value either
   too large or too small to encode within the available space.
@@ -1291,7 +1291,7 @@ class _TestEncodeFixext16IncorrectSize is UnitTest
       h.fail()
     end
 
-class _TestEncodeExt8 is UnitTest
+class \nodoc\ _TestEncodeExt8 is UnitTest
   """
   ext 8 stores an integer and a byte array whose length is upto (2^8)-1 bytes:
   +--------+--------+--------+========+
@@ -1324,7 +1324,7 @@ class _TestEncodeExt8 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(6)?)
     h.assert_eq[U8]('o', b.peek_u8(7)?)
 
-class _TestEncodeExt8TooLarge is UnitTest
+class \nodoc\ _TestEncodeExt8TooLarge is UnitTest
   """
   Verify that `ext_8` throws an error if supplied with a value
   too large to encode within the available space.
@@ -1343,7 +1343,7 @@ class _TestEncodeExt8TooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeExt16 is UnitTest
+class \nodoc\ _TestEncodeExt16 is UnitTest
   """
   ext 16 stores an integer and a byte array whose length is
   upto (2^16)-1 bytes:
@@ -1377,7 +1377,7 @@ class _TestEncodeExt16 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(7)?)
     h.assert_eq[U8]('o', b.peek_u8(8)?)
 
-class _TestEncodeExt16TooLarge is UnitTest
+class \nodoc\ _TestEncodeExt16TooLarge is UnitTest
   """
   Verify that `ext_16` throws an error if supplied with a value
   too large to encode within the available space.
@@ -1396,7 +1396,7 @@ class _TestEncodeExt16TooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeExt32 is UnitTest
+class \nodoc\ _TestEncodeExt32 is UnitTest
   """
   ext 32 stores an integer and a byte array whose length is
   upto (2^32)-1 bytes:
@@ -1430,7 +1430,7 @@ class _TestEncodeExt32 is UnitTest
     h.assert_eq[U8]('l', b.peek_u8(9)?)
     h.assert_eq[U8]('o', b.peek_u8(10)?)
 
-class _TestEncodeExt32TooLarge is UnitTest
+class \nodoc\ _TestEncodeExt32TooLarge is UnitTest
   """
   Verify that `ext_16` throws an error if supplied with a value
   too large to encode within the available space.
@@ -1449,7 +1449,7 @@ class _TestEncodeExt32TooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeTimestamp32 is UnitTest
+class \nodoc\ _TestEncodeTimestamp32 is UnitTest
   """
   timestamp 32 stores the number of seconds that have elapsed since 1970-01-01
   00:00:00 UTC in an 32-bit unsigned integer:
@@ -1477,7 +1477,7 @@ class _TestEncodeTimestamp32 is UnitTest
     h.assert_eq[I8](-1, b.i8()?)
     h.assert_eq[U32](secs, b.u32_be()?)
 
-class _TestEncodeTimestamp64 is UnitTest
+class \nodoc\ _TestEncodeTimestamp64 is UnitTest
   """
   timestamp 64 stores the number of seconds and nanoseconds that have elapsed
   since 1970-01-01 00:00:00 UTC in 32-bit unsigned integers:
@@ -1510,7 +1510,7 @@ class _TestEncodeTimestamp64 is UnitTest
     h.assert_eq[I8](-1, b.i8()?)
     h.assert_eq[U64](expect, b.u64_be()?)
 
-class _TestEncodeTimestamp64SecsTooLarge is UnitTest
+class \nodoc\ _TestEncodeTimestamp64SecsTooLarge is UnitTest
   """
   Verify that `timestamp_64` throws an error if supplied a seconds value larger
   than what can fit within 34 bits.
@@ -1526,7 +1526,7 @@ class _TestEncodeTimestamp64SecsTooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeTimestamp64NsecsTooLarge is UnitTest
+class \nodoc\ _TestEncodeTimestamp64NsecsTooLarge is UnitTest
   """
   Verify that `timestamp_64` throws an error if supplied a nanoseconds value
   larger than 99999999.
@@ -1542,7 +1542,7 @@ class _TestEncodeTimestamp64NsecsTooLarge is UnitTest
       h.fail()
     end
 
-class _TestEncodeTimestamp96 is UnitTest
+class \nodoc\ _TestEncodeTimestamp96 is UnitTest
   """
   timestamp 96 stores the number of seconds and nanoseconds that have elapsed
   since 1970-01-01 00:00:00 UTC in 64-bit signed integer and 32-bit unsigned
@@ -1577,7 +1577,7 @@ class _TestEncodeTimestamp96 is UnitTest
     h.assert_eq[U32](nsecs, b.u32_be()?)
     h.assert_eq[I64](secs, b.i64_be()?)
 
-class _TestEncodeTimestamp96NsecsTooLarge is UnitTest
+class \nodoc\ _TestEncodeTimestamp96NsecsTooLarge is UnitTest
   """
   Verify that `timestamp_96` throws an error if supplied a nanoseconds value larger
   than 99999999.

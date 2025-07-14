@@ -18,7 +18,7 @@ limitations under the License.
 
 use "pony_test"
 
-actor Main is TestList
+actor \nodoc\ Main is TestList
   new create(env: Env) =>
     PonyTest(env, this)
 

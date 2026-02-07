@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types: [shared-docker-linux-builders-updated]
 
+permissions:
+  packages: read
+
 jobs:
   release-vs-ponyc-main:
     name: Verify in release mode on Linux with most recent ponyc

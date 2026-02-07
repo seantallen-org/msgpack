@@ -13,6 +13,7 @@ All notable changes this project will be documented in this file. This project a
 
 ### Changed
 
+- Change timestamp nsec type from I64 to U32 ([PR #56](https://github.com/seantallen-org/msgpack/pull/56))
 
 ## [0.2.5] - 2022-02-26
 

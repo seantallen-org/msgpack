@@ -69,10 +69,12 @@ class val MessagePackTimestamp
 class val MessagePackExt
   """
   A MessagePack extension type. The `ext_type` field is the
-  user-defined type identifier (0-127 for user types; the
-  MessagePack spec reserves -1 through -128 for predefined types,
-  e.g., -1 for timestamps). The `data` field contains the raw
-  extension bytes.
+  type identifier stored as a `U8`. User-defined types occupy
+  0 through 127. The MessagePack spec reserves -1 through -128
+  (signed) for predefined types (e.g., -1 for timestamps);
+  these appear in `ext_type` as their unsigned equivalents
+  (0xFF for -1, 0x80 for -128). The `data` field contains the
+  raw extension bytes.
   """
   let ext_type: U8
   let data: Array[U8] val

@@ -966,7 +966,7 @@ class \nodoc\ _TestStreamTimestamp32 is UnitTest
     match sd.next()
     | let v: MessagePackTimestamp =>
       h.assert_eq[I64](500, v.sec)
-      h.assert_eq[I64](0, v.nsec)
+      h.assert_eq[U32](0, v.nsec)
     else h.fail("expected MessagePackTimestamp")
     end
 
@@ -983,7 +983,7 @@ class \nodoc\ _TestStreamTimestamp64 is UnitTest
     match sd.next()
     | let v: MessagePackTimestamp =>
       h.assert_eq[I64](_Limit.sec_34().i64(), v.sec)
-      h.assert_eq[I64](_Limit.nsec().i64(), v.nsec)
+      h.assert_eq[U32](_Limit.nsec(), v.nsec)
     else h.fail("expected MessagePackTimestamp")
     end
 
@@ -1000,7 +1000,7 @@ class \nodoc\ _TestStreamTimestamp96 is UnitTest
     match sd.next()
     | let v: MessagePackTimestamp =>
       h.assert_eq[I64](sec, v.sec)
-      h.assert_eq[I64](nsec.i64(), v.nsec)
+      h.assert_eq[U32](nsec, v.nsec)
     else h.fail("expected MessagePackTimestamp")
     end
 
@@ -1040,7 +1040,7 @@ class \nodoc\ _TestStreamTimestampPartial is UnitTest
     match sd.next()
     | let v: MessagePackTimestamp =>
       h.assert_eq[I64](1000, v.sec)
-      h.assert_eq[I64](0, v.nsec)
+      h.assert_eq[U32](0, v.nsec)
     else h.fail("expected MessagePackTimestamp")
     end
 
@@ -1080,7 +1080,7 @@ class \nodoc\ _TestStreamTimestamp64Partial is UnitTest
     match sd.next()
     | let v: MessagePackTimestamp =>
       h.assert_eq[I64](500, v.sec)
-      h.assert_eq[I64](100, v.nsec)
+      h.assert_eq[U32](100, v.nsec)
     else h.fail("expected MessagePackTimestamp")
     end
 
@@ -1120,7 +1120,7 @@ class \nodoc\ _TestStreamTimestamp96Partial is UnitTest
     match sd.next()
     | let v: MessagePackTimestamp =>
       h.assert_eq[I64](-1000, v.sec)
-      h.assert_eq[I64](500, v.nsec)
+      h.assert_eq[U32](500, v.nsec)
     else h.fail("expected MessagePackTimestamp")
     end
 
@@ -1326,7 +1326,7 @@ class \nodoc\ _PropertyStreamTimestamp32Safety
     match sd.next()
     | let v: MessagePackTimestamp =>
       h.assert_eq[I64](arg1.i64(), v.sec)
-      h.assert_eq[I64](0, v.nsec)
+      h.assert_eq[U32](0, v.nsec)
     else
       h.fail("expected MessagePackTimestamp")
     end

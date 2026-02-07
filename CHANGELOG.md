@@ -9,6 +9,7 @@ All notable changes this project will be documented in this file. This project a
 
 ### Added
 
+- Add streaming-safe MessagePack decoder ([PR #52](https://github.com/seantallen-org/msgpack/pull/52))
 
 ### Changed
 

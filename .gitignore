@@ -3,3 +3,4 @@ TAGS
 tags
 .deps/*
 lock.json
+.claude

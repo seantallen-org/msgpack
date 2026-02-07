@@ -24,10 +24,14 @@ primitive MessagePackDecoder
   """
   Implements low-level decoding from the [MessagePack serialization format](https://github.com/msgpack/msgpack/blob/master/spec.md).
 
-  You should be familiar with how MessagePack encodes messages if you use this
-  API directly. There are very few guardrails preventing you from incorrectly
-  decoding documents. This is particularly true when using the `array` and
-  `map` format family encoding methods.
+  You should be familiar with how MessagePack encodes messages if you use
+  this API directly. There are very few guardrails preventing you from
+  incorrectly decoding documents. This is particularly true when using the
+  `array` and `map` format family decoding methods, which only read
+  headers — the caller must read each element individually afterward.
+
+  This decoder assumes all data is available when decoding begins. If data
+  may arrive incrementally, use `MessagePackStreamingDecoder` instead.
   """
   //
   // nil format family

@@ -22,10 +22,14 @@ primitive MessagePackEncoder
   """
   Implements low-level encoding into the [MessagePack serialization format](https://github.com/msgpack/msgpack/blob/master/spec.md).
 
-  You should be familiar with how MessagePack encodes messages if you use this
-  API directly. There are very few guardrails preventing you from creating
-  invalid documents. This is particularly true when using the `array` and `map`
-  format family encoding methods.
+  You should be familiar with how MessagePack encodes messages if you use
+  this API directly. There are very few guardrails preventing you from
+  creating invalid documents. This is particularly true when using the
+  `array` and `map` format family encoding methods, which only write
+  headers — the caller must write each element individually afterward.
+
+  For decoding, see `MessagePackDecoder` (all-at-once) or
+  `MessagePackStreamingDecoder` (incremental/streaming).
   """
   //
   // nil format family

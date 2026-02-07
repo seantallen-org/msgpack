@@ -775,7 +775,7 @@ class \nodoc\ _TestDecodeTimestamp32 is UnitTest
 
     (let decoded_sec, let decoded_nsec) = MessagePackDecoder.timestamp(b)?
     h.assert_eq[I64](decoded_sec, encoded_sec.i64())
-    h.assert_eq[I64](decoded_nsec, I64(0))
+    h.assert_eq[U32](decoded_nsec, 0)
 
 class \nodoc\ _TestDecodeTimestamp64 is UnitTest
   fun name(): String =>
@@ -795,7 +795,7 @@ class \nodoc\ _TestDecodeTimestamp64 is UnitTest
 
     (let decoded_sec, let decoded_nsec) = MessagePackDecoder.timestamp(b)?
     h.assert_eq[I64](decoded_sec, _Limit.sec_34().i64())
-    h.assert_eq[I64](decoded_nsec, _Limit.nsec().i64())
+    h.assert_eq[U32](decoded_nsec, _Limit.nsec())
 
 class \nodoc\ _TestDecodeTimestamp96 is UnitTest
   fun name(): String =>
@@ -815,4 +815,4 @@ class \nodoc\ _TestDecodeTimestamp96 is UnitTest
 
     (let decoded_sec, let decoded_nsec) = MessagePackDecoder.timestamp(b)?
     h.assert_eq[I64](decoded_sec, 0 - _Limit.sec_34().i64())
-    h.assert_eq[I64](decoded_nsec, _Limit.nsec().i64())
+    h.assert_eq[U32](decoded_nsec, _Limit.nsec())

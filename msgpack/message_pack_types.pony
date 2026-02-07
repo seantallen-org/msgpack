@@ -60,9 +60,9 @@ class val MessagePackTimestamp
   component (0 to 999999999).
   """
   let sec: I64
-  let nsec: I64
+  let nsec: U32
 
-  new val create(sec': I64, nsec': I64) =>
+  new val create(sec': I64, nsec': U32) =>
     sec = sec'
     nsec = nsec'
 

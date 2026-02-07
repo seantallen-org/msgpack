@@ -313,21 +313,21 @@ primitive MessagePackDecoder
   // Note: MessagePackStreamingDecoder pre-validates total size
   // before calling this method. If the read sequence here changes,
   // update the size checks in _decode_fixext and _decode_ext_variable.
-  fun timestamp(b: Reader): (I64, I64) ? =>
+  fun timestamp(b: Reader): (I64, U32) ? =>
     let t = _read_type(b)?
 
     b.i8()?
-    var nsec: I64 = 0
+    var nsec: U32 = 0
     var sec: I64 = 0
     if t == _FormatName.fixext_4() then
       sec = b.u32_be()?.i64()
     elseif t == _FormatName.fixext_8() then
       let u: U64 = b.u64_be()?
-      nsec = (u >> 34).i64()
+      nsec = (u >> 34).u32()
       sec = (u - (nsec.u64() << 34)).i64()
     elseif t == _FormatName.ext_8() then
       b.u8()?
-      nsec = b.u32_be()?.i64()
+      nsec = b.u32_be()?
       sec = b.i64_be()?
     else
       error

@@ -22,27 +22,36 @@ Build modes: `config=release` (default) or `config=debug`.
 msgpack/                             # Main source package
   message_pack_encoder.pony          # Encoding API (primitive)
   message_pack_decoder.pony          # Decoding API (primitive)
+  message_pack_streaming_decoder.pony # Streaming decoder (class)
+  message_pack_types.pony            # Streaming decoder types
   _format_name.pony                  # MessagePack format byte constants
   _limit.pony                       # Range validation limits
   _size.pony                        # Fixed extension size constants
+  _unreachable.pony                 # Panic primitive for dead code
   _test.pony                        # Test entry point
   _test_encoder.pony                # Encoder tests (~101 cases)
   _test_decoder.pony                # Decoder tests (~34 cases)
-examples/simple-example/             # Example usage
+  _test_streaming_decoder.pony      # Streaming decoder tests
+examples/encode-decode/              # Encode/decode roundtrip example
+examples/streaming-decode/           # Streaming decoder example
 ```
 
 ## Architecture
 
-Two stateless primitives form the public API:
+Two stateless primitives provide low-level encoding/decoding:
 
 - **`MessagePackEncoder`** — All `fun` methods take a `Writer` and encode values into MessagePack format. Methods map directly to MessagePack format families (nil, bool, int, float, string, binary, array, map, ext, timestamp).
 - **`MessagePackDecoder`** — All `fun` methods take a `Reader ref` and decode MessagePack-encoded bytes. Returns decoded values or tuples for compound types.
+
+A streaming-safe decoder wraps the low-level primitives:
+
+- **`MessagePackStreamingDecoder`** — A class that peeks at format bytes and length fields before consuming data. Returns `DecodeResult` (a union of `MessagePackValue | NotEnoughData | InvalidData`). Container types return header objects (`MessagePackArray` / `MessagePackMap`); timestamps return `MessagePackTimestamp`. Types defined in `message_pack_types.pony`.
 
 Internal helpers (`_FormatName`, `_Limit`, `_Size`) are private primitives prefixed with `_`.
 
 All fallible methods use `?` for error signaling. No high-level API exists yet.
 
-**Known limitation:** The decoder is not suitable for streaming. It assumes all data is available when decoding begins. If you read the type byte but the full payload hasn't arrived yet, the stream and reader will be corrupted. See [issue #14](https://github.com/seantallen-org/msgpack/issues/14).
+**Known limitation:** `MessagePackDecoder` is not suitable for streaming. It assumes all data is available when decoding begins. If you read the type byte but the full payload hasn't arrived yet, the stream and reader will be corrupted. See [issue #14](https://github.com/seantallen-org/msgpack/issues/14). `MessagePackStreamingDecoder` addresses this by peeking at format bytes and length fields before consuming any data — if insufficient data is available, it returns `NotEnoughData` with zero bytes consumed.
 
 ## Conventions
 

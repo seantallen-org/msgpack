@@ -153,6 +153,9 @@ primitive MessagePackDecoder
     let len = (b.u8()?.usize() and _Limit.fixstr())
     String.from_iso_array(b.block(len)?)
 
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence here changes,
+  // update the size checks in _decode_str.
   fun str(b: Reader): String iso^ ? =>
     let t = _read_type(b)?
 
@@ -172,6 +175,9 @@ primitive MessagePackDecoder
   // byte array family
   //
 
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence here changes,
+  // update the size checks in _decode_bin.
   fun byte_array(b: Reader): Array[U8] iso^ ? =>
     let t = _read_type(b)?
 
@@ -263,6 +269,10 @@ primitive MessagePackDecoder
   // ext format family
   //
 
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence here changes,
+  // update the size checks in _decode_fixext and
+  // _decode_ext_variable.
   fun ext(b: Reader): (U8, Array[U8] val) ? =>
     """
     Allows for the reading of user supplied extensions to the MessagePack
@@ -300,6 +310,9 @@ primitive MessagePackDecoder
   // timestamp format family
   //
 
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence here changes,
+  // update the size checks in _decode_fixext and _decode_ext_variable.
   fun timestamp(b: Reader): (I64, I64) ? =>
     let t = _read_type(b)?
 

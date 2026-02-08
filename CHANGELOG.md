@@ -10,6 +10,7 @@ All notable changes this project will be documented in this file. This project a
 ### Added
 
 - Add streaming-safe MessagePack decoder ([PR #52](https://github.com/seantallen-org/msgpack/pull/52))
+- Add compact encoding and decoding methods ([PR #60](https://github.com/seantallen-org/msgpack/pull/60))
 
 ### Changed
 

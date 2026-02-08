@@ -2,7 +2,7 @@
 
 ## Overview
 
-Pure Pony implementation of the MessagePack serialization format. This is a **library** (not an application) providing low-level encoding/decoding primitives. Beta status (v0.2.5). No external dependencies — pure Pony stdlib only.
+Pure Pony implementation of the MessagePack serialization format. This is a **library** (not an application) providing compact encoding/decoding methods that automatically select the smallest wire format, format-specific primitives for explicit control, and a streaming-safe decoder. Beta status (v0.2.5). No external dependencies — pure Pony stdlib only.
 
 ## Building and Testing
 
@@ -29,8 +29,8 @@ msgpack/                             # Main source package
   _size.pony                        # Fixed extension size constants
   _unreachable.pony                 # Panic primitive for dead code
   _test.pony                        # Test entry point
-  _test_encoder.pony                # Encoder tests (~101 cases)
-  _test_decoder.pony                # Decoder tests (~34 cases)
+  _test_encoder.pony                # Encoder tests
+  _test_decoder.pony                # Decoder tests
   _test_streaming_decoder.pony      # Streaming decoder tests
 examples/encode-decode/              # Encode/decode roundtrip example
 examples/streaming-decode/           # Streaming decoder example
@@ -38,10 +38,10 @@ examples/streaming-decode/           # Streaming decoder example
 
 ## Architecture
 
-Two stateless primitives provide low-level encoding/decoding:
+Two stateless primitives provide encoding/decoding:
 
-- **`MessagePackEncoder`** — All `fun` methods take a `Writer` and encode values into MessagePack format. Methods map directly to MessagePack format families (nil, bool, int, float, string, binary, array, map, ext, timestamp).
-- **`MessagePackDecoder`** — All `fun` methods take a `Reader ref` and decode MessagePack-encoded bytes. Returns decoded values or tuples for compound types.
+- **`MessagePackEncoder`** — All `fun` methods take a `Writer` and encode values into MessagePack format. Compact methods (`uint`, `int`, `str`, `bin`, `array`, `map`, `ext`, `timestamp`) automatically select the smallest wire format for a given value. Format-specific methods (`uint_8`, `uint_32`, `fixstr`, `str_8`, `fixarray`, `array_16`, etc.) are available for explicit control.
+- **`MessagePackDecoder`** — All `fun` methods take a `Reader ref` and decode MessagePack-encoded bytes. Compact methods (`uint`, `int`, `str`, `array`, `map`) peek at the format byte and accept any wire format within the family. `str()` handles all string formats (fixstr, str_8, str_16, str_32). `array()` and `map()` handle all their respective formats. Format-specific methods remain available for callers who know the exact wire format.
 
 A streaming-safe decoder wraps the low-level primitives:
 
@@ -49,7 +49,7 @@ A streaming-safe decoder wraps the low-level primitives:
 
 Internal helpers (`_FormatName`, `_Limit`, `_Size`) are private primitives prefixed with `_`.
 
-All fallible methods use `?` for error signaling. No high-level API exists yet.
+All fallible methods use `?` for error signaling.
 
 **Known limitation:** `MessagePackDecoder` is not suitable for streaming. It assumes all data is available when decoding begins. If you read the type byte but the full payload hasn't arrived yet, the stream and reader will be corrupted. See [issue #14](https://github.com/seantallen-org/msgpack/issues/14). `MessagePackStreamingDecoder` addresses this by peeking at format bytes and length fields before consuming any data — if insufficient data is available, it returns `NotEnoughData` with zero bytes consumed.
 
@@ -69,7 +69,7 @@ All fallible methods use `?` for error signaling. No high-level API exists yet.
 
 ## Dependencies
 
-None. Uses only Pony stdlib packages: `buffered` (Reader/Writer), `collections`, `pony_test`.
+None. Uses only Pony stdlib packages: `buffered` (Reader/Writer), `collections`, `pony_check`, `pony_test`.
 
 Dependency management via `corral` (Pony's package manager). See `corral.json`.
 

@@ -24,18 +24,25 @@ serialization format.
 
 Three public APIs are available:
 
-* `MessagePackEncoder` — Stateless encoding methods. Each takes a `Writer`
-  and encodes a single value.
+* `MessagePackEncoder` — Stateless encoding methods. Compact methods
+  (`uint`, `int`, `str`, `bin`, `array`, `map`, `ext`, `timestamp`)
+  automatically select the smallest wire format. Format-specific methods
+  (`uint_8`, `uint_32`, `fixstr`, `str_8`, etc.) are available for
+  explicit control.
 
-* `MessagePackDecoder` — Stateless decoding methods. Each takes a
-  `Reader ref` and decodes a single value. Assumes all data is available;
-  not suitable for streaming.
+* `MessagePackDecoder` — Stateless decoding methods. Compact methods
+  (`uint`, `int`, `str`, `array`, `map`) accept any wire format within a
+  format family. Format-specific methods are available when the caller
+  knows the exact wire format. Assumes all data is available; not suitable
+  for streaming.
 
 * `MessagePackStreamingDecoder` — A streaming-safe decoder that peeks before
   consuming bytes. Returns `NotEnoughData` when more bytes are needed, with
   zero bytes consumed.
 
 ## Encoding and Decoding Scalar Values
+
+Compact methods pick the smallest wire format automatically:
 
 ```pony
 use "buffered"
@@ -45,8 +52,8 @@ use "msgpack"
 let w: Writer ref = Writer
 MessagePackEncoder.nil(w)
 MessagePackEncoder.bool(w, true)
-MessagePackEncoder.uint_32(w, 42)
-MessagePackEncoder.fixstr(w, "hello")?
+MessagePackEncoder.uint(w, 42)       // positive_fixint (1 byte)
+MessagePackEncoder.str(w, "hello")?  // fixstr (6 bytes)
 
 // Transfer encoded bytes to a reader
 let r: Reader ref = Reader
@@ -54,12 +61,15 @@ for bs in w.done().values() do
   r.append(bs)
 end
 
-// Decode in the same order
+// Decode — compact methods accept any format in the family
 MessagePackDecoder.nil(r)?
 let b = MessagePackDecoder.bool(r)?
-let n = MessagePackDecoder.u32(r)?
-let s = MessagePackDecoder.fixstr(r)?
+let n = MessagePackDecoder.uint(r)?
+let s = MessagePackDecoder.str(r)?
 ```
+
+Format-specific methods (`uint_32`, `fixstr`, `str_8`, etc.) are available
+when you need explicit control over the wire format.
 
 ## Encoding and Decoding Arrays
 
@@ -69,10 +79,10 @@ count. The caller must encode or decode each element individually.
 ```pony
 // Encode a 3-element array of U32
 let w: Writer ref = Writer
-MessagePackEncoder.fixarray(w, 3)?
-MessagePackEncoder.uint_32(w, 1)
-MessagePackEncoder.uint_32(w, 2)
-MessagePackEncoder.uint_32(w, 3)
+MessagePackEncoder.array(w, 3)  // picks fixarray
+MessagePackEncoder.uint(w, 1)
+MessagePackEncoder.uint(w, 2)
+MessagePackEncoder.uint(w, 3)
 
 // Decode
 let r: Reader ref = Reader
@@ -80,10 +90,10 @@ for bs in w.done().values() do
   r.append(bs)
 end
 
-let count = MessagePackDecoder.fixarray(r)?
-var i: U8 = 0
+let count = MessagePackDecoder.array(r)?
+var i: U32 = 0
 while i < count do
-  let v = MessagePackDecoder.u32(r)?
+  let v = MessagePackDecoder.uint(r)?
   // use v
   i = i + 1
 end
@@ -97,11 +107,11 @@ Keys and values are encoded alternately.
 ```pony
 // Encode a 2-entry map: "a" => 1, "b" => 2
 let w: Writer ref = Writer
-MessagePackEncoder.fixmap(w, 2)?
-MessagePackEncoder.fixstr(w, "a")?
-MessagePackEncoder.uint_32(w, 1)
-MessagePackEncoder.fixstr(w, "b")?
-MessagePackEncoder.uint_32(w, 2)
+MessagePackEncoder.map(w, 2)       // picks fixmap
+MessagePackEncoder.str(w, "a")?
+MessagePackEncoder.uint(w, 1)
+MessagePackEncoder.str(w, "b")?
+MessagePackEncoder.uint(w, 2)
 
 // Decode
 let r: Reader ref = Reader
@@ -109,11 +119,11 @@ for bs in w.done().values() do
   r.append(bs)
 end
 
-let count = MessagePackDecoder.fixmap(r)?
-var i: U8 = 0
+let count = MessagePackDecoder.map(r)?
+var i: U32 = 0
 while i < count do
-  let key = MessagePackDecoder.fixstr(r)?
-  let value = MessagePackDecoder.u32(r)?
+  let key = MessagePackDecoder.str(r)?
+  let value = MessagePackDecoder.uint(r)?
   // use key and value
   i = i + 1
 end

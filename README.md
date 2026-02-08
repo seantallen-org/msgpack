@@ -4,9 +4,7 @@ A pure Pony implementation of the [MessagePack serialization format](http://msgp
 
 ## Status
 
-msgpack is currently beta software. It provides low-level encoding/decoding primitives and a streaming-safe decoder for incremental data sources. Still to do:
-
-* High-level API for a better programming experience
+msgpack is currently beta software. It provides compact encoding/decoding methods that automatically select the smallest wire format, format-specific primitives for explicit control, and a streaming-safe decoder for incremental data sources.
 
 ## Installation
 
@@ -20,18 +18,18 @@ msgpack is currently beta software. It provides low-level encoding/decoding prim
 
 ### Encoding and Decoding
 
-`MessagePackEncoder` and `MessagePackDecoder` provide direct access to each MessagePack format type. Encode values into a `Writer`, transfer the bytes to a `Reader`, then decode in the same order.
+`MessagePackEncoder` and `MessagePackDecoder` provide compact methods that automatically select the smallest wire format for a given value. Encode values into a `Writer`, transfer the bytes to a `Reader`, then decode in the same order.
 
 ```pony
 use "msgpack"
 use "buffered"
 
-// Encode
+// Encode — compact methods pick the smallest wire format
 let w: Writer ref = Writer
 MessagePackEncoder.nil(w)
 MessagePackEncoder.bool(w, true)
-MessagePackEncoder.uint_32(w, 42)
-MessagePackEncoder.fixstr(w, "hello msgpack")?
+MessagePackEncoder.uint(w, 42)           // positive_fixint (1 byte)
+MessagePackEncoder.str(w, "hello")?      // fixstr (6 bytes)
 
 // Transfer encoded bytes to the reader
 let r: Reader ref = Reader
@@ -39,12 +37,14 @@ for bs in w.done().values() do
   r.append(bs)
 end
 
-// Decode in the same order
+// Decode — compact methods accept any format in the family
 MessagePackDecoder.nil(r)?
-MessagePackDecoder.bool(r)?    // true
-MessagePackDecoder.u32(r)?     // 42
-MessagePackDecoder.fixstr(r)?  // "hello msgpack"
+MessagePackDecoder.bool(r)?   // true
+MessagePackDecoder.uint(r)?   // 42
+MessagePackDecoder.str(r)?    // "hello"
 ```
+
+Format-specific methods (`uint_8`, `uint_32`, `fixstr`, `str_8`, etc.) are available when you need explicit control over the wire format.
 
 ### Streaming Decoder
 

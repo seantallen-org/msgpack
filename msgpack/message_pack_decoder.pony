@@ -34,6 +34,119 @@ primitive MessagePackDecoder
   may arrive incrementally, use `MessagePackStreamingDecoder` instead.
   """
   //
+  // compact format family
+  //
+  // These methods peek at the format byte to determine the wire
+  // format, then decode accordingly. They accept any format within
+  // the relevant MessagePack format family.
+  //
+  // The format-specific methods below remain available for callers
+  // who know the exact wire format in advance.
+  //
+
+  fun uint(b: Reader ref): U64 ? =>
+    """
+    Decodes an unsigned integer from any uint or positive fixint
+    format.
+    """
+    let t = b.peek_u8()?
+    if (t and 0x80) == 0 then
+      b.u8()?.u64()
+    elseif t == _FormatName.uint_8() then
+      _read_type(b)?
+      b.u8()?.u64()
+    elseif t == _FormatName.uint_16() then
+      _read_type(b)?
+      b.u16_be()?.u64()
+    elseif t == _FormatName.uint_32() then
+      _read_type(b)?
+      b.u32_be()?.u64()
+    elseif t == _FormatName.uint_64() then
+      _read_type(b)?
+      b.u64_be()?
+    else
+      error
+    end
+
+  fun int(b: Reader ref): I64 ? =>
+    """
+    Decodes a signed integer from any int, uint, or fixint
+    format. Errors if a uint_64 value exceeds I64.max_value().
+    """
+    let t = b.peek_u8()?
+    if (t and 0x80) == 0 then
+      b.u8()?.i64()
+    elseif (t and 0xE0) == _FormatName.negative_fixint() then
+      b.i8()?.i64()
+    elseif t == _FormatName.uint_8() then
+      _read_type(b)?
+      b.u8()?.i64()
+    elseif t == _FormatName.uint_16() then
+      _read_type(b)?
+      b.u16_be()?.i64()
+    elseif t == _FormatName.uint_32() then
+      _read_type(b)?
+      b.u32_be()?.i64()
+    elseif t == _FormatName.uint_64() then
+      _read_type(b)?
+      let v = b.u64_be()?
+      if v > I64.max_value().u64() then error end
+      v.i64()
+    elseif t == _FormatName.int_8() then
+      _read_type(b)?
+      b.i8()?.i64()
+    elseif t == _FormatName.int_16() then
+      _read_type(b)?
+      b.i16_be()?.i64()
+    elseif t == _FormatName.int_32() then
+      _read_type(b)?
+      b.i32_be()?.i64()
+    elseif t == _FormatName.int_64() then
+      _read_type(b)?
+      b.i64_be()?
+    else
+      error
+    end
+
+  fun array(b: Reader ref): U32 ? =>
+    """
+    Reads an array header from any array format. Returns the
+    element count. The caller must read that many elements
+    afterward.
+    """
+    let t = b.peek_u8()?
+    if (t and 0xF0) == _FormatName.fixarray() then
+      (b.u8()? and 0x0F).u32()
+    elseif t == _FormatName.array_16() then
+      _read_type(b)?
+      b.u16_be()?.u32()
+    elseif t == _FormatName.array_32() then
+      _read_type(b)?
+      b.u32_be()?
+    else
+      error
+    end
+
+  fun map(b: Reader ref): U32 ? =>
+    """
+    Reads a map header from any map format. Returns the pair
+    count. The caller must read that many key-value pairs
+    afterward.
+    """
+    let t = b.peek_u8()?
+    if (t and 0xF0) == _FormatName.fixmap() then
+      (b.u8()? and 0x0F).u32()
+    elseif t == _FormatName.map_16() then
+      _read_type(b)?
+      b.u16_be()?.u32()
+    elseif t == _FormatName.map_32() then
+      _read_type(b)?
+      b.u32_be()?
+    else
+      error
+    end
+
+  //
   // nil format family
   //
 
@@ -158,12 +271,17 @@ primitive MessagePackDecoder
     String.from_iso_array(b.block(len)?)
 
   // Note: MessagePackStreamingDecoder pre-validates total size
-  // before calling this method. If the read sequence here changes,
-  // update the size checks in _decode_str.
+  // before calling this method for str_8/str_16/str_32. The
+  // fixstr branch below is NOT reached from the streaming
+  // decoder (it dispatches fixstr to _decode_fixstr). If the
+  // str_8/str_16/str_32 read sequence changes, update the size
+  // checks in _decode_str.
   fun str(b: Reader): String iso^ ? =>
     let t = _read_type(b)?
 
-    let len = if t == _FormatName.str_8() then
+    let len = if (t and 0xE0) == _FormatName.fixstr() then
+      (t and 0x1F).usize()
+    elseif t == _FormatName.str_8() then
       b.u8()?
     elseif t == _FormatName.str_16() then
       b.u16_be()?.usize()

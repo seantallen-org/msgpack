@@ -22,7 +22,7 @@ limitations under the License.
 Pure Pony implementation of the [MessagePack](https://msgpack.org/)
 serialization format.
 
-Three public APIs are available:
+Four public APIs are available:
 
 * `MessagePackEncoder` — Stateless encoding methods. Compact methods
   (`uint`, `int`, `str`, `bin`, `array`, `map`, `ext`, `timestamp`)
@@ -30,15 +30,21 @@ Three public APIs are available:
   (`uint_8`, `uint_32`, `fixstr`, `str_8`, etc.) are available for
   explicit control.
 
-* `MessagePackDecoder` — Stateless decoding methods. Compact methods
-  (`uint`, `int`, `str`, `array`, `map`) accept any wire format within a
-  format family. Format-specific methods are available when the caller
-  knows the exact wire format. Assumes all data is available; not suitable
-  for streaming.
+* `MessagePackDecoder` — Stateless decoding methods that work with
+  `buffered.Reader`. Compact methods (`uint`, `int`, `str`, `array`,
+  `map`) accept any wire format within a format family. Format-specific
+  methods are available when the caller knows the exact wire format.
+  Assumes all data is available; not suitable for streaming.
 
-* `MessagePackStreamingDecoder` — A streaming-safe decoder that peeks before
-  consuming bytes. Returns `NotEnoughData` when more bytes are needed, with
-  zero bytes consumed.
+* `MessagePackZeroCopyDecoder` — Zero-copy decoding methods that work
+  with `ZeroCopyReader`. Same API as `MessagePackDecoder` but returns
+  `String val` and `Array[U8] val` views into the reader's buffer
+  instead of copying. Use this when you need to avoid allocation
+  overhead for large string and binary payloads.
+
+* `MessagePackStreamingDecoder` — A streaming-safe decoder that peeks
+  before consuming bytes. Returns `NotEnoughData` when more bytes are
+  needed, with zero bytes consumed. Uses zero-copy decoding internally.
 
 ## Encoding and Decoding Scalar Values
 
@@ -168,6 +174,40 @@ match sd.next()
 | InvalidData => None // stream is corrupt
 end
 ```
+
+## Zero-Copy Decoding
+
+`ZeroCopyReader` + `MessagePackZeroCopyDecoder` provide zero-copy
+decoding as an alternative to `buffered.Reader` + `MessagePackDecoder`.
+When string or binary data falls within a single chunk, the decoder
+returns a shared view into the reader's buffer — no allocation or copy.
+When data spans chunk boundaries, it falls back to copying.
+
+`MessagePackStreamingDecoder` uses zero-copy decoding internally.
+Callers get the benefit automatically with no code changes.
+
+For low-level decoding where you want zero-copy directly:
+
+```pony
+use "buffered"
+use "msgpack"
+
+let w: Writer ref = Writer
+MessagePackEncoder.str(w, "hello")?
+
+let r = ZeroCopyReader
+for bs in w.done().values() do
+  r.append(bs)
+end
+
+let s = MessagePackZeroCopyDecoder.str(r)?
+```
+
+**Tradeoff:** `ZeroCopyReader` is specific to this package and is not
+interoperable with APIs that expect `buffered.Reader`. Decoded values
+may hold references to the reader's internal chunks, pinning them in
+memory until the decoded value is discarded. For most use cases
+(decode, process, discard) this is not a concern.
 
 ## Decoding Untrusted Data
 

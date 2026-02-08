@@ -16,8 +16,6 @@ limitations under the License.
 
 */
 
-use "buffered"
-
 class MessagePackStreamingDecoder
   """
   A streaming-safe MessagePack decoder that never corrupts the
@@ -73,7 +71,7 @@ class MessagePackStreamingDecoder
   count. The caller is responsible for subsequently reading that
   many values.
   """
-  let _reader: Reader ref
+  let _reader: ZeroCopyReader ref
   let _limits: MessagePackDecodeLimits val
   let _stack: Array[USize]
 
@@ -81,7 +79,7 @@ class MessagePackStreamingDecoder
     limits: MessagePackDecodeLimits val
       = MessagePackDecodeLimits)
   =>
-    _reader = Reader
+    _reader = ZeroCopyReader
     _limits = limits
     _stack = Array[USize]
 
@@ -424,7 +422,7 @@ class MessagePackStreamingDecoder
   fun ref _decode_nil(): DecodeResult =>
     // 0xC0: 1 byte total
     try
-      MessagePackDecoder.nil(_reader)?
+      MessagePackZeroCopyDecoder.nil(_reader)?
     else
       _Unreachable()
       InvalidData
@@ -433,7 +431,7 @@ class MessagePackStreamingDecoder
   fun ref _decode_bool(): DecodeResult =>
     // 0xC2/0xC3: 1 byte total
     try
-      MessagePackDecoder.bool(_reader)?
+      MessagePackZeroCopyDecoder.bool(_reader)?
     else
       _Unreachable()
       InvalidData
@@ -446,7 +444,7 @@ class MessagePackStreamingDecoder
   fun ref _decode_float_32(): DecodeResult =>
     // 0xCA: 1 type + 4 data = 5 bytes
     if _reader.size() < 5 then return NotEnoughData end
-    try MessagePackDecoder.f32(_reader)?
+    try MessagePackZeroCopyDecoder.f32(_reader)?
     else
       _Unreachable()
       InvalidData
@@ -455,7 +453,7 @@ class MessagePackStreamingDecoder
   fun ref _decode_float_64(): DecodeResult =>
     // 0xCB: 1 type + 8 data = 9 bytes
     if _reader.size() < 9 then return NotEnoughData end
-    try MessagePackDecoder.f64(_reader)?
+    try MessagePackZeroCopyDecoder.f64(_reader)?
     else
       _Unreachable()
       InvalidData
@@ -477,13 +475,13 @@ class MessagePackStreamingDecoder
 
     try
       if fb == _FormatName.uint_8() then
-        MessagePackDecoder.u8(_reader)?
+        MessagePackZeroCopyDecoder.u8(_reader)?
       elseif fb == _FormatName.uint_16() then
-        MessagePackDecoder.u16(_reader)?
+        MessagePackZeroCopyDecoder.u16(_reader)?
       elseif fb == _FormatName.uint_32() then
-        MessagePackDecoder.u32(_reader)?
+        MessagePackZeroCopyDecoder.u32(_reader)?
       else
-        MessagePackDecoder.u64(_reader)?
+        MessagePackZeroCopyDecoder.u64(_reader)?
       end
     else
       _Unreachable()
@@ -506,13 +504,13 @@ class MessagePackStreamingDecoder
 
     try
       if fb == _FormatName.int_8() then
-        MessagePackDecoder.i8(_reader)?
+        MessagePackZeroCopyDecoder.i8(_reader)?
       elseif fb == _FormatName.int_16() then
-        MessagePackDecoder.i16(_reader)?
+        MessagePackZeroCopyDecoder.i16(_reader)?
       elseif fb == _FormatName.int_32() then
-        MessagePackDecoder.i32(_reader)?
+        MessagePackZeroCopyDecoder.i32(_reader)?
       else
-        MessagePackDecoder.i64(_reader)?
+        MessagePackZeroCopyDecoder.i64(_reader)?
       end
     else
       _Unreachable()
@@ -532,7 +530,7 @@ class MessagePackStreamingDecoder
     if _reader.size() < (1 + data_len) then
       return NotEnoughData
     end
-    try MessagePackDecoder.fixstr(_reader)?
+    try MessagePackZeroCopyDecoder.fixstr(_reader)?
     else
       _Unreachable()
       InvalidData
@@ -575,11 +573,11 @@ class MessagePackStreamingDecoder
 
     try
       if fb == _FormatName.str_8() then
-        MessagePackDecoder.str_8(_reader)?
+        MessagePackZeroCopyDecoder.str_8(_reader)?
       elseif fb == _FormatName.str_16() then
-        MessagePackDecoder.str_16(_reader)?
+        MessagePackZeroCopyDecoder.str_16(_reader)?
       else
-        MessagePackDecoder.str_32(_reader)?
+        MessagePackZeroCopyDecoder.str_32(_reader)?
       end
     else
       _Unreachable()
@@ -627,11 +625,11 @@ class MessagePackStreamingDecoder
 
     try
       if fb == _FormatName.bin_8() then
-        MessagePackDecoder.bin_8(_reader)?
+        MessagePackZeroCopyDecoder.bin_8(_reader)?
       elseif fb == _FormatName.bin_16() then
-        MessagePackDecoder.bin_16(_reader)?
+        MessagePackZeroCopyDecoder.bin_16(_reader)?
       else
-        MessagePackDecoder.bin_32(_reader)?
+        MessagePackZeroCopyDecoder.bin_32(_reader)?
       end
     else
       _Unreachable()
@@ -653,7 +651,7 @@ class MessagePackStreamingDecoder
     end
     try
       MessagePackArray(
-        MessagePackDecoder.fixarray(_reader)?.u32())
+        MessagePackZeroCopyDecoder.fixarray(_reader)?.u32())
     else
       _Unreachable()
       InvalidData
@@ -690,10 +688,10 @@ class MessagePackStreamingDecoder
     try
       if fb == _FormatName.array_16() then
         MessagePackArray(
-          MessagePackDecoder.array_16(_reader)?.u32())
+          MessagePackZeroCopyDecoder.array_16(_reader)?.u32())
       else
         MessagePackArray(
-          MessagePackDecoder.array_32(_reader)?)
+          MessagePackZeroCopyDecoder.array_32(_reader)?)
       end
     else
       _Unreachable()
@@ -715,7 +713,7 @@ class MessagePackStreamingDecoder
     end
     try
       MessagePackMap(
-        MessagePackDecoder.fixmap(_reader)?.u32())
+        MessagePackZeroCopyDecoder.fixmap(_reader)?.u32())
     else
       _Unreachable()
       InvalidData
@@ -752,10 +750,10 @@ class MessagePackStreamingDecoder
     try
       if fb == _FormatName.map_16() then
         MessagePackMap(
-          MessagePackDecoder.map_16(_reader)?.u32())
+          MessagePackZeroCopyDecoder.map_16(_reader)?.u32())
       else
         MessagePackMap(
-          MessagePackDecoder.map_32(_reader)?)
+          MessagePackZeroCopyDecoder.map_32(_reader)?)
       end
     else
       _Unreachable()
@@ -804,15 +802,15 @@ class MessagePackStreamingDecoder
     try
       (let t, let d) =
         if fb == _FormatName.fixext_1() then
-          MessagePackDecoder.fixext_1(_reader)?
+          MessagePackZeroCopyDecoder.fixext_1(_reader)?
         elseif fb == _FormatName.fixext_2() then
-          MessagePackDecoder.fixext_2(_reader)?
+          MessagePackZeroCopyDecoder.fixext_2(_reader)?
         elseif fb == _FormatName.fixext_4() then
-          MessagePackDecoder.fixext_4(_reader)?
+          MessagePackZeroCopyDecoder.fixext_4(_reader)?
         elseif fb == _FormatName.fixext_8() then
-          MessagePackDecoder.fixext_8(_reader)?
+          MessagePackZeroCopyDecoder.fixext_8(_reader)?
         else
-          MessagePackDecoder.fixext_16(_reader)?
+          MessagePackZeroCopyDecoder.fixext_16(_reader)?
         end
       MessagePackExt(t, d)
     else
@@ -876,11 +874,11 @@ class MessagePackStreamingDecoder
     try
       (let t, let d) =
         if fb == _FormatName.ext_8() then
-          MessagePackDecoder.ext_8(_reader)?
+          MessagePackZeroCopyDecoder.ext_8(_reader)?
         elseif fb == _FormatName.ext_16() then
-          MessagePackDecoder.ext_16(_reader)?
+          MessagePackZeroCopyDecoder.ext_16(_reader)?
         else
-          MessagePackDecoder.ext_32(_reader)?
+          MessagePackZeroCopyDecoder.ext_32(_reader)?
         end
       MessagePackExt(t, d)
     else
@@ -894,7 +892,7 @@ class MessagePackStreamingDecoder
 
   fun ref _decode_timestamp(): DecodeResult =>
     try
-      (let sec, let nsec) = MessagePackDecoder.timestamp(_reader)?
+      (let sec, let nsec) = MessagePackZeroCopyDecoder.timestamp(_reader)?
       MessagePackTimestamp(sec, nsec)
     else
       _Unreachable()

@@ -2,30 +2,74 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://seantallen-org.github.io/msgpack/</loc>
-         <lastmod>2025-07-14</lastmod>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack--index/</loc>
-         <lastmod>2025-07-14</lastmod>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-DecodeResult/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-InvalidData/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackArray/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackDecoder/</loc>
-         <lastmod>2025-07-14</lastmod>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackEncoder/</loc>
-         <lastmod>2025-07-14</lastmod>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackExt/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackMap/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackStreamingDecoder/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackTimestamp/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackType/</loc>
-         <lastmod>2025-07-14</lastmod>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackValue/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-NotEnoughData/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_decoder/</loc>
-         <lastmod>2025-07-14</lastmod>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_encoder/</loc>
-         <lastmod>2025-07-14</lastmod>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_streaming_decoder/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_types/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
 </urlset>

@@ -9,6 +9,7 @@ All notable changes this project will be documented in this file. This project a
 
 ### Added
 
+- Add decoding size limits to streaming decoder ([PR #71](https://github.com/seantallen-org/msgpack/pull/71))
 
 ### Changed
 

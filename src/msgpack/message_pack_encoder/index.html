@@ -357,6 +357,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../msgpack-InvalidUtf8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive InvalidUtf8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../msgpack-LimitExceeded/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive LimitExceeded
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../msgpack-MessagePackArray/" class="md-nav__link">
         
   
@@ -365,6 +421,34 @@
     
   
     class MessagePackArray
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../msgpack-MessagePackDecodeLimits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    class MessagePackDecodeLimits
   
 
     
@@ -581,6 +665,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../msgpack-MessagePackValidateUTF8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive MessagePackValidateUTF8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../msgpack-MessagePackValue/" class="md-nav__link">
         
   
@@ -609,6 +721,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../msgpack-MessagePackZeroCopyDecoder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive MessagePackZeroCopyDecoder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../msgpack-NotEnoughData/" class="md-nav__link">
         
   
@@ -617,6 +757,62 @@
     
   
     primitive NotEnoughData
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../msgpack-SkipResult/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    type SkipResult
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../msgpack-ZeroCopyReader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    class ZeroCopyReader
   
 
     
@@ -1455,7 +1651,79 @@
 <span class="normal"><a href="#L-0-777">777</a></span>
 <span class="normal"><a href="#L-0-778">778</a></span>
 <span class="normal"><a href="#L-0-779">779</a></span>
-<span class="normal"><a href="#L-0-780">780</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="L-0-1" name="L-0-1"></a><span class="cm">/*</span>
+<span class="normal"><a href="#L-0-780">780</a></span>
+<span class="normal"><a href="#L-0-781">781</a></span>
+<span class="normal"><a href="#L-0-782">782</a></span>
+<span class="normal"><a href="#L-0-783">783</a></span>
+<span class="normal"><a href="#L-0-784">784</a></span>
+<span class="normal"><a href="#L-0-785">785</a></span>
+<span class="normal"><a href="#L-0-786">786</a></span>
+<span class="normal"><a href="#L-0-787">787</a></span>
+<span class="normal"><a href="#L-0-788">788</a></span>
+<span class="normal"><a href="#L-0-789">789</a></span>
+<span class="normal"><a href="#L-0-790">790</a></span>
+<span class="normal"><a href="#L-0-791">791</a></span>
+<span class="normal"><a href="#L-0-792">792</a></span>
+<span class="normal"><a href="#L-0-793">793</a></span>
+<span class="normal"><a href="#L-0-794">794</a></span>
+<span class="normal"><a href="#L-0-795">795</a></span>
+<span class="normal"><a href="#L-0-796">796</a></span>
+<span class="normal"><a href="#L-0-797">797</a></span>
+<span class="normal"><a href="#L-0-798">798</a></span>
+<span class="normal"><a href="#L-0-799">799</a></span>
+<span class="normal"><a href="#L-0-800">800</a></span>
+<span class="normal"><a href="#L-0-801">801</a></span>
+<span class="normal"><a href="#L-0-802">802</a></span>
+<span class="normal"><a href="#L-0-803">803</a></span>
+<span class="normal"><a href="#L-0-804">804</a></span>
+<span class="normal"><a href="#L-0-805">805</a></span>
+<span class="normal"><a href="#L-0-806">806</a></span>
+<span class="normal"><a href="#L-0-807">807</a></span>
+<span class="normal"><a href="#L-0-808">808</a></span>
+<span class="normal"><a href="#L-0-809">809</a></span>
+<span class="normal"><a href="#L-0-810">810</a></span>
+<span class="normal"><a href="#L-0-811">811</a></span>
+<span class="normal"><a href="#L-0-812">812</a></span>
+<span class="normal"><a href="#L-0-813">813</a></span>
+<span class="normal"><a href="#L-0-814">814</a></span>
+<span class="normal"><a href="#L-0-815">815</a></span>
+<span class="normal"><a href="#L-0-816">816</a></span>
+<span class="normal"><a href="#L-0-817">817</a></span>
+<span class="normal"><a href="#L-0-818">818</a></span>
+<span class="normal"><a href="#L-0-819">819</a></span>
+<span class="normal"><a href="#L-0-820">820</a></span>
+<span class="normal"><a href="#L-0-821">821</a></span>
+<span class="normal"><a href="#L-0-822">822</a></span>
+<span class="normal"><a href="#L-0-823">823</a></span>
+<span class="normal"><a href="#L-0-824">824</a></span>
+<span class="normal"><a href="#L-0-825">825</a></span>
+<span class="normal"><a href="#L-0-826">826</a></span>
+<span class="normal"><a href="#L-0-827">827</a></span>
+<span class="normal"><a href="#L-0-828">828</a></span>
+<span class="normal"><a href="#L-0-829">829</a></span>
+<span class="normal"><a href="#L-0-830">830</a></span>
+<span class="normal"><a href="#L-0-831">831</a></span>
+<span class="normal"><a href="#L-0-832">832</a></span>
+<span class="normal"><a href="#L-0-833">833</a></span>
+<span class="normal"><a href="#L-0-834">834</a></span>
+<span class="normal"><a href="#L-0-835">835</a></span>
+<span class="normal"><a href="#L-0-836">836</a></span>
+<span class="normal"><a href="#L-0-837">837</a></span>
+<span class="normal"><a href="#L-0-838">838</a></span>
+<span class="normal"><a href="#L-0-839">839</a></span>
+<span class="normal"><a href="#L-0-840">840</a></span>
+<span class="normal"><a href="#L-0-841">841</a></span>
+<span class="normal"><a href="#L-0-842">842</a></span>
+<span class="normal"><a href="#L-0-843">843</a></span>
+<span class="normal"><a href="#L-0-844">844</a></span>
+<span class="normal"><a href="#L-0-845">845</a></span>
+<span class="normal"><a href="#L-0-846">846</a></span>
+<span class="normal"><a href="#L-0-847">847</a></span>
+<span class="normal"><a href="#L-0-848">848</a></span>
+<span class="normal"><a href="#L-0-849">849</a></span>
+<span class="normal"><a href="#L-0-850">850</a></span>
+<span class="normal"><a href="#L-0-851">851</a></span>
+<span class="normal"><a href="#L-0-852">852</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="L-0-1" name="L-0-1"></a><span class="cm">/*</span>
 <a id="L-0-2" name="L-0-2"></a>
 <a id="L-0-3" name="L-0-3"></a><span class="cm">Copyright 2017 The Pony MessagePack Developers</span>
 <a id="L-0-4" name="L-0-4"></a>
@@ -1821,420 +2089,492 @@
 <a id="L-0-364" name="L-0-364"></a>    <span class="n">_write_byte_array_32</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">str_32</span><span class="p">())?</span>
 <a id="L-0-365" name="L-0-365"></a>
 <a id="L-0-366" name="L-0-366"></a>  <span class="c1">//</span>
-<a id="L-0-367" name="L-0-367"></a>  <span class="c1">// bin format family</span>
+<a id="L-0-367" name="L-0-367"></a>  <span class="c1">// str format family — UTF-8 validating variants</span>
 <a id="L-0-368" name="L-0-368"></a>  <span class="c1">//</span>
 <a id="L-0-369" name="L-0-369"></a>
-<a id="L-0-370" name="L-0-370"></a>  <span class="k">fun</span> <span class="nf">bin_8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-370" name="L-0-370"></a>  <span class="k">fun</span> <span class="nf">str_utf8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
 <a id="L-0-371" name="L-0-371"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-372" name="L-0-372"></a><span class="sd">    bin 8 stores a byte array whose length is upto (2^8)-1 bytes.</span>
-<a id="L-0-373" name="L-0-373"></a>
-<a id="L-0-374" name="L-0-374"></a><span class="sd">    Attempting to encode a `ByteSeq` larger than (2^8)-1 bytes will result in</span>
-<a id="L-0-375" name="L-0-375"></a><span class="sd">    an `error`.</span>
-<a id="L-0-376" name="L-0-376"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-377" name="L-0-377"></a>    <span class="n">_write_byte_array_8</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">bin_8</span><span class="p">())?</span>
-<a id="L-0-378" name="L-0-378"></a>
-<a id="L-0-379" name="L-0-379"></a>  <span class="k">fun</span> <span class="nf">bin_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-380" name="L-0-380"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-381" name="L-0-381"></a><span class="sd">    bin 16 stores a byte array whose length is upto (2^16)-1 bytes.</span>
+<a id="L-0-372" name="L-0-372"></a><span class="sd">    Encodes a string using the smallest format that fits the</span>
+<a id="L-0-373" name="L-0-373"></a><span class="sd">    byte length, after validating that the bytes are valid</span>
+<a id="L-0-374" name="L-0-374"></a><span class="sd">    UTF-8.</span>
+<a id="L-0-375" name="L-0-375"></a>
+<a id="L-0-376" name="L-0-376"></a><span class="sd">    Errors if the bytes are not valid UTF-8 or if the value is</span>
+<a id="L-0-377" name="L-0-377"></a><span class="sd">    too large to encode. For the non-validating variant, use</span>
+<a id="L-0-378" name="L-0-378"></a><span class="sd">    `str()`.</span>
+<a id="L-0-379" name="L-0-379"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-380" name="L-0-380"></a>    <span class="n">_validate_utf8</span><span class="p">(</span><span class="n">v</span><span class="p">)?</span>
+<a id="L-0-381" name="L-0-381"></a>    <span class="n">str</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">)?</span>
 <a id="L-0-382" name="L-0-382"></a>
-<a id="L-0-383" name="L-0-383"></a><span class="sd">    Attempting to encode a `ByteSeq` larger than (2^16)-1 bytes will result in</span>
-<a id="L-0-384" name="L-0-384"></a><span class="sd">    an `error`.</span>
-<a id="L-0-385" name="L-0-385"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-386" name="L-0-386"></a>    <span class="n">_write_byte_array_16</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">bin_16</span><span class="p">())?</span>
+<a id="L-0-383" name="L-0-383"></a>  <span class="k">fun</span> <span class="nf">fixstr_utf8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-384" name="L-0-384"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-385" name="L-0-385"></a><span class="sd">    Encodes a fixstr value after validating that the bytes are</span>
+<a id="L-0-386" name="L-0-386"></a><span class="sd">    valid UTF-8.</span>
 <a id="L-0-387" name="L-0-387"></a>
-<a id="L-0-388" name="L-0-388"></a>   <span class="k">fun</span> <span class="nf">bin_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-389" name="L-0-389"></a>     <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-390" name="L-0-390"></a><span class="sd">     bin 32 stores a byte array whose length is upto (2^32)-1 bytes.</span>
-<a id="L-0-391" name="L-0-391"></a>
-<a id="L-0-392" name="L-0-392"></a><span class="sd">     Attempting to encode a `ByteSeq` larger than (2^32)-1 bytes will result in</span>
-<a id="L-0-393" name="L-0-393"></a><span class="sd">     an `error`.</span>
-<a id="L-0-394" name="L-0-394"></a><span class="sd">     &quot;&quot;&quot;</span>
-<a id="L-0-395" name="L-0-395"></a>    <span class="n">_write_byte_array_32</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">bin_32</span><span class="p">())?</span>
-<a id="L-0-396" name="L-0-396"></a>
-<a id="L-0-397" name="L-0-397"></a>  <span class="c1">//</span>
-<a id="L-0-398" name="L-0-398"></a>  <span class="c1">// array format family</span>
-<a id="L-0-399" name="L-0-399"></a>  <span class="c1">//</span>
-<a id="L-0-400" name="L-0-400"></a>
-<a id="L-0-401" name="L-0-401"></a>  <span class="k">fun</span> <span class="nf">fixarray</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-402" name="L-0-402"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-403" name="L-0-403"></a><span class="sd">    Creates a header for a MessagePack &quot;fixarray&quot;. This only creates the</span>
-<a id="L-0-404" name="L-0-404"></a><span class="sd">    header. `s` number of array items should be written via other methods</span>
-<a id="L-0-405" name="L-0-405"></a><span class="sd">    after this is called.</span>
+<a id="L-0-388" name="L-0-388"></a><span class="sd">    Errors if the bytes are not valid UTF-8 or if the value</span>
+<a id="L-0-389" name="L-0-389"></a><span class="sd">    exceeds 31 bytes. For the non-validating variant, use</span>
+<a id="L-0-390" name="L-0-390"></a><span class="sd">    `fixstr()`.</span>
+<a id="L-0-391" name="L-0-391"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-392" name="L-0-392"></a>    <span class="n">_validate_utf8</span><span class="p">(</span><span class="n">v</span><span class="p">)?</span>
+<a id="L-0-393" name="L-0-393"></a>    <span class="n">fixstr</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">)?</span>
+<a id="L-0-394" name="L-0-394"></a>
+<a id="L-0-395" name="L-0-395"></a>  <span class="k">fun</span> <span class="nf">str_8_utf8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-396" name="L-0-396"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-397" name="L-0-397"></a><span class="sd">    Encodes a str 8 value after validating that the bytes are</span>
+<a id="L-0-398" name="L-0-398"></a><span class="sd">    valid UTF-8.</span>
+<a id="L-0-399" name="L-0-399"></a>
+<a id="L-0-400" name="L-0-400"></a><span class="sd">    Errors if the bytes are not valid UTF-8 or if the value</span>
+<a id="L-0-401" name="L-0-401"></a><span class="sd">    exceeds (2^8)-1 bytes. For the non-validating variant, use</span>
+<a id="L-0-402" name="L-0-402"></a><span class="sd">    `str_8()`.</span>
+<a id="L-0-403" name="L-0-403"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-404" name="L-0-404"></a>    <span class="n">_validate_utf8</span><span class="p">(</span><span class="n">v</span><span class="p">)?</span>
+<a id="L-0-405" name="L-0-405"></a>    <span class="n">str_8</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">)?</span>
 <a id="L-0-406" name="L-0-406"></a>
-<a id="L-0-407" name="L-0-407"></a><span class="sd">    fixarray stores an array whose length is upto 15 elements.</span>
-<a id="L-0-408" name="L-0-408"></a>
-<a id="L-0-409" name="L-0-409"></a><span class="sd">    Attempting to encode a value larger than 15 will result in an `error`.</span>
-<a id="L-0-410" name="L-0-410"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-411" name="L-0-411"></a>    <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">fixarray</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-412" name="L-0-412"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixarray</span><span class="p">()</span> <span class="ow">or</span> <span class="n">s</span><span class="p">))</span>
-<a id="L-0-413" name="L-0-413"></a>    <span class="k">else</span>
-<a id="L-0-414" name="L-0-414"></a>      <span class="k">error</span>
-<a id="L-0-415" name="L-0-415"></a>    <span class="k">end</span>
-<a id="L-0-416" name="L-0-416"></a>
-<a id="L-0-417" name="L-0-417"></a>  <span class="k">fun</span> <span class="nf">array_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U16</span><span class="p">)</span> <span class="p">=&gt;</span>
-<a id="L-0-418" name="L-0-418"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-419" name="L-0-419"></a><span class="sd">    Creates a header for a MessagePack &quot;array_16&quot;. This only creates the</span>
-<a id="L-0-420" name="L-0-420"></a><span class="sd">    header. `s` number of array items should be written via other methods</span>
-<a id="L-0-421" name="L-0-421"></a><span class="sd">    after this is called.</span>
-<a id="L-0-422" name="L-0-422"></a>
-<a id="L-0-423" name="L-0-423"></a><span class="sd">    array 16 stores an array whose length is upto (2^16)-1 elements.</span>
-<a id="L-0-424" name="L-0-424"></a>
-<a id="L-0-425" name="L-0-425"></a><span class="sd">    Attempting to encode a value larger than (2^16)-1 bytes will result in</span>
-<a id="L-0-426" name="L-0-426"></a><span class="sd">    an `error`.</span>
+<a id="L-0-407" name="L-0-407"></a>  <span class="k">fun</span> <span class="nf">str_16_utf8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-408" name="L-0-408"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-409" name="L-0-409"></a><span class="sd">    Encodes a str 16 value after validating that the bytes are</span>
+<a id="L-0-410" name="L-0-410"></a><span class="sd">    valid UTF-8.</span>
+<a id="L-0-411" name="L-0-411"></a>
+<a id="L-0-412" name="L-0-412"></a><span class="sd">    Errors if the bytes are not valid UTF-8 or if the value</span>
+<a id="L-0-413" name="L-0-413"></a><span class="sd">    exceeds (2^16)-1 bytes. For the non-validating variant, use</span>
+<a id="L-0-414" name="L-0-414"></a><span class="sd">    `str_16()`.</span>
+<a id="L-0-415" name="L-0-415"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-416" name="L-0-416"></a>    <span class="n">_validate_utf8</span><span class="p">(</span><span class="n">v</span><span class="p">)?</span>
+<a id="L-0-417" name="L-0-417"></a>    <span class="n">str_16</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">)?</span>
+<a id="L-0-418" name="L-0-418"></a>
+<a id="L-0-419" name="L-0-419"></a>  <span class="k">fun</span> <span class="nf">str_32_utf8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-420" name="L-0-420"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-421" name="L-0-421"></a><span class="sd">    Encodes a str 32 value after validating that the bytes are</span>
+<a id="L-0-422" name="L-0-422"></a><span class="sd">    valid UTF-8.</span>
+<a id="L-0-423" name="L-0-423"></a>
+<a id="L-0-424" name="L-0-424"></a><span class="sd">    Errors if the bytes are not valid UTF-8 or if the value</span>
+<a id="L-0-425" name="L-0-425"></a><span class="sd">    exceeds (2^32)-1 bytes. For the non-validating variant, use</span>
+<a id="L-0-426" name="L-0-426"></a><span class="sd">    `str_32()`.</span>
 <a id="L-0-427" name="L-0-427"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-428" name="L-0-428"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">array_16</span><span class="p">())</span>
-<a id="L-0-429" name="L-0-429"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u16_be</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<a id="L-0-428" name="L-0-428"></a>    <span class="n">_validate_utf8</span><span class="p">(</span><span class="n">v</span><span class="p">)?</span>
+<a id="L-0-429" name="L-0-429"></a>    <span class="n">str_32</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">)?</span>
 <a id="L-0-430" name="L-0-430"></a>
-<a id="L-0-431" name="L-0-431"></a>  <span class="k">fun</span> <span class="nf">array_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">=&gt;</span>
-<a id="L-0-432" name="L-0-432"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-433" name="L-0-433"></a><span class="sd">    Creates a header for a MessagePack &quot;array_32&quot;. This only creates the</span>
-<a id="L-0-434" name="L-0-434"></a><span class="sd">    header. `s` number of array items should be written via other methods</span>
-<a id="L-0-435" name="L-0-435"></a><span class="sd">    after this is called.</span>
-<a id="L-0-436" name="L-0-436"></a>
-<a id="L-0-437" name="L-0-437"></a><span class="sd">    array 32 stores an array whose length is upto (2^32)-1 elements.</span>
-<a id="L-0-438" name="L-0-438"></a>
-<a id="L-0-439" name="L-0-439"></a><span class="sd">    Attempting to encode a value larger than (2^32)-1 bytes will result in</span>
-<a id="L-0-440" name="L-0-440"></a><span class="sd">    an `error`.</span>
-<a id="L-0-441" name="L-0-441"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-442" name="L-0-442"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">array_32</span><span class="p">())</span>
-<a id="L-0-443" name="L-0-443"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<a id="L-0-444" name="L-0-444"></a>
-<a id="L-0-445" name="L-0-445"></a>  <span class="c1">//</span>
-<a id="L-0-446" name="L-0-446"></a>  <span class="c1">// map format family</span>
-<a id="L-0-447" name="L-0-447"></a>  <span class="c1">//</span>
-<a id="L-0-448" name="L-0-448"></a>
-<a id="L-0-449" name="L-0-449"></a>  <span class="k">fun</span> <span class="nf">fixmap</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-450" name="L-0-450"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-451" name="L-0-451"></a><span class="sd">    Creates a header for a MessagePack &quot;fixmap&quot;. This only creates the</span>
-<a id="L-0-452" name="L-0-452"></a><span class="sd">    header. `s` number of map items should be written via other methods</span>
-<a id="L-0-453" name="L-0-453"></a><span class="sd">    after this is called.</span>
+<a id="L-0-431" name="L-0-431"></a>  <span class="k">fun</span> <span class="nf">_validate_utf8</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-432" name="L-0-432"></a>    <span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="k">match</span> <span class="n">v</span>
+<a id="L-0-433" name="L-0-433"></a>    <span class="p">|</span> <span class="k">let</span> <span class="n">s&#39;</span><span class="p">:</span> <span class="nb nb-Type">String</span> <span class="k">val</span> <span class="p">=&gt;</span> <span class="n">s&#39;</span>
+<a id="L-0-434" name="L-0-434"></a>    <span class="p">|</span> <span class="k">let</span> <span class="n">a</span><span class="p">:</span> <span class="nb nb-Type">Array</span><span class="p">[</span><span class="nb nb-Type">U8</span><span class="p">]</span> <span class="k">val</span> <span class="p">=&gt;</span> <span class="nb nb-Type">String</span><span class="p">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<a id="L-0-435" name="L-0-435"></a>    <span class="k">end</span>
+<a id="L-0-436" name="L-0-436"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n n-Type">MessagePackValidateUTF8</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">then</span> <span class="k">error</span> <span class="k">end</span>
+<a id="L-0-437" name="L-0-437"></a>
+<a id="L-0-438" name="L-0-438"></a>  <span class="c1">//</span>
+<a id="L-0-439" name="L-0-439"></a>  <span class="c1">// bin format family</span>
+<a id="L-0-440" name="L-0-440"></a>  <span class="c1">//</span>
+<a id="L-0-441" name="L-0-441"></a>
+<a id="L-0-442" name="L-0-442"></a>  <span class="k">fun</span> <span class="nf">bin_8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-443" name="L-0-443"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-444" name="L-0-444"></a><span class="sd">    bin 8 stores a byte array whose length is upto (2^8)-1 bytes.</span>
+<a id="L-0-445" name="L-0-445"></a>
+<a id="L-0-446" name="L-0-446"></a><span class="sd">    Attempting to encode a `ByteSeq` larger than (2^8)-1 bytes will result in</span>
+<a id="L-0-447" name="L-0-447"></a><span class="sd">    an `error`.</span>
+<a id="L-0-448" name="L-0-448"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-449" name="L-0-449"></a>    <span class="n">_write_byte_array_8</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">bin_8</span><span class="p">())?</span>
+<a id="L-0-450" name="L-0-450"></a>
+<a id="L-0-451" name="L-0-451"></a>  <span class="k">fun</span> <span class="nf">bin_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-452" name="L-0-452"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-453" name="L-0-453"></a><span class="sd">    bin 16 stores a byte array whose length is upto (2^16)-1 bytes.</span>
 <a id="L-0-454" name="L-0-454"></a>
-<a id="L-0-455" name="L-0-455"></a><span class="sd">    fixmap stores a map whose length is upto 15 elements.</span>
-<a id="L-0-456" name="L-0-456"></a>
-<a id="L-0-457" name="L-0-457"></a><span class="sd">    Attempting to encode a value larger than 15 will result in an `error`.</span>
-<a id="L-0-458" name="L-0-458"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-459" name="L-0-459"></a>    <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">fixmap</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-460" name="L-0-460"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixmap</span><span class="p">()</span> <span class="ow">or</span> <span class="n">s</span><span class="p">))</span>
-<a id="L-0-461" name="L-0-461"></a>    <span class="k">else</span>
-<a id="L-0-462" name="L-0-462"></a>      <span class="k">error</span>
-<a id="L-0-463" name="L-0-463"></a>    <span class="k">end</span>
-<a id="L-0-464" name="L-0-464"></a>
-<a id="L-0-465" name="L-0-465"></a>  <span class="k">fun</span> <span class="nf">map_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U16</span><span class="p">)</span> <span class="p">=&gt;</span>
-<a id="L-0-466" name="L-0-466"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-467" name="L-0-467"></a><span class="sd">    Creates a header for a MessagePack &quot;map_16&quot;. This only creates the</span>
-<a id="L-0-468" name="L-0-468"></a><span class="sd">    header. `s` number of map items should be written via other methods</span>
-<a id="L-0-469" name="L-0-469"></a><span class="sd">    after this is called.</span>
-<a id="L-0-470" name="L-0-470"></a>
-<a id="L-0-471" name="L-0-471"></a><span class="sd">    map 16 stores an array whose length is upto (2^16)-1 elements.</span>
+<a id="L-0-455" name="L-0-455"></a><span class="sd">    Attempting to encode a `ByteSeq` larger than (2^16)-1 bytes will result in</span>
+<a id="L-0-456" name="L-0-456"></a><span class="sd">    an `error`.</span>
+<a id="L-0-457" name="L-0-457"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-458" name="L-0-458"></a>    <span class="n">_write_byte_array_16</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">bin_16</span><span class="p">())?</span>
+<a id="L-0-459" name="L-0-459"></a>
+<a id="L-0-460" name="L-0-460"></a>   <span class="k">fun</span> <span class="nf">bin_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-461" name="L-0-461"></a>     <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-462" name="L-0-462"></a><span class="sd">     bin 32 stores a byte array whose length is upto (2^32)-1 bytes.</span>
+<a id="L-0-463" name="L-0-463"></a>
+<a id="L-0-464" name="L-0-464"></a><span class="sd">     Attempting to encode a `ByteSeq` larger than (2^32)-1 bytes will result in</span>
+<a id="L-0-465" name="L-0-465"></a><span class="sd">     an `error`.</span>
+<a id="L-0-466" name="L-0-466"></a><span class="sd">     &quot;&quot;&quot;</span>
+<a id="L-0-467" name="L-0-467"></a>    <span class="n">_write_byte_array_32</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">bin_32</span><span class="p">())?</span>
+<a id="L-0-468" name="L-0-468"></a>
+<a id="L-0-469" name="L-0-469"></a>  <span class="c1">//</span>
+<a id="L-0-470" name="L-0-470"></a>  <span class="c1">// array format family</span>
+<a id="L-0-471" name="L-0-471"></a>  <span class="c1">//</span>
 <a id="L-0-472" name="L-0-472"></a>
-<a id="L-0-473" name="L-0-473"></a><span class="sd">    Attempting to encode a value larger than (2^16)-1 bytes will result in</span>
-<a id="L-0-474" name="L-0-474"></a><span class="sd">    an `error`.</span>
-<a id="L-0-475" name="L-0-475"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-476" name="L-0-476"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">map_16</span><span class="p">())</span>
-<a id="L-0-477" name="L-0-477"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u16_be</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<a id="L-0-473" name="L-0-473"></a>  <span class="k">fun</span> <span class="nf">fixarray</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-474" name="L-0-474"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-475" name="L-0-475"></a><span class="sd">    Creates a header for a MessagePack &quot;fixarray&quot;. This only creates the</span>
+<a id="L-0-476" name="L-0-476"></a><span class="sd">    header. `s` number of array items should be written via other methods</span>
+<a id="L-0-477" name="L-0-477"></a><span class="sd">    after this is called.</span>
 <a id="L-0-478" name="L-0-478"></a>
-<a id="L-0-479" name="L-0-479"></a>  <span class="k">fun</span> <span class="nf">map_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">=&gt;</span>
-<a id="L-0-480" name="L-0-480"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-481" name="L-0-481"></a><span class="sd">    Creates a header for a MessagePack &quot;map_32&quot;. This only creates the</span>
-<a id="L-0-482" name="L-0-482"></a><span class="sd">    header. `s` number of map items should be written via other methods</span>
-<a id="L-0-483" name="L-0-483"></a><span class="sd">    after this is called.</span>
-<a id="L-0-484" name="L-0-484"></a>
-<a id="L-0-485" name="L-0-485"></a><span class="sd">    map 32 stores an array whose length is upto (2^32)-1 elements.</span>
-<a id="L-0-486" name="L-0-486"></a>
-<a id="L-0-487" name="L-0-487"></a><span class="sd">    Attempting to encode a value larger than (2^32)-1 bytes will result in</span>
-<a id="L-0-488" name="L-0-488"></a><span class="sd">    an `error`.</span>
-<a id="L-0-489" name="L-0-489"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-490" name="L-0-490"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">map_32</span><span class="p">())</span>
-<a id="L-0-491" name="L-0-491"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<a id="L-0-492" name="L-0-492"></a>
-<a id="L-0-493" name="L-0-493"></a>  <span class="c1">//</span>
-<a id="L-0-494" name="L-0-494"></a>  <span class="c1">// ext format family</span>
-<a id="L-0-495" name="L-0-495"></a>  <span class="c1">//</span>
+<a id="L-0-479" name="L-0-479"></a><span class="sd">    fixarray stores an array whose length is upto 15 elements.</span>
+<a id="L-0-480" name="L-0-480"></a>
+<a id="L-0-481" name="L-0-481"></a><span class="sd">    Attempting to encode a value larger than 15 will result in an `error`.</span>
+<a id="L-0-482" name="L-0-482"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-483" name="L-0-483"></a>    <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">fixarray</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-484" name="L-0-484"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixarray</span><span class="p">()</span> <span class="ow">or</span> <span class="n">s</span><span class="p">))</span>
+<a id="L-0-485" name="L-0-485"></a>    <span class="k">else</span>
+<a id="L-0-486" name="L-0-486"></a>      <span class="k">error</span>
+<a id="L-0-487" name="L-0-487"></a>    <span class="k">end</span>
+<a id="L-0-488" name="L-0-488"></a>
+<a id="L-0-489" name="L-0-489"></a>  <span class="k">fun</span> <span class="nf">array_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U16</span><span class="p">)</span> <span class="p">=&gt;</span>
+<a id="L-0-490" name="L-0-490"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-491" name="L-0-491"></a><span class="sd">    Creates a header for a MessagePack &quot;array_16&quot;. This only creates the</span>
+<a id="L-0-492" name="L-0-492"></a><span class="sd">    header. `s` number of array items should be written via other methods</span>
+<a id="L-0-493" name="L-0-493"></a><span class="sd">    after this is called.</span>
+<a id="L-0-494" name="L-0-494"></a>
+<a id="L-0-495" name="L-0-495"></a><span class="sd">    array 16 stores an array whose length is upto (2^16)-1 elements.</span>
 <a id="L-0-496" name="L-0-496"></a>
-<a id="L-0-497" name="L-0-497"></a>  <span class="k">fun</span> <span class="nf">fixext_1</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-498" name="L-0-498"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-499" name="L-0-499"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
-<a id="L-0-500" name="L-0-500"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
-<a id="L-0-501" name="L-0-501"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-497" name="L-0-497"></a><span class="sd">    Attempting to encode a value larger than (2^16)-1 bytes will result in</span>
+<a id="L-0-498" name="L-0-498"></a><span class="sd">    an `error`.</span>
+<a id="L-0-499" name="L-0-499"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-500" name="L-0-500"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">array_16</span><span class="p">())</span>
+<a id="L-0-501" name="L-0-501"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u16_be</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 <a id="L-0-502" name="L-0-502"></a>
-<a id="L-0-503" name="L-0-503"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
-<a id="L-0-504" name="L-0-504"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
-<a id="L-0-505" name="L-0-505"></a><span class="sd">    types.</span>
-<a id="L-0-506" name="L-0-506"></a>
-<a id="L-0-507" name="L-0-507"></a><span class="sd">    fixext 1 stores an integer and a byte array whose length is 1 byte.</span>
+<a id="L-0-503" name="L-0-503"></a>  <span class="k">fun</span> <span class="nf">array_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">=&gt;</span>
+<a id="L-0-504" name="L-0-504"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-505" name="L-0-505"></a><span class="sd">    Creates a header for a MessagePack &quot;array_32&quot;. This only creates the</span>
+<a id="L-0-506" name="L-0-506"></a><span class="sd">    header. `s` number of array items should be written via other methods</span>
+<a id="L-0-507" name="L-0-507"></a><span class="sd">    after this is called.</span>
 <a id="L-0-508" name="L-0-508"></a>
-<a id="L-0-509" name="L-0-509"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 1 element in size will result</span>
-<a id="L-0-510" name="L-0-510"></a><span class="sd">    in an `error`.</span>
-<a id="L-0-511" name="L-0-511"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-512" name="L-0-512"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_1</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-513" name="L-0-513"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_1</span><span class="p">())</span>
-<a id="L-0-514" name="L-0-514"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-515" name="L-0-515"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-516" name="L-0-516"></a>    <span class="k">else</span>
-<a id="L-0-517" name="L-0-517"></a>      <span class="k">error</span>
-<a id="L-0-518" name="L-0-518"></a>    <span class="k">end</span>
-<a id="L-0-519" name="L-0-519"></a>
-<a id="L-0-520" name="L-0-520"></a>  <span class="k">fun</span> <span class="nf">fixext_2</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-521" name="L-0-521"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-522" name="L-0-522"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
-<a id="L-0-523" name="L-0-523"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
-<a id="L-0-524" name="L-0-524"></a><span class="sd">    unique type identifier `t` as well.</span>
-<a id="L-0-525" name="L-0-525"></a>
-<a id="L-0-526" name="L-0-526"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
-<a id="L-0-527" name="L-0-527"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
-<a id="L-0-528" name="L-0-528"></a><span class="sd">    types.</span>
-<a id="L-0-529" name="L-0-529"></a>
-<a id="L-0-530" name="L-0-530"></a><span class="sd">    fixext 2 stores an integer and a byte array whose length is 2 byte.</span>
-<a id="L-0-531" name="L-0-531"></a>
-<a id="L-0-532" name="L-0-532"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 2 element in size will result</span>
-<a id="L-0-533" name="L-0-533"></a><span class="sd">    in an `error`.</span>
-<a id="L-0-534" name="L-0-534"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-535" name="L-0-535"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_2</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-536" name="L-0-536"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_2</span><span class="p">())</span>
-<a id="L-0-537" name="L-0-537"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-538" name="L-0-538"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-539" name="L-0-539"></a>    <span class="k">else</span>
-<a id="L-0-540" name="L-0-540"></a>      <span class="k">error</span>
-<a id="L-0-541" name="L-0-541"></a>    <span class="k">end</span>
+<a id="L-0-509" name="L-0-509"></a><span class="sd">    array 32 stores an array whose length is upto (2^32)-1 elements.</span>
+<a id="L-0-510" name="L-0-510"></a>
+<a id="L-0-511" name="L-0-511"></a><span class="sd">    Attempting to encode a value larger than (2^32)-1 bytes will result in</span>
+<a id="L-0-512" name="L-0-512"></a><span class="sd">    an `error`.</span>
+<a id="L-0-513" name="L-0-513"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-514" name="L-0-514"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">array_32</span><span class="p">())</span>
+<a id="L-0-515" name="L-0-515"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<a id="L-0-516" name="L-0-516"></a>
+<a id="L-0-517" name="L-0-517"></a>  <span class="c1">//</span>
+<a id="L-0-518" name="L-0-518"></a>  <span class="c1">// map format family</span>
+<a id="L-0-519" name="L-0-519"></a>  <span class="c1">//</span>
+<a id="L-0-520" name="L-0-520"></a>
+<a id="L-0-521" name="L-0-521"></a>  <span class="k">fun</span> <span class="nf">fixmap</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-522" name="L-0-522"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-523" name="L-0-523"></a><span class="sd">    Creates a header for a MessagePack &quot;fixmap&quot;. This only creates the</span>
+<a id="L-0-524" name="L-0-524"></a><span class="sd">    header. `s` number of map items should be written via other methods</span>
+<a id="L-0-525" name="L-0-525"></a><span class="sd">    after this is called.</span>
+<a id="L-0-526" name="L-0-526"></a>
+<a id="L-0-527" name="L-0-527"></a><span class="sd">    fixmap stores a map whose length is upto 15 elements.</span>
+<a id="L-0-528" name="L-0-528"></a>
+<a id="L-0-529" name="L-0-529"></a><span class="sd">    Attempting to encode a value larger than 15 will result in an `error`.</span>
+<a id="L-0-530" name="L-0-530"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-531" name="L-0-531"></a>    <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">fixmap</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-532" name="L-0-532"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixmap</span><span class="p">()</span> <span class="ow">or</span> <span class="n">s</span><span class="p">))</span>
+<a id="L-0-533" name="L-0-533"></a>    <span class="k">else</span>
+<a id="L-0-534" name="L-0-534"></a>      <span class="k">error</span>
+<a id="L-0-535" name="L-0-535"></a>    <span class="k">end</span>
+<a id="L-0-536" name="L-0-536"></a>
+<a id="L-0-537" name="L-0-537"></a>  <span class="k">fun</span> <span class="nf">map_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U16</span><span class="p">)</span> <span class="p">=&gt;</span>
+<a id="L-0-538" name="L-0-538"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-539" name="L-0-539"></a><span class="sd">    Creates a header for a MessagePack &quot;map_16&quot;. This only creates the</span>
+<a id="L-0-540" name="L-0-540"></a><span class="sd">    header. `s` number of map items should be written via other methods</span>
+<a id="L-0-541" name="L-0-541"></a><span class="sd">    after this is called.</span>
 <a id="L-0-542" name="L-0-542"></a>
-<a id="L-0-543" name="L-0-543"></a>  <span class="k">fun</span> <span class="nf">fixext_4</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-544" name="L-0-544"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-545" name="L-0-545"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
-<a id="L-0-546" name="L-0-546"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
-<a id="L-0-547" name="L-0-547"></a><span class="sd">    unique type identifier `t` as well.</span>
-<a id="L-0-548" name="L-0-548"></a>
-<a id="L-0-549" name="L-0-549"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
-<a id="L-0-550" name="L-0-550"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
-<a id="L-0-551" name="L-0-551"></a><span class="sd">    types.</span>
-<a id="L-0-552" name="L-0-552"></a>
-<a id="L-0-553" name="L-0-553"></a><span class="sd">    fixext 4 stores an integer and a byte array whose length is 4 byte.</span>
-<a id="L-0-554" name="L-0-554"></a>
-<a id="L-0-555" name="L-0-555"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 4 element in size will result</span>
-<a id="L-0-556" name="L-0-556"></a><span class="sd">    in an `error`.</span>
-<a id="L-0-557" name="L-0-557"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-558" name="L-0-558"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_4</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-559" name="L-0-559"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_4</span><span class="p">())</span>
-<a id="L-0-560" name="L-0-560"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-561" name="L-0-561"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-562" name="L-0-562"></a>    <span class="k">else</span>
-<a id="L-0-563" name="L-0-563"></a>      <span class="k">error</span>
-<a id="L-0-564" name="L-0-564"></a>    <span class="k">end</span>
-<a id="L-0-565" name="L-0-565"></a>
-<a id="L-0-566" name="L-0-566"></a>  <span class="k">fun</span> <span class="nf">fixext_8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-567" name="L-0-567"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-568" name="L-0-568"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
-<a id="L-0-569" name="L-0-569"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
-<a id="L-0-570" name="L-0-570"></a><span class="sd">    unique type identifier `t` as well.</span>
-<a id="L-0-571" name="L-0-571"></a>
-<a id="L-0-572" name="L-0-572"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
-<a id="L-0-573" name="L-0-573"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
-<a id="L-0-574" name="L-0-574"></a><span class="sd">    types.</span>
-<a id="L-0-575" name="L-0-575"></a>
-<a id="L-0-576" name="L-0-576"></a><span class="sd">    fixext 8 stores an integer and a byte array whose length is 8 byte.</span>
-<a id="L-0-577" name="L-0-577"></a>
-<a id="L-0-578" name="L-0-578"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 8 element in size will result</span>
-<a id="L-0-579" name="L-0-579"></a><span class="sd">    in an `error`.</span>
-<a id="L-0-580" name="L-0-580"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-581" name="L-0-581"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_8</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-582" name="L-0-582"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_8</span><span class="p">())</span>
-<a id="L-0-583" name="L-0-583"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-584" name="L-0-584"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-585" name="L-0-585"></a>    <span class="k">else</span>
-<a id="L-0-586" name="L-0-586"></a>      <span class="k">error</span>
-<a id="L-0-587" name="L-0-587"></a>    <span class="k">end</span>
-<a id="L-0-588" name="L-0-588"></a>
-<a id="L-0-589" name="L-0-589"></a>  <span class="k">fun</span> <span class="nf">fixext_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-590" name="L-0-590"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-591" name="L-0-591"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
-<a id="L-0-592" name="L-0-592"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
-<a id="L-0-593" name="L-0-593"></a><span class="sd">    unique type identifier `t` as well.</span>
-<a id="L-0-594" name="L-0-594"></a>
-<a id="L-0-595" name="L-0-595"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
-<a id="L-0-596" name="L-0-596"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
-<a id="L-0-597" name="L-0-597"></a><span class="sd">    types.</span>
-<a id="L-0-598" name="L-0-598"></a>
-<a id="L-0-599" name="L-0-599"></a><span class="sd">    fixext 16 stores an integer and a byte array whose length is 16 byte.</span>
-<a id="L-0-600" name="L-0-600"></a>
-<a id="L-0-601" name="L-0-601"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 16 element in size will result</span>
-<a id="L-0-602" name="L-0-602"></a><span class="sd">    in an `error`.</span>
-<a id="L-0-603" name="L-0-603"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-604" name="L-0-604"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_16</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-605" name="L-0-605"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_16</span><span class="p">())</span>
-<a id="L-0-606" name="L-0-606"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-607" name="L-0-607"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-608" name="L-0-608"></a>    <span class="k">else</span>
-<a id="L-0-609" name="L-0-609"></a>      <span class="k">error</span>
-<a id="L-0-610" name="L-0-610"></a>    <span class="k">end</span>
-<a id="L-0-611" name="L-0-611"></a>
-<a id="L-0-612" name="L-0-612"></a>  <span class="k">fun</span> <span class="nf">ext_8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-613" name="L-0-613"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-614" name="L-0-614"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
-<a id="L-0-615" name="L-0-615"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
-<a id="L-0-616" name="L-0-616"></a><span class="sd">    unique type identifier `t` as well.</span>
-<a id="L-0-617" name="L-0-617"></a>
-<a id="L-0-618" name="L-0-618"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
-<a id="L-0-619" name="L-0-619"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
-<a id="L-0-620" name="L-0-620"></a><span class="sd">    types.</span>
-<a id="L-0-621" name="L-0-621"></a>
-<a id="L-0-622" name="L-0-622"></a><span class="sd">    ext 8 stores an integer and a byte array whose length is</span>
-<a id="L-0-623" name="L-0-623"></a><span class="sd">    upto (2^8)-1 bytes.</span>
+<a id="L-0-543" name="L-0-543"></a><span class="sd">    map 16 stores an array whose length is upto (2^16)-1 elements.</span>
+<a id="L-0-544" name="L-0-544"></a>
+<a id="L-0-545" name="L-0-545"></a><span class="sd">    Attempting to encode a value larger than (2^16)-1 bytes will result in</span>
+<a id="L-0-546" name="L-0-546"></a><span class="sd">    an `error`.</span>
+<a id="L-0-547" name="L-0-547"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-548" name="L-0-548"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">map_16</span><span class="p">())</span>
+<a id="L-0-549" name="L-0-549"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u16_be</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<a id="L-0-550" name="L-0-550"></a>
+<a id="L-0-551" name="L-0-551"></a>  <span class="k">fun</span> <span class="nf">map_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">=&gt;</span>
+<a id="L-0-552" name="L-0-552"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-553" name="L-0-553"></a><span class="sd">    Creates a header for a MessagePack &quot;map_32&quot;. This only creates the</span>
+<a id="L-0-554" name="L-0-554"></a><span class="sd">    header. `s` number of map items should be written via other methods</span>
+<a id="L-0-555" name="L-0-555"></a><span class="sd">    after this is called.</span>
+<a id="L-0-556" name="L-0-556"></a>
+<a id="L-0-557" name="L-0-557"></a><span class="sd">    map 32 stores an array whose length is upto (2^32)-1 elements.</span>
+<a id="L-0-558" name="L-0-558"></a>
+<a id="L-0-559" name="L-0-559"></a><span class="sd">    Attempting to encode a value larger than (2^32)-1 bytes will result in</span>
+<a id="L-0-560" name="L-0-560"></a><span class="sd">    an `error`.</span>
+<a id="L-0-561" name="L-0-561"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-562" name="L-0-562"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">map_32</span><span class="p">())</span>
+<a id="L-0-563" name="L-0-563"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<a id="L-0-564" name="L-0-564"></a>
+<a id="L-0-565" name="L-0-565"></a>  <span class="c1">//</span>
+<a id="L-0-566" name="L-0-566"></a>  <span class="c1">// ext format family</span>
+<a id="L-0-567" name="L-0-567"></a>  <span class="c1">//</span>
+<a id="L-0-568" name="L-0-568"></a>
+<a id="L-0-569" name="L-0-569"></a>  <span class="k">fun</span> <span class="nf">fixext_1</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-570" name="L-0-570"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-571" name="L-0-571"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
+<a id="L-0-572" name="L-0-572"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
+<a id="L-0-573" name="L-0-573"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-574" name="L-0-574"></a>
+<a id="L-0-575" name="L-0-575"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
+<a id="L-0-576" name="L-0-576"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
+<a id="L-0-577" name="L-0-577"></a><span class="sd">    types.</span>
+<a id="L-0-578" name="L-0-578"></a>
+<a id="L-0-579" name="L-0-579"></a><span class="sd">    fixext 1 stores an integer and a byte array whose length is 1 byte.</span>
+<a id="L-0-580" name="L-0-580"></a>
+<a id="L-0-581" name="L-0-581"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 1 element in size will result</span>
+<a id="L-0-582" name="L-0-582"></a><span class="sd">    in an `error`.</span>
+<a id="L-0-583" name="L-0-583"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-584" name="L-0-584"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_1</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-585" name="L-0-585"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_1</span><span class="p">())</span>
+<a id="L-0-586" name="L-0-586"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-587" name="L-0-587"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-588" name="L-0-588"></a>    <span class="k">else</span>
+<a id="L-0-589" name="L-0-589"></a>      <span class="k">error</span>
+<a id="L-0-590" name="L-0-590"></a>    <span class="k">end</span>
+<a id="L-0-591" name="L-0-591"></a>
+<a id="L-0-592" name="L-0-592"></a>  <span class="k">fun</span> <span class="nf">fixext_2</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-593" name="L-0-593"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-594" name="L-0-594"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
+<a id="L-0-595" name="L-0-595"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
+<a id="L-0-596" name="L-0-596"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-597" name="L-0-597"></a>
+<a id="L-0-598" name="L-0-598"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
+<a id="L-0-599" name="L-0-599"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
+<a id="L-0-600" name="L-0-600"></a><span class="sd">    types.</span>
+<a id="L-0-601" name="L-0-601"></a>
+<a id="L-0-602" name="L-0-602"></a><span class="sd">    fixext 2 stores an integer and a byte array whose length is 2 byte.</span>
+<a id="L-0-603" name="L-0-603"></a>
+<a id="L-0-604" name="L-0-604"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 2 element in size will result</span>
+<a id="L-0-605" name="L-0-605"></a><span class="sd">    in an `error`.</span>
+<a id="L-0-606" name="L-0-606"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-607" name="L-0-607"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_2</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-608" name="L-0-608"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_2</span><span class="p">())</span>
+<a id="L-0-609" name="L-0-609"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-610" name="L-0-610"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-611" name="L-0-611"></a>    <span class="k">else</span>
+<a id="L-0-612" name="L-0-612"></a>      <span class="k">error</span>
+<a id="L-0-613" name="L-0-613"></a>    <span class="k">end</span>
+<a id="L-0-614" name="L-0-614"></a>
+<a id="L-0-615" name="L-0-615"></a>  <span class="k">fun</span> <span class="nf">fixext_4</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-616" name="L-0-616"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-617" name="L-0-617"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
+<a id="L-0-618" name="L-0-618"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
+<a id="L-0-619" name="L-0-619"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-620" name="L-0-620"></a>
+<a id="L-0-621" name="L-0-621"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
+<a id="L-0-622" name="L-0-622"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
+<a id="L-0-623" name="L-0-623"></a><span class="sd">    types.</span>
 <a id="L-0-624" name="L-0-624"></a>
-<a id="L-0-625" name="L-0-625"></a><span class="sd">    Attempting to encode a `ByteSeq` that is larger than (2^8)-1 bytes in</span>
-<a id="L-0-626" name="L-0-626"></a><span class="sd">    size will result in an `error`.</span>
-<a id="L-0-627" name="L-0-627"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-628" name="L-0-628"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U8</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-629" name="L-0-629"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">ext_8</span><span class="p">())</span>
-<a id="L-0-630" name="L-0-630"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u8</span><span class="p">())</span>
-<a id="L-0-631" name="L-0-631"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-632" name="L-0-632"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-633" name="L-0-633"></a>    <span class="k">else</span>
-<a id="L-0-634" name="L-0-634"></a>      <span class="k">error</span>
-<a id="L-0-635" name="L-0-635"></a>    <span class="k">end</span>
-<a id="L-0-636" name="L-0-636"></a>
-<a id="L-0-637" name="L-0-637"></a>  <span class="k">fun</span> <span class="nf">ext_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-638" name="L-0-638"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-639" name="L-0-639"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
-<a id="L-0-640" name="L-0-640"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
-<a id="L-0-641" name="L-0-641"></a><span class="sd">    unique type identifier `t` as well.</span>
-<a id="L-0-642" name="L-0-642"></a>
-<a id="L-0-643" name="L-0-643"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
-<a id="L-0-644" name="L-0-644"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
-<a id="L-0-645" name="L-0-645"></a><span class="sd">    types.</span>
-<a id="L-0-646" name="L-0-646"></a>
-<a id="L-0-647" name="L-0-647"></a><span class="sd">    ext 16 stores an integer and a byte array whose length is</span>
-<a id="L-0-648" name="L-0-648"></a><span class="sd">    upto (2^16)-1 bytes.</span>
+<a id="L-0-625" name="L-0-625"></a><span class="sd">    fixext 4 stores an integer and a byte array whose length is 4 byte.</span>
+<a id="L-0-626" name="L-0-626"></a>
+<a id="L-0-627" name="L-0-627"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 4 element in size will result</span>
+<a id="L-0-628" name="L-0-628"></a><span class="sd">    in an `error`.</span>
+<a id="L-0-629" name="L-0-629"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-630" name="L-0-630"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_4</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-631" name="L-0-631"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_4</span><span class="p">())</span>
+<a id="L-0-632" name="L-0-632"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-633" name="L-0-633"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-634" name="L-0-634"></a>    <span class="k">else</span>
+<a id="L-0-635" name="L-0-635"></a>      <span class="k">error</span>
+<a id="L-0-636" name="L-0-636"></a>    <span class="k">end</span>
+<a id="L-0-637" name="L-0-637"></a>
+<a id="L-0-638" name="L-0-638"></a>  <span class="k">fun</span> <span class="nf">fixext_8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-639" name="L-0-639"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-640" name="L-0-640"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
+<a id="L-0-641" name="L-0-641"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
+<a id="L-0-642" name="L-0-642"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-643" name="L-0-643"></a>
+<a id="L-0-644" name="L-0-644"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
+<a id="L-0-645" name="L-0-645"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
+<a id="L-0-646" name="L-0-646"></a><span class="sd">    types.</span>
+<a id="L-0-647" name="L-0-647"></a>
+<a id="L-0-648" name="L-0-648"></a><span class="sd">    fixext 8 stores an integer and a byte array whose length is 8 byte.</span>
 <a id="L-0-649" name="L-0-649"></a>
-<a id="L-0-650" name="L-0-650"></a><span class="sd">    Attempting to encode a `ByteSeq` that is larger than (2^16)-1 bytes in</span>
-<a id="L-0-651" name="L-0-651"></a><span class="sd">    size will result in an `error`.</span>
+<a id="L-0-650" name="L-0-650"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 8 element in size will result</span>
+<a id="L-0-651" name="L-0-651"></a><span class="sd">    in an `error`.</span>
 <a id="L-0-652" name="L-0-652"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-653" name="L-0-653"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U16</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-654" name="L-0-654"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">ext_16</span><span class="p">())</span>
-<a id="L-0-655" name="L-0-655"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u16_be</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u16</span><span class="p">())</span>
-<a id="L-0-656" name="L-0-656"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-657" name="L-0-657"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-658" name="L-0-658"></a>    <span class="k">else</span>
-<a id="L-0-659" name="L-0-659"></a>      <span class="k">error</span>
-<a id="L-0-660" name="L-0-660"></a>    <span class="k">end</span>
-<a id="L-0-661" name="L-0-661"></a>
-<a id="L-0-662" name="L-0-662"></a>  <span class="k">fun</span> <span class="nf">ext_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-663" name="L-0-663"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-664" name="L-0-664"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
-<a id="L-0-665" name="L-0-665"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
-<a id="L-0-666" name="L-0-666"></a><span class="sd">    unique type identifier `t` as well.</span>
-<a id="L-0-667" name="L-0-667"></a>
-<a id="L-0-668" name="L-0-668"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
-<a id="L-0-669" name="L-0-669"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
-<a id="L-0-670" name="L-0-670"></a><span class="sd">    types.</span>
-<a id="L-0-671" name="L-0-671"></a>
-<a id="L-0-672" name="L-0-672"></a><span class="sd">    ext 32 stores an integer and a byte array whose length is</span>
-<a id="L-0-673" name="L-0-673"></a><span class="sd">    upto (2^32)-1 bytes.</span>
-<a id="L-0-674" name="L-0-674"></a>
-<a id="L-0-675" name="L-0-675"></a><span class="sd">    Attempting to encode a `ByteSeq` that is larger than (2^32)-1 bytes in</span>
-<a id="L-0-676" name="L-0-676"></a><span class="sd">    size will result in an `error`.</span>
-<a id="L-0-677" name="L-0-677"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-678" name="L-0-678"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U32</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-679" name="L-0-679"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">ext_32</span><span class="p">())</span>
-<a id="L-0-680" name="L-0-680"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u32</span><span class="p">())</span>
-<a id="L-0-681" name="L-0-681"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-682" name="L-0-682"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-683" name="L-0-683"></a>    <span class="k">else</span>
-<a id="L-0-684" name="L-0-684"></a>      <span class="k">error</span>
-<a id="L-0-685" name="L-0-685"></a>    <span class="k">end</span>
-<a id="L-0-686" name="L-0-686"></a>
-<a id="L-0-687" name="L-0-687"></a>  <span class="c1">//</span>
-<a id="L-0-688" name="L-0-688"></a>  <span class="c1">// timestamp format family</span>
-<a id="L-0-689" name="L-0-689"></a>  <span class="c1">//</span>
-<a id="L-0-690" name="L-0-690"></a>
-<a id="L-0-691" name="L-0-691"></a>  <span class="k">fun</span> <span class="nf">timestamp_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">sec</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">=&gt;</span>
-<a id="L-0-692" name="L-0-692"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-693" name="L-0-693"></a><span class="sd">    timestamp 32 stores the number of seconds that have elapsed since 1970-01-01</span>
-<a id="L-0-694" name="L-0-694"></a><span class="sd">    00:00:00 UTC in a 32-bit unsigned integer.</span>
-<a id="L-0-695" name="L-0-695"></a>
-<a id="L-0-696" name="L-0-696"></a><span class="sd">    It can represent a timestamp in [1970-01-01 00:00:00 UTC, 2106-02-07</span>
-<a id="L-0-697" name="L-0-697"></a><span class="sd">    06:28:16 UTC).</span>
-<a id="L-0-698" name="L-0-698"></a>
-<a id="L-0-699" name="L-0-699"></a><span class="sd">    Nanoseconds part is 0.</span>
-<a id="L-0-700" name="L-0-700"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-701" name="L-0-701"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_4</span><span class="p">())</span>
-<a id="L-0-702" name="L-0-702"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<a id="L-0-703" name="L-0-703"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">sec</span><span class="p">)</span>
-<a id="L-0-704" name="L-0-704"></a>
-<a id="L-0-705" name="L-0-705"></a>  <span class="k">fun</span> <span class="nf">timestamp_64</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">sec</span><span class="p">:</span> <span class="nb nb-Type">U64</span><span class="p">,</span> <span class="n">nsec</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-706" name="L-0-706"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-707" name="L-0-707"></a><span class="sd">    timestamp 64 stores the number of seconds and nanoseconds that have elapsed</span>
-<a id="L-0-708" name="L-0-708"></a><span class="sd">    since 1970-01-01 00:00:00 UTC in 32-bit unsigned integers.</span>
-<a id="L-0-709" name="L-0-709"></a>
-<a id="L-0-710" name="L-0-710"></a><span class="sd">    It can represent a timestamp in [1970-01-01 00:00:00.000000000 UTC,</span>
-<a id="L-0-711" name="L-0-711"></a><span class="sd">    2514-05-30 01:53:04.000000000 UTC).</span>
-<a id="L-0-712" name="L-0-712"></a>
-<a id="L-0-713" name="L-0-713"></a><span class="sd">    `nsec` must not be larger than 999999999. `sec` must not be larger than</span>
-<a id="L-0-714" name="L-0-714"></a><span class="sd">    (2^34 - 1).</span>
-<a id="L-0-715" name="L-0-715"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-716" name="L-0-716"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">nsec</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">nsec</span><span class="p">())</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sec</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">sec_34</span><span class="p">())</span> <span class="k">then</span>
-<a id="L-0-717" name="L-0-717"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_8</span><span class="p">())</span>
-<a id="L-0-718" name="L-0-718"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<a id="L-0-719" name="L-0-719"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u64_be</span><span class="p">((</span><span class="n">nsec</span><span class="p">.</span><span class="n">u64</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="mi">34</span><span class="p">)</span> <span class="o">+</span> <span class="n">sec</span><span class="p">)</span>
-<a id="L-0-720" name="L-0-720"></a>    <span class="k">else</span>
-<a id="L-0-721" name="L-0-721"></a>      <span class="k">error</span>
-<a id="L-0-722" name="L-0-722"></a>    <span class="k">end</span>
-<a id="L-0-723" name="L-0-723"></a>
-<a id="L-0-724" name="L-0-724"></a>  <span class="k">fun</span> <span class="nf">timestamp_96</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">sec</span><span class="p">:</span> <span class="nb nb-Type">I64</span><span class="p">,</span> <span class="n">nsec</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-725" name="L-0-725"></a>    <span class="sd">&quot;&quot;&quot;</span>
-<a id="L-0-726" name="L-0-726"></a><span class="sd">    timestamp 96 stores the number of seconds and nanoseconds that have elapsed</span>
-<a id="L-0-727" name="L-0-727"></a><span class="sd">    since 1970-01-01 00:00:00 UTC in 64-bit signed integer and 32-bit unsigned</span>
-<a id="L-0-728" name="L-0-728"></a><span class="sd">    integer.</span>
-<a id="L-0-729" name="L-0-729"></a>
-<a id="L-0-730" name="L-0-730"></a><span class="sd">    It can represent a timestamp in [-584554047284-02-23 16:59:44 UTC,</span>
-<a id="L-0-731" name="L-0-731"></a><span class="sd">    584554051223-11-09 07:00:16.000000000 UTC).</span>
-<a id="L-0-732" name="L-0-732"></a>
-<a id="L-0-733" name="L-0-733"></a><span class="sd">    `nsec` must not be larger than 999999999.</span>
-<a id="L-0-734" name="L-0-734"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="L-0-735" name="L-0-735"></a>    <span class="k">if</span> <span class="n">nsec</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">nsec</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-736" name="L-0-736"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">ext_8</span><span class="p">())</span>
-<a id="L-0-737" name="L-0-737"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
-<a id="L-0-738" name="L-0-738"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<a id="L-0-739" name="L-0-739"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">nsec</span><span class="p">)</span>
-<a id="L-0-740" name="L-0-740"></a>      <span class="n">b</span><span class="p">.</span><span class="n">i64_be</span><span class="p">(</span><span class="n">sec</span><span class="p">)</span>
-<a id="L-0-741" name="L-0-741"></a>    <span class="k">else</span>
-<a id="L-0-742" name="L-0-742"></a>      <span class="k">error</span>
-<a id="L-0-743" name="L-0-743"></a>    <span class="k">end</span>
-<a id="L-0-744" name="L-0-744"></a>
-<a id="L-0-745" name="L-0-745"></a>  <span class="c1">//</span>
-<a id="L-0-746" name="L-0-746"></a>  <span class="c1">// support methods</span>
-<a id="L-0-747" name="L-0-747"></a>  <span class="c1">//</span>
-<a id="L-0-748" name="L-0-748"></a>
-<a id="L-0-749" name="L-0-749"></a>  <span class="k">fun</span> <span class="nf">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">=&gt;</span>
-<a id="L-0-750" name="L-0-750"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<a id="L-0-751" name="L-0-751"></a>
-<a id="L-0-752" name="L-0-752"></a>  <span class="k">fun</span> <span class="nf">_write_fixed_value</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">=&gt;</span>
-<a id="L-0-753" name="L-0-753"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-754" name="L-0-754"></a>
-<a id="L-0-755" name="L-0-755"></a>  <span class="k">fun</span> <span class="nf">_write_byte_array_8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-756" name="L-0-756"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U8</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-757" name="L-0-757"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-<a id="L-0-758" name="L-0-758"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u8</span><span class="p">())</span>
-<a id="L-0-759" name="L-0-759"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-760" name="L-0-760"></a>    <span class="k">else</span>
-<a id="L-0-761" name="L-0-761"></a>      <span class="k">error</span>
-<a id="L-0-762" name="L-0-762"></a>    <span class="k">end</span>
-<a id="L-0-763" name="L-0-763"></a>
-<a id="L-0-764" name="L-0-764"></a>  <span class="k">fun</span> <span class="nf">_write_byte_array_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-765" name="L-0-765"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U16</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-766" name="L-0-766"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-<a id="L-0-767" name="L-0-767"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u16_be</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u16</span><span class="p">())</span>
-<a id="L-0-768" name="L-0-768"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-769" name="L-0-769"></a>    <span class="k">else</span>
-<a id="L-0-770" name="L-0-770"></a>      <span class="k">error</span>
-<a id="L-0-771" name="L-0-771"></a>    <span class="k">end</span>
-<a id="L-0-772" name="L-0-772"></a>
-<a id="L-0-773" name="L-0-773"></a>  <span class="k">fun</span> <span class="nf">_write_byte_array_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
-<a id="L-0-774" name="L-0-774"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U32</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
-<a id="L-0-775" name="L-0-775"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-<a id="L-0-776" name="L-0-776"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u32</span><span class="p">())</span>
-<a id="L-0-777" name="L-0-777"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-<a id="L-0-778" name="L-0-778"></a>    <span class="k">else</span>
-<a id="L-0-779" name="L-0-779"></a>      <span class="k">error</span>
-<a id="L-0-780" name="L-0-780"></a>    <span class="k">end</span>
+<a id="L-0-653" name="L-0-653"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_8</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-654" name="L-0-654"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_8</span><span class="p">())</span>
+<a id="L-0-655" name="L-0-655"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-656" name="L-0-656"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-657" name="L-0-657"></a>    <span class="k">else</span>
+<a id="L-0-658" name="L-0-658"></a>      <span class="k">error</span>
+<a id="L-0-659" name="L-0-659"></a>    <span class="k">end</span>
+<a id="L-0-660" name="L-0-660"></a>
+<a id="L-0-661" name="L-0-661"></a>  <span class="k">fun</span> <span class="nf">fixext_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-662" name="L-0-662"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-663" name="L-0-663"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
+<a id="L-0-664" name="L-0-664"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
+<a id="L-0-665" name="L-0-665"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-666" name="L-0-666"></a>
+<a id="L-0-667" name="L-0-667"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
+<a id="L-0-668" name="L-0-668"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
+<a id="L-0-669" name="L-0-669"></a><span class="sd">    types.</span>
+<a id="L-0-670" name="L-0-670"></a>
+<a id="L-0-671" name="L-0-671"></a><span class="sd">    fixext 16 stores an integer and a byte array whose length is 16 byte.</span>
+<a id="L-0-672" name="L-0-672"></a>
+<a id="L-0-673" name="L-0-673"></a><span class="sd">    Attempting to encode a `ByteSeq` that is not 16 element in size will result</span>
+<a id="L-0-674" name="L-0-674"></a><span class="sd">    in an `error`.</span>
+<a id="L-0-675" name="L-0-675"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-676" name="L-0-676"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n n-Type">_Size</span><span class="p">.</span><span class="n">fixext_16</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-677" name="L-0-677"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_16</span><span class="p">())</span>
+<a id="L-0-678" name="L-0-678"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-679" name="L-0-679"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-680" name="L-0-680"></a>    <span class="k">else</span>
+<a id="L-0-681" name="L-0-681"></a>      <span class="k">error</span>
+<a id="L-0-682" name="L-0-682"></a>    <span class="k">end</span>
+<a id="L-0-683" name="L-0-683"></a>
+<a id="L-0-684" name="L-0-684"></a>  <span class="k">fun</span> <span class="nf">ext_8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-685" name="L-0-685"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-686" name="L-0-686"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
+<a id="L-0-687" name="L-0-687"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
+<a id="L-0-688" name="L-0-688"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-689" name="L-0-689"></a>
+<a id="L-0-690" name="L-0-690"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
+<a id="L-0-691" name="L-0-691"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
+<a id="L-0-692" name="L-0-692"></a><span class="sd">    types.</span>
+<a id="L-0-693" name="L-0-693"></a>
+<a id="L-0-694" name="L-0-694"></a><span class="sd">    ext 8 stores an integer and a byte array whose length is</span>
+<a id="L-0-695" name="L-0-695"></a><span class="sd">    upto (2^8)-1 bytes.</span>
+<a id="L-0-696" name="L-0-696"></a>
+<a id="L-0-697" name="L-0-697"></a><span class="sd">    Attempting to encode a `ByteSeq` that is larger than (2^8)-1 bytes in</span>
+<a id="L-0-698" name="L-0-698"></a><span class="sd">    size will result in an `error`.</span>
+<a id="L-0-699" name="L-0-699"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-700" name="L-0-700"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U8</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-701" name="L-0-701"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">ext_8</span><span class="p">())</span>
+<a id="L-0-702" name="L-0-702"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u8</span><span class="p">())</span>
+<a id="L-0-703" name="L-0-703"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-704" name="L-0-704"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-705" name="L-0-705"></a>    <span class="k">else</span>
+<a id="L-0-706" name="L-0-706"></a>      <span class="k">error</span>
+<a id="L-0-707" name="L-0-707"></a>    <span class="k">end</span>
+<a id="L-0-708" name="L-0-708"></a>
+<a id="L-0-709" name="L-0-709"></a>  <span class="k">fun</span> <span class="nf">ext_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-710" name="L-0-710"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-711" name="L-0-711"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
+<a id="L-0-712" name="L-0-712"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
+<a id="L-0-713" name="L-0-713"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-714" name="L-0-714"></a>
+<a id="L-0-715" name="L-0-715"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
+<a id="L-0-716" name="L-0-716"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
+<a id="L-0-717" name="L-0-717"></a><span class="sd">    types.</span>
+<a id="L-0-718" name="L-0-718"></a>
+<a id="L-0-719" name="L-0-719"></a><span class="sd">    ext 16 stores an integer and a byte array whose length is</span>
+<a id="L-0-720" name="L-0-720"></a><span class="sd">    upto (2^16)-1 bytes.</span>
+<a id="L-0-721" name="L-0-721"></a>
+<a id="L-0-722" name="L-0-722"></a><span class="sd">    Attempting to encode a `ByteSeq` that is larger than (2^16)-1 bytes in</span>
+<a id="L-0-723" name="L-0-723"></a><span class="sd">    size will result in an `error`.</span>
+<a id="L-0-724" name="L-0-724"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-725" name="L-0-725"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U16</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-726" name="L-0-726"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">ext_16</span><span class="p">())</span>
+<a id="L-0-727" name="L-0-727"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u16_be</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u16</span><span class="p">())</span>
+<a id="L-0-728" name="L-0-728"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-729" name="L-0-729"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-730" name="L-0-730"></a>    <span class="k">else</span>
+<a id="L-0-731" name="L-0-731"></a>      <span class="k">error</span>
+<a id="L-0-732" name="L-0-732"></a>    <span class="k">end</span>
+<a id="L-0-733" name="L-0-733"></a>
+<a id="L-0-734" name="L-0-734"></a>  <span class="k">fun</span> <span class="nf">ext_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-735" name="L-0-735"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-736" name="L-0-736"></a><span class="sd">    Allows for the creation of user supplied extensions to the MessagePack</span>
+<a id="L-0-737" name="L-0-737"></a><span class="sd">    format. User should provide not just the value `v` to be encoded, but a</span>
+<a id="L-0-738" name="L-0-738"></a><span class="sd">    unique type identifier `t` as well.</span>
+<a id="L-0-739" name="L-0-739"></a>
+<a id="L-0-740" name="L-0-740"></a><span class="sd">    Type identifiers `0` to `127` are valid for user supplied types.</span>
+<a id="L-0-741" name="L-0-741"></a><span class="sd">    MessagePack reserves -1 to -128 for future extension to add predefined</span>
+<a id="L-0-742" name="L-0-742"></a><span class="sd">    types.</span>
+<a id="L-0-743" name="L-0-743"></a>
+<a id="L-0-744" name="L-0-744"></a><span class="sd">    ext 32 stores an integer and a byte array whose length is</span>
+<a id="L-0-745" name="L-0-745"></a><span class="sd">    upto (2^32)-1 bytes.</span>
+<a id="L-0-746" name="L-0-746"></a>
+<a id="L-0-747" name="L-0-747"></a><span class="sd">    Attempting to encode a `ByteSeq` that is larger than (2^32)-1 bytes in</span>
+<a id="L-0-748" name="L-0-748"></a><span class="sd">    size will result in an `error`.</span>
+<a id="L-0-749" name="L-0-749"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-750" name="L-0-750"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U32</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-751" name="L-0-751"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">ext_32</span><span class="p">())</span>
+<a id="L-0-752" name="L-0-752"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u32</span><span class="p">())</span>
+<a id="L-0-753" name="L-0-753"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-754" name="L-0-754"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-755" name="L-0-755"></a>    <span class="k">else</span>
+<a id="L-0-756" name="L-0-756"></a>      <span class="k">error</span>
+<a id="L-0-757" name="L-0-757"></a>    <span class="k">end</span>
+<a id="L-0-758" name="L-0-758"></a>
+<a id="L-0-759" name="L-0-759"></a>  <span class="c1">//</span>
+<a id="L-0-760" name="L-0-760"></a>  <span class="c1">// timestamp format family</span>
+<a id="L-0-761" name="L-0-761"></a>  <span class="c1">//</span>
+<a id="L-0-762" name="L-0-762"></a>
+<a id="L-0-763" name="L-0-763"></a>  <span class="k">fun</span> <span class="nf">timestamp_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">sec</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">=&gt;</span>
+<a id="L-0-764" name="L-0-764"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-765" name="L-0-765"></a><span class="sd">    timestamp 32 stores the number of seconds that have elapsed since 1970-01-01</span>
+<a id="L-0-766" name="L-0-766"></a><span class="sd">    00:00:00 UTC in a 32-bit unsigned integer.</span>
+<a id="L-0-767" name="L-0-767"></a>
+<a id="L-0-768" name="L-0-768"></a><span class="sd">    It can represent a timestamp in [1970-01-01 00:00:00 UTC, 2106-02-07</span>
+<a id="L-0-769" name="L-0-769"></a><span class="sd">    06:28:16 UTC).</span>
+<a id="L-0-770" name="L-0-770"></a>
+<a id="L-0-771" name="L-0-771"></a><span class="sd">    Nanoseconds part is 0.</span>
+<a id="L-0-772" name="L-0-772"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-773" name="L-0-773"></a>    <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_4</span><span class="p">())</span>
+<a id="L-0-774" name="L-0-774"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a id="L-0-775" name="L-0-775"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">sec</span><span class="p">)</span>
+<a id="L-0-776" name="L-0-776"></a>
+<a id="L-0-777" name="L-0-777"></a>  <span class="k">fun</span> <span class="nf">timestamp_64</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">sec</span><span class="p">:</span> <span class="nb nb-Type">U64</span><span class="p">,</span> <span class="n">nsec</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-778" name="L-0-778"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-779" name="L-0-779"></a><span class="sd">    timestamp 64 stores the number of seconds and nanoseconds that have elapsed</span>
+<a id="L-0-780" name="L-0-780"></a><span class="sd">    since 1970-01-01 00:00:00 UTC in 32-bit unsigned integers.</span>
+<a id="L-0-781" name="L-0-781"></a>
+<a id="L-0-782" name="L-0-782"></a><span class="sd">    It can represent a timestamp in [1970-01-01 00:00:00.000000000 UTC,</span>
+<a id="L-0-783" name="L-0-783"></a><span class="sd">    2514-05-30 01:53:04.000000000 UTC).</span>
+<a id="L-0-784" name="L-0-784"></a>
+<a id="L-0-785" name="L-0-785"></a><span class="sd">    `nsec` must not be larger than 999999999. `sec` must not be larger than</span>
+<a id="L-0-786" name="L-0-786"></a><span class="sd">    (2^34 - 1).</span>
+<a id="L-0-787" name="L-0-787"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-788" name="L-0-788"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">nsec</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">nsec</span><span class="p">())</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sec</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">sec_34</span><span class="p">())</span> <span class="k">then</span>
+<a id="L-0-789" name="L-0-789"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">fixext_8</span><span class="p">())</span>
+<a id="L-0-790" name="L-0-790"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a id="L-0-791" name="L-0-791"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u64_be</span><span class="p">((</span><span class="n">nsec</span><span class="p">.</span><span class="n">u64</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="mi">34</span><span class="p">)</span> <span class="o">+</span> <span class="n">sec</span><span class="p">)</span>
+<a id="L-0-792" name="L-0-792"></a>    <span class="k">else</span>
+<a id="L-0-793" name="L-0-793"></a>      <span class="k">error</span>
+<a id="L-0-794" name="L-0-794"></a>    <span class="k">end</span>
+<a id="L-0-795" name="L-0-795"></a>
+<a id="L-0-796" name="L-0-796"></a>  <span class="k">fun</span> <span class="nf">timestamp_96</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">sec</span><span class="p">:</span> <span class="nb nb-Type">I64</span><span class="p">,</span> <span class="n">nsec</span><span class="p">:</span> <span class="nb nb-Type">U32</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-797" name="L-0-797"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="L-0-798" name="L-0-798"></a><span class="sd">    timestamp 96 stores the number of seconds and nanoseconds that have elapsed</span>
+<a id="L-0-799" name="L-0-799"></a><span class="sd">    since 1970-01-01 00:00:00 UTC in 64-bit signed integer and 32-bit unsigned</span>
+<a id="L-0-800" name="L-0-800"></a><span class="sd">    integer.</span>
+<a id="L-0-801" name="L-0-801"></a>
+<a id="L-0-802" name="L-0-802"></a><span class="sd">    It can represent a timestamp in [-584554047284-02-23 16:59:44 UTC,</span>
+<a id="L-0-803" name="L-0-803"></a><span class="sd">    584554051223-11-09 07:00:16.000000000 UTC).</span>
+<a id="L-0-804" name="L-0-804"></a>
+<a id="L-0-805" name="L-0-805"></a><span class="sd">    `nsec` must not be larger than 999999999.</span>
+<a id="L-0-806" name="L-0-806"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="L-0-807" name="L-0-807"></a>    <span class="k">if</span> <span class="n">nsec</span> <span class="o">&lt;=</span> <span class="n n-Type">_Limit</span><span class="p">.</span><span class="n">nsec</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-808" name="L-0-808"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n n-Type">_FormatName</span><span class="p">.</span><span class="n">ext_8</span><span class="p">())</span>
+<a id="L-0-809" name="L-0-809"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<a id="L-0-810" name="L-0-810"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a id="L-0-811" name="L-0-811"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">nsec</span><span class="p">)</span>
+<a id="L-0-812" name="L-0-812"></a>      <span class="n">b</span><span class="p">.</span><span class="n">i64_be</span><span class="p">(</span><span class="n">sec</span><span class="p">)</span>
+<a id="L-0-813" name="L-0-813"></a>    <span class="k">else</span>
+<a id="L-0-814" name="L-0-814"></a>      <span class="k">error</span>
+<a id="L-0-815" name="L-0-815"></a>    <span class="k">end</span>
+<a id="L-0-816" name="L-0-816"></a>
+<a id="L-0-817" name="L-0-817"></a>  <span class="c1">//</span>
+<a id="L-0-818" name="L-0-818"></a>  <span class="c1">// support methods</span>
+<a id="L-0-819" name="L-0-819"></a>  <span class="c1">//</span>
+<a id="L-0-820" name="L-0-820"></a>
+<a id="L-0-821" name="L-0-821"></a>  <span class="k">fun</span> <span class="nf">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">=&gt;</span>
+<a id="L-0-822" name="L-0-822"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<a id="L-0-823" name="L-0-823"></a>
+<a id="L-0-824" name="L-0-824"></a>  <span class="k">fun</span> <span class="nf">_write_fixed_value</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">=&gt;</span>
+<a id="L-0-825" name="L-0-825"></a>    <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-826" name="L-0-826"></a>
+<a id="L-0-827" name="L-0-827"></a>  <span class="k">fun</span> <span class="nf">_write_byte_array_8</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-828" name="L-0-828"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U8</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-829" name="L-0-829"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<a id="L-0-830" name="L-0-830"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u8</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u8</span><span class="p">())</span>
+<a id="L-0-831" name="L-0-831"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-832" name="L-0-832"></a>    <span class="k">else</span>
+<a id="L-0-833" name="L-0-833"></a>      <span class="k">error</span>
+<a id="L-0-834" name="L-0-834"></a>    <span class="k">end</span>
+<a id="L-0-835" name="L-0-835"></a>
+<a id="L-0-836" name="L-0-836"></a>  <span class="k">fun</span> <span class="nf">_write_byte_array_16</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-837" name="L-0-837"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U16</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-838" name="L-0-838"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<a id="L-0-839" name="L-0-839"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u16_be</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u16</span><span class="p">())</span>
+<a id="L-0-840" name="L-0-840"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-841" name="L-0-841"></a>    <span class="k">else</span>
+<a id="L-0-842" name="L-0-842"></a>      <span class="k">error</span>
+<a id="L-0-843" name="L-0-843"></a>    <span class="k">end</span>
+<a id="L-0-844" name="L-0-844"></a>
+<a id="L-0-845" name="L-0-845"></a>  <span class="k">fun</span> <span class="nf">_write_byte_array_32</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n n-Type">Writer</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n n-Type">ByteSeq</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb nb-Type">U8</span><span class="p">)</span> <span class="p">?</span> <span class="p">=&gt;</span>
+<a id="L-0-846" name="L-0-846"></a>    <span class="k">if</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nb nb-Type">U32</span><span class="p">.</span><span class="n">max_value</span><span class="p">().</span><span class="n">usize</span><span class="p">()</span> <span class="k">then</span>
+<a id="L-0-847" name="L-0-847"></a>      <span class="n">_write_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<a id="L-0-848" name="L-0-848"></a>      <span class="n">b</span><span class="p">.</span><span class="n">u32_be</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">().</span><span class="n">u32</span><span class="p">())</span>
+<a id="L-0-849" name="L-0-849"></a>      <span class="n">b</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a id="L-0-850" name="L-0-850"></a>    <span class="k">else</span>
+<a id="L-0-851" name="L-0-851"></a>      <span class="k">error</span>
+<a id="L-0-852" name="L-0-852"></a>    <span class="k">end</span>
 </code></pre></div></td></tr></table></div>
 
 

@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://seantallen-org.github.io/msgpack/msgpack-MessagePackTimestamp/">
+        <link rel="canonical" href="https://seantallen-org.github.io/msgpack/msgpack-MessagePackDecodeLimits/">
       
       
-        <link rel="prev" href="../msgpack-MessagePackStreamingDecoder/">
+        <link rel="prev" href="../msgpack-MessagePackArray/">
       
       
-        <link rel="next" href="../msgpack-MessagePackType/">
+        <link rel="next" href="../msgpack-MessagePackDecoder/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>class MessagePackTimestamp - msgpack</title>
+        <title>class MessagePackDecodeLimits - msgpack</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#messagepacktimestamp" class="md-skip">
+        <a href="#messagepackdecodelimits" class="md-skip">
           Skip to content
         </a>
       
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              class MessagePackTimestamp
+              class MessagePackDecodeLimits
             
           </span>
         </div>
@@ -447,10 +447,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../msgpack-MessagePackDecodeLimits/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    class MessagePackDecodeLimits
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -466,6 +493,159 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#constructors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructors
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unlimited" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unlimited
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public fields
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public fields">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#let-max_str_len-usize-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_str_len: USize val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_bin_len-usize-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_bin_len: USize val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_ext_len-usize-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_ext_len: USize val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_array_len-u32-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_array_len: U32 val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_map_len-u32-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_map_len: U32 val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_depth-usize-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_depth: USize val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_skip_values-usize-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_skip_values: USize val
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -615,37 +795,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    class MessagePackTimestamp
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../msgpack-MessagePackTimestamp/" class="md-nav__link">
         
   
   
@@ -661,93 +814,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#constructors" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Constructors
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Constructors">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        create
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Public fields
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Public fields">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#let-sec-i64-val" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        let sec: I64 val
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#let-nsec-u32-val" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        let nsec: U32 val
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1005,6 +1071,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#unlimited" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unlimited
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1023,10 +1100,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#let-sec-i64-val" class="md-nav__link">
+  <a href="#let-max_str_len-usize-val" class="md-nav__link">
     <span class="md-ellipsis">
       
-        let sec: I64 val
+        let max_str_len: USize val
       
     </span>
   </a>
@@ -1034,10 +1111,65 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#let-nsec-u32-val" class="md-nav__link">
+  <a href="#let-max_bin_len-usize-val" class="md-nav__link">
     <span class="md-ellipsis">
       
-        let nsec: U32 val
+        let max_bin_len: USize val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_ext_len-usize-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_ext_len: USize val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_array_len-u32-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_array_len: U32 val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_map_len-u32-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_map_len: U32 val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_depth-usize-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_depth: USize val
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#let-max_skip_values-usize-val" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        let max_skip_values: USize val
       
     </span>
   </a>
@@ -1066,38 +1198,87 @@
 
 
 
-<h1 id="messagepacktimestamp">MessagePackTimestamp<a class="headerlink" href="#messagepacktimestamp" title="Permanent link">&para;</a></h1>
-<p><span class="source-link"><a href="../src/msgpack/message_pack_types/#L-0-69">[Source]</a></span></p>
-<p>A decoded MessagePack timestamp. The <code>sec</code> field is the number
-of seconds since 1970-01-01 00:00:00 UTC (can be negative for
-dates before the epoch). The <code>nsec</code> field is the nanoseconds
-component (0 to 999999999).</p>
-<div class="highlight"><pre><span></span><code><a id="L-0-1" name="L-0-1" href="#L-0-1"></a><span class="k">class</span> <span class="k">val</span> <span class="nc">MessagePackTimestamp</span>
+<h1 id="messagepackdecodelimits">MessagePackDecodeLimits<a class="headerlink" href="#messagepackdecodelimits" title="Permanent link">&para;</a></h1>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-19">[Source]</a></span></p>
+<p>Limits for the streaming decoder. Protects against
+denial-of-service attacks where a malicious payload claims
+enormous sizes for variable-length values or deeply nested
+containers.</p>
+<p>The default constructor applies conservative limits: 1 MB for
+str/bin/ext data, 131,072 for array/map element counts, and
+512 for container nesting depth. Use <code>unlimited()</code> to disable
+all limits, or override individual limits:</p>
+<div class="highlight"><pre><span></span><code><a id="L-0-1" name="L-0-1" href="#L-0-1"></a><span class="c1">// Default conservative limits:</span>
+<a id="L-0-2" name="L-0-2" href="#L-0-2"></a><span class="k">let</span> <span class="n">limits</span> <span class="o">=</span> <span class="n n-Type">MessagePackDecodeLimits</span>
+<a id="L-0-3" name="L-0-3" href="#L-0-3"></a>
+<a id="L-0-4" name="L-0-4" href="#L-0-4"></a><span class="c1">// Custom limits:</span>
+<a id="L-0-5" name="L-0-5" href="#L-0-5"></a><span class="k">let</span> <span class="n">limits</span> <span class="o">=</span> <span class="n n-Type">MessagePackDecodeLimits</span><span class="p">(</span>
+<a id="L-0-6" name="L-0-6" href="#L-0-6"></a>  <span class="k">where</span> <span class="n">max_str_len&#39;</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">)</span>
+<a id="L-0-7" name="L-0-7" href="#L-0-7"></a>
+<a id="L-0-8" name="L-0-8" href="#L-0-8"></a><span class="c1">// No limits:</span>
+<a id="L-0-9" name="L-0-9" href="#L-0-9"></a><span class="k">let</span> <span class="n">limits</span> <span class="o">=</span> <span class="n n-Type">MessagePackDecodeLimits</span><span class="p">.</span><span class="n">unlimited</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="L-1-1" name="L-1-1" href="#L-1-1"></a><span class="k">class</span> <span class="k">val</span> <span class="nc">MessagePackDecodeLimits</span>
 </code></pre></div>
 <h2 id="constructors">Constructors<a class="headerlink" href="#constructors" title="Permanent link">&para;</a></h2>
 <h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
-<p><span class="source-link"><a href="../src/msgpack/message_pack_types/#L-0-79">[Source]</a></span></p>
-<div class="highlight"><pre><span></span><code><a id="L-1-1" name="L-1-1" href="#L-1-1"></a><span class="k">new</span> <span class="k">val</span> <span class="nf">create</span><span class="p">(</span>
-<a id="L-1-2" name="L-1-2" href="#L-1-2"></a>  <span class="n">sec&#39;</span><span class="p">:</span> <span class="nb nb-Type">I64</span> <span class="k">val</span><span class="p">,</span>
-<a id="L-1-3" name="L-1-3" href="#L-1-3"></a>  <span class="n">nsec&#39;</span><span class="p">:</span> <span class="nb nb-Type">U32</span> <span class="k">val</span><span class="p">)</span>
-<a id="L-1-4" name="L-1-4" href="#L-1-4"></a><span class="p">:</span> <span class="n n-Type">MessagePackTimestamp</span> <span class="k">val</span><span class="p">^</span>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-51">[Source]</a></span></p>
+<div class="highlight"><pre><span></span><code><a id="L-2-1" name="L-2-1" href="#L-2-1"></a><span class="k">new</span> <span class="k">val</span> <span class="nf">create</span><span class="p">(</span>
+<a id="L-2-2" name="L-2-2" href="#L-2-2"></a>  <span class="n">max_str_len&#39;</span><span class="p">:</span> <span class="nb nb-Type">USize</span> <span class="k">val</span> <span class="o">=</span> <span class="mi">1048576</span><span class="p">,</span>
+<a id="L-2-3" name="L-2-3" href="#L-2-3"></a>  <span class="n">max_bin_len&#39;</span><span class="p">:</span> <span class="nb nb-Type">USize</span> <span class="k">val</span> <span class="o">=</span> <span class="mi">1048576</span><span class="p">,</span>
+<a id="L-2-4" name="L-2-4" href="#L-2-4"></a>  <span class="n">max_ext_len&#39;</span><span class="p">:</span> <span class="nb nb-Type">USize</span> <span class="k">val</span> <span class="o">=</span> <span class="mi">1048576</span><span class="p">,</span>
+<a id="L-2-5" name="L-2-5" href="#L-2-5"></a>  <span class="n">max_array_len&#39;</span><span class="p">:</span> <span class="nb nb-Type">U32</span> <span class="k">val</span> <span class="o">=</span> <span class="mi">131072</span><span class="p">,</span>
+<a id="L-2-6" name="L-2-6" href="#L-2-6"></a>  <span class="n">max_map_len&#39;</span><span class="p">:</span> <span class="nb nb-Type">U32</span> <span class="k">val</span> <span class="o">=</span> <span class="mi">131072</span><span class="p">,</span>
+<a id="L-2-7" name="L-2-7" href="#L-2-7"></a>  <span class="n">max_depth&#39;</span><span class="p">:</span> <span class="nb nb-Type">USize</span> <span class="k">val</span> <span class="o">=</span> <span class="mi">512</span><span class="p">,</span>
+<a id="L-2-8" name="L-2-8" href="#L-2-8"></a>  <span class="n">max_skip_values&#39;</span><span class="p">:</span> <span class="nb nb-Type">USize</span> <span class="k">val</span> <span class="o">=</span> <span class="mi">1048576</span><span class="p">)</span>
+<a id="L-2-9" name="L-2-9" href="#L-2-9"></a><span class="p">:</span> <span class="n n-Type">MessagePackDecodeLimits</span> <span class="k">val</span><span class="p">^</span>
 </code></pre></div>
 <h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
 <ul>
-<li>sec': <a href="https://stdlib.ponylang.io/builtin-I64/">I64</a> val</li>
-<li>nsec': <a href="https://stdlib.ponylang.io/builtin-U32/">U32</a> val</li>
+<li>max_str_len': <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val = 1048576</li>
+<li>max_bin_len': <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val = 1048576</li>
+<li>max_ext_len': <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val = 1048576</li>
+<li>max_array_len': <a href="https://stdlib.ponylang.io/builtin-U32/">U32</a> val = 131072</li>
+<li>max_map_len': <a href="https://stdlib.ponylang.io/builtin-U32/">U32</a> val = 131072</li>
+<li>max_depth': <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val = 512</li>
+<li>max_skip_values': <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val = 1048576</li>
 </ul>
 <h4 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="./">MessagePackTimestamp</a> val^</li>
+<li><a href="./">MessagePackDecodeLimits</a> val^</li>
+</ul>
+<hr />
+<h3 id="unlimited">unlimited<a class="headerlink" href="#unlimited" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-68">[Source]</a></span></p>
+<div class="highlight"><pre><span></span><code><a id="L-3-1" name="L-3-1" href="#L-3-1"></a><span class="k">new</span> <span class="k">val</span> <span class="nf">unlimited</span><span class="p">()</span>
+<a id="L-3-2" name="L-3-2" href="#L-3-2"></a><span class="p">:</span> <span class="n n-Type">MessagePackDecodeLimits</span> <span class="k">val</span><span class="p">^</span>
+</code></pre></div>
+<h4 id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="./">MessagePackDecodeLimits</a> val^</li>
 </ul>
 <hr />
 <h2 id="public-fields">Public fields<a class="headerlink" href="#public-fields" title="Permanent link">&para;</a></h2>
-<h3 id="let-sec-i64-val">let sec: <a href="https://stdlib.ponylang.io/builtin-I64/">I64</a> val<a class="headerlink" href="#let-sec-i64-val" title="Permanent link">&para;</a></h3>
-<p><span class="source-link"><a href="../src/msgpack/message_pack_types/#L-0-76">[Source]</a></span></p>
+<h3 id="let-max_str_len-usize-val">let max_str_len: <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val<a class="headerlink" href="#let-max_str_len-usize-val" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-43">[Source]</a></span></p>
 <hr />
-<h3 id="let-nsec-u32-val">let nsec: <a href="https://stdlib.ponylang.io/builtin-U32/">U32</a> val<a class="headerlink" href="#let-nsec-u32-val" title="Permanent link">&para;</a></h3>
-<p><span class="source-link"><a href="../src/msgpack/message_pack_types/#L-0-77">[Source]</a></span></p>
+<h3 id="let-max_bin_len-usize-val">let max_bin_len: <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val<a class="headerlink" href="#let-max_bin_len-usize-val" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-44">[Source]</a></span></p>
+<hr />
+<h3 id="let-max_ext_len-usize-val">let max_ext_len: <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val<a class="headerlink" href="#let-max_ext_len-usize-val" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-45">[Source]</a></span></p>
+<hr />
+<h3 id="let-max_array_len-u32-val">let max_array_len: <a href="https://stdlib.ponylang.io/builtin-U32/">U32</a> val<a class="headerlink" href="#let-max_array_len-u32-val" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-46">[Source]</a></span></p>
+<hr />
+<h3 id="let-max_map_len-u32-val">let max_map_len: <a href="https://stdlib.ponylang.io/builtin-U32/">U32</a> val<a class="headerlink" href="#let-max_map_len-u32-val" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-47">[Source]</a></span></p>
+<hr />
+<h3 id="let-max_depth-usize-val">let max_depth: <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val<a class="headerlink" href="#let-max_depth-usize-val" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-48">[Source]</a></span></p>
+<hr />
+<h3 id="let-max_skip_values-usize-val">let max_skip_values: <a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val<a class="headerlink" href="#let-max_skip_values-usize-val" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_decode_limits/#L-0-49">[Source]</a></span></p>
 <hr />
 
 

@@ -17,7 +17,19 @@
          <lastmod>2026-02-08</lastmod>
     </url>
     <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-InvalidUtf8/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-LimitExceeded/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackArray/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackDecodeLimits/</loc>
          <lastmod>2026-02-08</lastmod>
     </url>
     <url>
@@ -49,11 +61,31 @@
          <lastmod>2026-02-08</lastmod>
     </url>
     <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackValidateUTF8/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackValue/</loc>
          <lastmod>2026-02-08</lastmod>
     </url>
     <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-MessagePackZeroCopyDecoder/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
          <loc>https://seantallen-org.github.io/msgpack/msgpack-NotEnoughData/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-SkipResult/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/msgpack-ZeroCopyReader/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_decode_limits/</loc>
          <lastmod>2026-02-08</lastmod>
     </url>
     <url>
@@ -70,6 +102,18 @@
     </url>
     <url>
          <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_types/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_validate_utf8/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/src/msgpack/message_pack_zero_copy_decoder/</loc>
+         <lastmod>2026-02-08</lastmod>
+    </url>
+    <url>
+         <loc>https://seantallen-org.github.io/msgpack/src/msgpack/zero_copy_reader/</loc>
          <lastmod>2026-02-08</lastmod>
     </url>
 </urlset>

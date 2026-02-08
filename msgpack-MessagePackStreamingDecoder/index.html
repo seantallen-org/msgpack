@@ -366,6 +366,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../msgpack-InvalidUtf8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive InvalidUtf8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgpack-LimitExceeded/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive LimitExceeded
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../msgpack-MessagePackArray/" class="md-nav__link">
         
   
@@ -374,6 +430,34 @@
     
   
     class MessagePackArray
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgpack-MessagePackDecodeLimits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    class MessagePackDecodeLimits
   
 
     
@@ -617,10 +701,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#depth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        depth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#next" class="md-nav__link">
     <span class="md-ellipsis">
       
         next
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        skip
       
     </span>
   </a>
@@ -704,6 +810,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../msgpack-MessagePackValidateUTF8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive MessagePackValidateUTF8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../msgpack-MessagePackValue/" class="md-nav__link">
         
   
@@ -732,6 +866,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../msgpack-MessagePackZeroCopyDecoder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive MessagePackZeroCopyDecoder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../msgpack-NotEnoughData/" class="md-nav__link">
         
   
@@ -740,6 +902,62 @@
     
   
     primitive NotEnoughData
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgpack-SkipResult/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    type SkipResult
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgpack-ZeroCopyReader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    class ZeroCopyReader
   
 
     
@@ -838,10 +1056,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#depth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        depth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#next" class="md-nav__link">
     <span class="md-ellipsis">
       
         next
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        skip
       
     </span>
   </a>
@@ -871,7 +1111,7 @@
 
 
 <h1 id="messagepackstreamingdecoder">MessagePackStreamingDecoder<a class="headerlink" href="#messagepackstreamingdecoder" title="Permanent link">&para;</a></h1>
-<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-21">[Source]</a></span></p>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-19">[Source]</a></span></p>
 <p>A streaming-safe MessagePack decoder that never corrupts the
 underlying reader on insufficient data.</p>
 <p>Unlike <code>MessagePackDecoder</code>, which assumes all data is available
@@ -880,14 +1120,52 @@ peeks at the format byte and any length fields before consuming
 any bytes. If insufficient data is available, it returns
 <code>NotEnoughData</code> with zero bytes consumed, allowing the caller to
 append more data and retry.</p>
+<p>Limits protect against denial-of-service attacks where a
+malicious payload claims enormous sizes for variable-length
+values or deeply nested containers. By default, conservative
+limits are applied (1 MB for str/bin/ext, 131,072 for
+array/map counts, 512 for container nesting depth). When a
+value exceeds its limit, <code>next()</code> returns <code>LimitExceeded</code>
+with zero bytes consumed.</p>
+<p>The decoder automatically tracks container nesting depth.
+When <code>next()</code> returns a <code>MessagePackArray</code> or
+<code>MessagePackMap</code>, the depth counter increments. As the
+caller reads elements and containers are exhausted, the
+depth counter decrements automatically. Use <code>depth()</code> to
+inspect the current nesting level.</p>
+<p>When <code>validate_utf8</code> is <code>true</code>, decoded str values are
+validated for UTF-8 correctness. If a str value contains
+invalid UTF-8 byte sequences, <code>next()</code> returns <code>InvalidUtf8</code>
+instead of the decoded string. The bytes have been consumed
+from the reader and decoding can continue. By default,
+validation is off for backward compatibility.</p>
 <p>Usage:
-<div class="highlight"><pre><span></span><code><a id="L-0-1" name="L-0-1" href="#L-0-1"></a><span class="k">let</span> <span class="n">decoder</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span>
-<a id="L-0-2" name="L-0-2" href="#L-0-2"></a><span class="n">decoder</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk1</span><span class="p">)</span>
-<a id="L-0-3" name="L-0-3" href="#L-0-3"></a><span class="k">match</span> <span class="n">decoder</span><span class="p">.</span><span class="n">next</span><span class="p">()</span>
-<a id="L-0-4" name="L-0-4" href="#L-0-4"></a><span class="p">|</span> <span class="k">let</span> <span class="n">v</span><span class="p">:</span> <span class="nb nb-Type">U32</span> <span class="p">=&gt;</span> <span class="c1">// got a value</span>
-<a id="L-0-5" name="L-0-5" href="#L-0-5"></a><span class="p">|</span> <span class="n n-Type">NotEnoughData</span> <span class="p">=&gt;</span> <span class="c1">// need more data, append and retry</span>
-<a id="L-0-6" name="L-0-6" href="#L-0-6"></a><span class="p">|</span> <span class="n n-Type">InvalidData</span> <span class="p">=&gt;</span> <span class="c1">// corrupt stream, abort</span>
-<a id="L-0-7" name="L-0-7" href="#L-0-7"></a><span class="k">end</span>
+<div class="highlight"><pre><span></span><code><a id="L-0-1" name="L-0-1" href="#L-0-1"></a><span class="c1">// Default conservative limits, no UTF-8 validation:</span>
+<a id="L-0-2" name="L-0-2" href="#L-0-2"></a><span class="k">let</span> <span class="n">decoder</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span>
+<a id="L-0-3" name="L-0-3" href="#L-0-3"></a><span class="n">decoder</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk1</span><span class="p">)</span>
+<a id="L-0-4" name="L-0-4" href="#L-0-4"></a><span class="k">match</span> <span class="n">decoder</span><span class="p">.</span><span class="n">next</span><span class="p">()</span>
+<a id="L-0-5" name="L-0-5" href="#L-0-5"></a><span class="p">|</span> <span class="k">let</span> <span class="n">v</span><span class="p">:</span> <span class="nb nb-Type">U32</span> <span class="p">=&gt;</span> <span class="c1">// got a value</span>
+<a id="L-0-6" name="L-0-6" href="#L-0-6"></a><span class="p">|</span> <span class="n n-Type">NotEnoughData</span> <span class="p">=&gt;</span> <span class="c1">// need more data, append and retry</span>
+<a id="L-0-7" name="L-0-7" href="#L-0-7"></a><span class="p">|</span> <span class="n n-Type">LimitExceeded</span> <span class="p">=&gt;</span> <span class="c1">// value too large or too deep, reject</span>
+<a id="L-0-8" name="L-0-8" href="#L-0-8"></a><span class="p">|</span> <span class="n n-Type">InvalidData</span> <span class="p">=&gt;</span> <span class="c1">// corrupt stream, abort</span>
+<a id="L-0-9" name="L-0-9" href="#L-0-9"></a><span class="k">end</span>
+<a id="L-0-10" name="L-0-10" href="#L-0-10"></a>
+<a id="L-0-11" name="L-0-11" href="#L-0-11"></a><span class="c1">// Custom limits:</span>
+<a id="L-0-12" name="L-0-12" href="#L-0-12"></a><span class="k">let</span> <span class="n">limits</span> <span class="o">=</span> <span class="n n-Type">MessagePackDecodeLimits</span><span class="p">(</span>
+<a id="L-0-13" name="L-0-13" href="#L-0-13"></a>  <span class="k">where</span> <span class="n">max_str_len&#39;</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span>
+<a id="L-0-14" name="L-0-14" href="#L-0-14"></a>        <span class="n">max_depth&#39;</span> <span class="o">=</span> <span class="mi">16</span><span class="p">)</span>
+<a id="L-0-15" name="L-0-15" href="#L-0-15"></a><span class="k">let</span> <span class="n">decoder</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span><span class="p">(</span><span class="n">limits</span><span class="p">)</span>
+<a id="L-0-16" name="L-0-16" href="#L-0-16"></a>
+<a id="L-0-17" name="L-0-17" href="#L-0-17"></a><span class="c1">// With UTF-8 validation:</span>
+<a id="L-0-18" name="L-0-18" href="#L-0-18"></a><span class="k">let</span> <span class="n">decoder</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span><span class="p">(</span>
+<a id="L-0-19" name="L-0-19" href="#L-0-19"></a>  <span class="k">where</span> <span class="n">validate_utf8&#39;</span> <span class="o">=</span> <span class="nb">true</span><span class="p">)</span>
+<a id="L-0-20" name="L-0-20" href="#L-0-20"></a><span class="k">match</span> <span class="n">decoder</span><span class="p">.</span><span class="n">next</span><span class="p">()</span>
+<a id="L-0-21" name="L-0-21" href="#L-0-21"></a><span class="p">|</span> <span class="n n-Type">InvalidUtf8</span> <span class="p">=&gt;</span> <span class="c1">// str value had invalid UTF-8</span>
+<a id="L-0-22" name="L-0-22" href="#L-0-22"></a><span class="k">end</span>
+<a id="L-0-23" name="L-0-23" href="#L-0-23"></a>
+<a id="L-0-24" name="L-0-24" href="#L-0-24"></a><span class="c1">// No limits:</span>
+<a id="L-0-25" name="L-0-25" href="#L-0-25"></a><span class="k">let</span> <span class="n">decoder</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span><span class="p">(</span>
+<a id="L-0-26" name="L-0-26" href="#L-0-26"></a>  <span class="n n-Type">MessagePackDecodeLimits</span><span class="p">.</span><span class="n">unlimited</span><span class="p">())</span>
 </code></pre></div></p>
 <p>Container types (arrays and maps) return header objects
 (<code>MessagePackArray</code> / <code>MessagePackMap</code>) containing the element
@@ -897,10 +1175,17 @@ many values.</p>
 </code></pre></div>
 <h2 id="constructors">Constructors<a class="headerlink" href="#constructors" title="Permanent link">&para;</a></h2>
 <h3 id="create">create<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
-<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-51">[Source]</a></span></p>
-<div class="highlight"><pre><span></span><code><a id="L-2-1" name="L-2-1" href="#L-2-1"></a><span class="k">new</span> <span class="k">ref</span> <span class="nf">create</span><span class="p">()</span>
-<a id="L-2-2" name="L-2-2" href="#L-2-2"></a><span class="p">:</span> <span class="n n-Type">MessagePackStreamingDecoder</span> <span class="k">ref</span><span class="p">^</span>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-93">[Source]</a></span></p>
+<div class="highlight"><pre><span></span><code><a id="L-2-1" name="L-2-1" href="#L-2-1"></a><span class="k">new</span> <span class="k">ref</span> <span class="nf">create</span><span class="p">(</span>
+<a id="L-2-2" name="L-2-2" href="#L-2-2"></a>  <span class="n">limits</span><span class="p">:</span> <span class="n n-Type">MessagePackDecodeLimits</span> <span class="k">val</span> <span class="o">=</span> <span class="n">reference</span><span class="p">,</span>
+<a id="L-2-3" name="L-2-3" href="#L-2-3"></a>  <span class="n">validate_utf8&#39;</span><span class="p">:</span> <span class="nb nb-Type">Bool</span> <span class="k">val</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span>
+<a id="L-2-4" name="L-2-4" href="#L-2-4"></a><span class="p">:</span> <span class="n n-Type">MessagePackStreamingDecoder</span> <span class="k">ref</span><span class="p">^</span>
 </code></pre></div>
+<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
+<ul>
+<li>limits: <a href="../msgpack-MessagePackDecodeLimits/">MessagePackDecodeLimits</a> val = reference</li>
+<li>validate_utf8': <a href="https://stdlib.ponylang.io/builtin-Bool/">Bool</a> val = false</li>
+</ul>
 <h4 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h4>
 <ul>
 <li><a href="./">MessagePackStreamingDecoder</a> ref^</li>
@@ -908,13 +1193,13 @@ many values.</p>
 <hr />
 <h2 id="public-functions">Public Functions<a class="headerlink" href="#public-functions" title="Permanent link">&para;</a></h2>
 <h3 id="append">append<a class="headerlink" href="#append" title="Permanent link">&para;</a></h3>
-<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-54">[Source]</a></span></p>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-103">[Source]</a></span></p>
 <p>Append data to the internal reader. Call this as chunks arrive.</p>
 <div class="highlight"><pre><span></span><code><a id="L-3-1" name="L-3-1" href="#L-3-1"></a><span class="k">fun</span> <span class="k">ref</span> <span class="nf">append</span><span class="p">(</span>
 <a id="L-3-2" name="L-3-2" href="#L-3-2"></a>  <span class="n">data</span><span class="p">:</span> <span class="p">(</span><span class="nb nb-Type">String</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">Array</span><span class="p">[</span><span class="nb nb-Type">U8</span> <span class="k">val</span><span class="p">]</span> <span class="k">val</span><span class="p">))</span>
 <a id="L-3-3" name="L-3-3" href="#L-3-3"></a><span class="p">:</span> <span class="nb nb-Type">None</span> <span class="k">val</span>
 </code></pre></div>
-<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
+<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h4>
 <ul>
 <li>data: (<a href="https://stdlib.ponylang.io/builtin-String/">String</a> val | <a href="https://stdlib.ponylang.io/builtin-Array/">Array</a>[<a href="https://stdlib.ponylang.io/builtin-U8/">U8</a> val] val)</li>
 </ul>
@@ -923,26 +1208,42 @@ many values.</p>
 <li><a href="https://stdlib.ponylang.io/builtin-None/">None</a> val</li>
 </ul>
 <hr />
+<h3 id="depth">depth<a class="headerlink" href="#depth" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-109">[Source]</a></span></p>
+<p>Returns the current container nesting depth. Depth increases
+when <code>next()</code> returns <code>MessagePackArray</code> or <code>MessagePackMap</code>,
+and decreases automatically as elements are consumed.</p>
+<div class="highlight"><pre><span></span><code><a id="L-4-1" name="L-4-1" href="#L-4-1"></a><span class="k">fun</span> <span class="k">box</span> <span class="nf">depth</span><span class="p">()</span>
+<a id="L-4-2" name="L-4-2" href="#L-4-2"></a><span class="p">:</span> <span class="nb nb-Type">USize</span> <span class="k">val</span>
+</code></pre></div>
+<h4 id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="https://stdlib.ponylang.io/builtin-USize/">USize</a> val</li>
+</ul>
+<hr />
 <h3 id="next">next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h3>
-<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-60">[Source]</a></span></p>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-117">[Source]</a></span></p>
 <p>Attempt to decode the next MessagePack value.</p>
 <p>Returns one of:
 - A <code>MessagePackValue</code> if a complete value was decoded
 - <code>NotEnoughData</code> if more bytes are needed (no bytes consumed)
+- <code>LimitExceeded</code> if the value exceeds a configured size
+  limit (no bytes consumed)
 - <code>InvalidData</code> if the format byte is invalid (0xC1).
   The invalid byte is NOT consumed. The caller must stop
   calling <code>next()</code> after receiving <code>InvalidData</code> — the
   stream is corrupt and cannot be resynced.</p>
-<div class="highlight"><pre><span></span><code><a id="L-4-1" name="L-4-1" href="#L-4-1"></a><span class="k">fun</span> <span class="k">ref</span> <span class="nf">next</span><span class="p">()</span>
-<a id="L-4-2" name="L-4-2" href="#L-4-2"></a><span class="p">:</span> <span class="p">(</span><span class="nb nb-Type">None</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">Bool</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">U8</span> <span class="k">val</span> <span class="p">|</span> 
-<a id="L-4-3" name="L-4-3" href="#L-4-3"></a>    <span class="nb nb-Type">U16</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">U32</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">U64</span> <span class="k">val</span> <span class="p">|</span> 
-<a id="L-4-4" name="L-4-4" href="#L-4-4"></a>    <span class="nb nb-Type">I8</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">I16</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">I32</span> <span class="k">val</span> <span class="p">|</span> 
-<a id="L-4-5" name="L-4-5" href="#L-4-5"></a>    <span class="nb nb-Type">I64</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">F32</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">F64</span> <span class="k">val</span> <span class="p">|</span> 
-<a id="L-4-6" name="L-4-6" href="#L-4-6"></a>    <span class="nb nb-Type">String</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">Array</span><span class="p">[</span><span class="nb nb-Type">U8</span> <span class="k">val</span><span class="p">]</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">MessagePackArray</span> <span class="k">val</span> <span class="p">|</span> 
-<a id="L-4-7" name="L-4-7" href="#L-4-7"></a>    <span class="n n-Type">MessagePackMap</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">MessagePackExt</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">MessagePackTimestamp</span> <span class="k">val</span> <span class="p">|</span> 
-<a id="L-4-8" name="L-4-8" href="#L-4-8"></a>    <span class="n n-Type">NotEnoughData</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">InvalidData</span> <span class="k">val</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="L-5-1" name="L-5-1" href="#L-5-1"></a><span class="k">fun</span> <span class="k">ref</span> <span class="nf">next</span><span class="p">()</span>
+<a id="L-5-2" name="L-5-2" href="#L-5-2"></a><span class="p">:</span> <span class="p">(</span><span class="nb nb-Type">None</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">Bool</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">U8</span> <span class="k">val</span> <span class="p">|</span> 
+<a id="L-5-3" name="L-5-3" href="#L-5-3"></a>    <span class="nb nb-Type">U16</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">U32</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">U64</span> <span class="k">val</span> <span class="p">|</span> 
+<a id="L-5-4" name="L-5-4" href="#L-5-4"></a>    <span class="nb nb-Type">I8</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">I16</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">I32</span> <span class="k">val</span> <span class="p">|</span> 
+<a id="L-5-5" name="L-5-5" href="#L-5-5"></a>    <span class="nb nb-Type">I64</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">F32</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">F64</span> <span class="k">val</span> <span class="p">|</span> 
+<a id="L-5-6" name="L-5-6" href="#L-5-6"></a>    <span class="nb nb-Type">String</span> <span class="k">val</span> <span class="p">|</span> <span class="nb nb-Type">Array</span><span class="p">[</span><span class="nb nb-Type">U8</span> <span class="k">val</span><span class="p">]</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">MessagePackArray</span> <span class="k">val</span> <span class="p">|</span> 
+<a id="L-5-7" name="L-5-7" href="#L-5-7"></a>    <span class="n n-Type">MessagePackMap</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">MessagePackExt</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">MessagePackTimestamp</span> <span class="k">val</span> <span class="p">|</span> 
+<a id="L-5-8" name="L-5-8" href="#L-5-8"></a>    <span class="n n-Type">NotEnoughData</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">InvalidData</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">InvalidUtf8</span> <span class="k">val</span> <span class="p">|</span> 
+<a id="L-5-9" name="L-5-9" href="#L-5-9"></a>    <span class="n n-Type">LimitExceeded</span> <span class="k">val</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">&para;</a></h4>
+<h4 id="returns_3">Returns<a class="headerlink" href="#returns_3" title="Permanent link">&para;</a></h4>
 <ul>
 <li>(<a href="https://stdlib.ponylang.io/builtin-None/">None</a> val | <a href="https://stdlib.ponylang.io/builtin-Bool/">Bool</a> val | <a href="https://stdlib.ponylang.io/builtin-U8/">U8</a> val | 
     <a href="https://stdlib.ponylang.io/builtin-U16/">U16</a> val | <a href="https://stdlib.ponylang.io/builtin-U32/">U32</a> val | <a href="https://stdlib.ponylang.io/builtin-U64/">U64</a> val | 
@@ -950,7 +1251,32 @@ many values.</p>
     <a href="https://stdlib.ponylang.io/builtin-I64/">I64</a> val | <a href="https://stdlib.ponylang.io/builtin-F32/">F32</a> val | <a href="https://stdlib.ponylang.io/builtin-F64/">F64</a> val | 
     <a href="https://stdlib.ponylang.io/builtin-String/">String</a> val | <a href="https://stdlib.ponylang.io/builtin-Array/">Array</a>[<a href="https://stdlib.ponylang.io/builtin-U8/">U8</a> val] val | <a href="../msgpack-MessagePackArray/">MessagePackArray</a> val | 
     <a href="../msgpack-MessagePackMap/">MessagePackMap</a> val | <a href="../msgpack-MessagePackExt/">MessagePackExt</a> val | <a href="../msgpack-MessagePackTimestamp/">MessagePackTimestamp</a> val | 
-    <a href="../msgpack-NotEnoughData/">NotEnoughData</a> val | <a href="../msgpack-InvalidData/">InvalidData</a> val)</li>
+    <a href="../msgpack-NotEnoughData/">NotEnoughData</a> val | <a href="../msgpack-InvalidData/">InvalidData</a> val | <a href="../msgpack-InvalidUtf8/">InvalidUtf8</a> val | 
+    <a href="../msgpack-LimitExceeded/">LimitExceeded</a> val)</li>
+</ul>
+<hr />
+<h3 id="skip">skip<a class="headerlink" href="#skip" title="Permanent link">&para;</a></h3>
+<p><span class="source-link"><a href="../src/msgpack/message_pack_streaming_decoder/#L-0-180">[Source]</a></span></p>
+<p>Advances past one complete MessagePack value without
+decoding it. For containers (arrays and maps), skips all
+contained elements.</p>
+<p>Returns <code>None</code> on success, <code>NotEnoughData</code> if more bytes
+are needed (no bytes consumed), <code>InvalidData</code> if the
+format byte is invalid (no bytes consumed), or
+<code>LimitExceeded</code> if the number of values traversed exceeds
+the configured <code>max_skip_values</code> limit (no bytes
+consumed).</p>
+<p>Like <code>next()</code>, a successful skip decrements the parent
+container's remaining element count when called inside a
+container.</p>
+<div class="highlight"><pre><span></span><code><a id="L-6-1" name="L-6-1" href="#L-6-1"></a><span class="k">fun</span> <span class="k">ref</span> <span class="nf">skip</span><span class="p">()</span>
+<a id="L-6-2" name="L-6-2" href="#L-6-2"></a><span class="p">:</span> <span class="p">(</span><span class="nb nb-Type">None</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">NotEnoughData</span> <span class="k">val</span> <span class="p">|</span> <span class="n n-Type">InvalidData</span> <span class="k">val</span> <span class="p">|</span> 
+<a id="L-6-3" name="L-6-3" href="#L-6-3"></a>    <span class="n n-Type">LimitExceeded</span> <span class="k">val</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="returns_4">Returns<a class="headerlink" href="#returns_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>(<a href="https://stdlib.ponylang.io/builtin-None/">None</a> val | <a href="../msgpack-NotEnoughData/">NotEnoughData</a> val | <a href="../msgpack-InvalidData/">InvalidData</a> val | 
+    <a href="../msgpack-LimitExceeded/">LimitExceeded</a> val)</li>
 </ul>
 <hr />
 

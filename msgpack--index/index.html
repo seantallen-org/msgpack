@@ -386,6 +386,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#zero-copy-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero-Copy Decoding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decoding-untrusted-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decoding Untrusted Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utf-8-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UTF-8 Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-types" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -468,6 +501,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../msgpack-InvalidUtf8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive InvalidUtf8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgpack-LimitExceeded/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive LimitExceeded
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../msgpack-MessagePackArray/" class="md-nav__link">
         
   
@@ -476,6 +565,34 @@
     
   
     class MessagePackArray
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgpack-MessagePackDecodeLimits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    class MessagePackDecodeLimits
   
 
     
@@ -692,6 +809,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../msgpack-MessagePackValidateUTF8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive MessagePackValidateUTF8
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../msgpack-MessagePackValue/" class="md-nav__link">
         
   
@@ -720,6 +865,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../msgpack-MessagePackZeroCopyDecoder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    primitive MessagePackZeroCopyDecoder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../msgpack-NotEnoughData/" class="md-nav__link">
         
   
@@ -728,6 +901,62 @@
     
   
     primitive NotEnoughData
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgpack-SkipResult/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    type SkipResult
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgpack-ZeroCopyReader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    class ZeroCopyReader
   
 
     
@@ -819,6 +1048,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#zero-copy-decoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero-Copy Decoding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decoding-untrusted-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decoding Untrusted Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utf-8-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UTF-8 Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-types" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -849,7 +1111,7 @@
 <h1 id="pony-messagepack">Pony MessagePack<a class="headerlink" href="#pony-messagepack" title="Permanent link">&para;</a></h1>
 <p>Pure Pony implementation of the <a href="https://msgpack.org/">MessagePack</a>
 serialization format.</p>
-<p>Three public APIs are available:</p>
+<p>Four public APIs are available:</p>
 <ul>
 <li>
 <p><code>MessagePackEncoder</code> — Stateless encoding methods. Compact methods
@@ -859,16 +1121,23 @@ serialization format.</p>
   explicit control.</p>
 </li>
 <li>
-<p><code>MessagePackDecoder</code> — Stateless decoding methods. Compact methods
-  (<code>uint</code>, <code>int</code>, <code>str</code>, <code>array</code>, <code>map</code>) accept any wire format within a
-  format family. Format-specific methods are available when the caller
-  knows the exact wire format. Assumes all data is available; not suitable
-  for streaming.</p>
+<p><code>MessagePackDecoder</code> — Stateless decoding methods that work with
+  <code>buffered.Reader</code>. Compact methods (<code>uint</code>, <code>int</code>, <code>str</code>, <code>array</code>,
+  <code>map</code>) accept any wire format within a format family. Format-specific
+  methods are available when the caller knows the exact wire format.
+  Assumes all data is available; not suitable for streaming.</p>
 </li>
 <li>
-<p><code>MessagePackStreamingDecoder</code> — A streaming-safe decoder that peeks before
-  consuming bytes. Returns <code>NotEnoughData</code> when more bytes are needed, with
-  zero bytes consumed.</p>
+<p><code>MessagePackZeroCopyDecoder</code> — Zero-copy decoding methods that work
+  with <code>ZeroCopyReader</code>. Same API as <code>MessagePackDecoder</code> but returns
+  <code>String val</code> and <code>Array[U8] val</code> views into the reader's buffer
+  instead of copying. Use this when you need to avoid allocation
+  overhead for large string and binary payloads.</p>
+</li>
+<li>
+<p><code>MessagePackStreamingDecoder</code> — A streaming-safe decoder that peeks
+  before consuming bytes. Returns <code>NotEnoughData</code> when more bytes are
+  needed, with zero bytes consumed. Uses zero-copy decoding internally.</p>
 </li>
 </ul>
 <h2 id="encoding-and-decoding-scalar-values">Encoding and Decoding Scalar Values<a class="headerlink" href="#encoding-and-decoding-scalar-values" title="Permanent link">&para;</a></h2>
@@ -979,14 +1248,113 @@ caller then reads the elements.</p>
 <a id="L-3-26" name="L-3-26" href="#L-3-26"></a>    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
 <a id="L-3-27" name="L-3-27" href="#L-3-27"></a>  <span class="k">end</span>
 <a id="L-3-28" name="L-3-28" href="#L-3-28"></a><span class="p">|</span> <span class="n n-Type">NotEnoughData</span> <span class="p">=&gt;</span> <span class="nb nb-Type">None</span> <span class="c1">// need more bytes</span>
-<a id="L-3-29" name="L-3-29" href="#L-3-29"></a><span class="p">|</span> <span class="n n-Type">InvalidData</span> <span class="p">=&gt;</span> <span class="nb nb-Type">None</span> <span class="c1">// stream is corrupt</span>
-<a id="L-3-30" name="L-3-30" href="#L-3-30"></a><span class="k">end</span>
+<a id="L-3-29" name="L-3-29" href="#L-3-29"></a><span class="p">|</span> <span class="n n-Type">LimitExceeded</span> <span class="p">=&gt;</span> <span class="nb nb-Type">None</span> <span class="c1">// value too large</span>
+<a id="L-3-30" name="L-3-30" href="#L-3-30"></a><span class="p">|</span> <span class="n n-Type">InvalidData</span> <span class="p">=&gt;</span> <span class="nb nb-Type">None</span> <span class="c1">// stream is corrupt</span>
+<a id="L-3-31" name="L-3-31" href="#L-3-31"></a><span class="k">end</span>
+</code></pre></div>
+<h2 id="zero-copy-decoding">Zero-Copy Decoding<a class="headerlink" href="#zero-copy-decoding" title="Permanent link">&para;</a></h2>
+<p><code>ZeroCopyReader</code> + <code>MessagePackZeroCopyDecoder</code> provide zero-copy
+decoding as an alternative to <code>buffered.Reader</code> + <code>MessagePackDecoder</code>.
+When string or binary data falls within a single chunk, the decoder
+returns a shared view into the reader's buffer — no allocation or copy.
+When data spans chunk boundaries, it falls back to copying.</p>
+<p><code>MessagePackStreamingDecoder</code> uses zero-copy decoding internally.
+Callers get the benefit automatically with no code changes.</p>
+<p>For low-level decoding where you want zero-copy directly:</p>
+<div class="highlight"><pre><span></span><code><a id="L-4-1" name="L-4-1" href="#L-4-1"></a><span class="k">use</span> <span class="s">&quot;buffered&quot;</span>
+<a id="L-4-2" name="L-4-2" href="#L-4-2"></a><span class="k">use</span> <span class="s">&quot;msgpack&quot;</span>
+<a id="L-4-3" name="L-4-3" href="#L-4-3"></a>
+<a id="L-4-4" name="L-4-4" href="#L-4-4"></a><span class="k">let</span> <span class="n">w</span><span class="p">:</span> <span class="n n-Type">Writer</span> <span class="k">ref</span> <span class="o">=</span> <span class="n n-Type">Writer</span>
+<a id="L-4-5" name="L-4-5" href="#L-4-5"></a><span class="n n-Type">MessagePackEncoder</span><span class="p">.</span><span class="n">str</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s">&quot;hello&quot;</span><span class="p">)?</span>
+<a id="L-4-6" name="L-4-6" href="#L-4-6"></a>
+<a id="L-4-7" name="L-4-7" href="#L-4-7"></a><span class="k">let</span> <span class="n">r</span> <span class="o">=</span> <span class="n n-Type">ZeroCopyReader</span>
+<a id="L-4-8" name="L-4-8" href="#L-4-8"></a><span class="k">for</span> <span class="n">bs</span> <span class="k">in</span> <span class="n">w</span><span class="p">.</span><span class="n">done</span><span class="p">().</span><span class="n">values</span><span class="p">()</span> <span class="k">do</span>
+<a id="L-4-9" name="L-4-9" href="#L-4-9"></a>  <span class="n">r</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">bs</span><span class="p">)</span>
+<a id="L-4-10" name="L-4-10" href="#L-4-10"></a><span class="k">end</span>
+<a id="L-4-11" name="L-4-11" href="#L-4-11"></a>
+<a id="L-4-12" name="L-4-12" href="#L-4-12"></a><span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n n-Type">MessagePackZeroCopyDecoder</span><span class="p">.</span><span class="n">str</span><span class="p">(</span><span class="n">r</span><span class="p">)?</span>
+</code></pre></div>
+<p><strong>Tradeoff:</strong> <code>ZeroCopyReader</code> is specific to this package and is not
+interoperable with APIs that expect <code>buffered.Reader</code>. Decoded values
+may hold references to the reader's internal chunks, pinning them in
+memory until the decoded value is discarded. For most use cases
+(decode, process, discard) this is not a concern.</p>
+<h2 id="decoding-untrusted-data">Decoding Untrusted Data<a class="headerlink" href="#decoding-untrusted-data" title="Permanent link">&para;</a></h2>
+<p>MessagePack headers declare the size of variable-length values
+(strings, byte arrays, extensions) and the element count of
+containers (arrays, maps). A malicious or malformed payload can
+claim sizes far larger than the actual data — for example, a
+5-byte message whose header declares a 2 GB string. Without
+limits, a decoder may attempt to allocate memory proportional to
+the declared size, enabling denial-of-service attacks.</p>
+<p><strong><code>MessagePackDecoder</code> provides no protection.</strong> It trusts the
+declared sizes and will attempt to read whatever the header says.
+Use it only when you control both ends of the connection or have
+already validated the payload.</p>
+<p><strong><code>MessagePackStreamingDecoder</code> enforces size limits.</strong> By
+default, conservative limits are applied: 1 MB for str/bin/ext
+data and 131,072 for array/map element counts. When a value
+exceeds its limit, <code>next()</code> returns <code>LimitExceeded</code> with zero
+bytes consumed.</p>
+<p>For network-facing code that decodes data from untrusted sources,
+use <code>MessagePackStreamingDecoder</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="L-5-1" name="L-5-1" href="#L-5-1"></a><span class="c1">// Default limits — safe for most applications:</span>
+<a id="L-5-2" name="L-5-2" href="#L-5-2"></a><span class="k">let</span> <span class="n">sd</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span>
+<a id="L-5-3" name="L-5-3" href="#L-5-3"></a>
+<a id="L-5-4" name="L-5-4" href="#L-5-4"></a><span class="c1">// Tighter limits for a constrained protocol:</span>
+<a id="L-5-5" name="L-5-5" href="#L-5-5"></a><span class="k">let</span> <span class="n">limits</span> <span class="o">=</span> <span class="n n-Type">MessagePackDecodeLimits</span><span class="p">(</span>
+<a id="L-5-6" name="L-5-6" href="#L-5-6"></a>  <span class="k">where</span> <span class="n">max_str_len&#39;</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span>
+<a id="L-5-7" name="L-5-7" href="#L-5-7"></a>        <span class="n">max_array_len&#39;</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<a id="L-5-8" name="L-5-8" href="#L-5-8"></a><span class="k">let</span> <span class="n">sd</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span><span class="p">(</span><span class="n">limits</span><span class="p">)</span>
+<a id="L-5-9" name="L-5-9" href="#L-5-9"></a>
+<a id="L-5-10" name="L-5-10" href="#L-5-10"></a><span class="c1">// No limits (trusted data only):</span>
+<a id="L-5-11" name="L-5-11" href="#L-5-11"></a><span class="k">let</span> <span class="n">sd</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span><span class="p">(</span>
+<a id="L-5-12" name="L-5-12" href="#L-5-12"></a>  <span class="n n-Type">MessagePackDecodeLimits</span><span class="p">.</span><span class="n">unlimited</span><span class="p">())</span>
+</code></pre></div>
+<p>See <code>MessagePackDecodeLimits</code> for the full set of configurable
+limits.</p>
+<h2 id="utf-8-validation">UTF-8 Validation<a class="headerlink" href="#utf-8-validation" title="Permanent link">&para;</a></h2>
+<p>The MessagePack spec defines the str format family as UTF-8
+strings. By default, this library does not validate UTF-8 — str
+values are treated as raw byte sequences for backward
+compatibility and performance. Opt-in validation is available at
+every layer:</p>
+<p><strong>Validating method variants</strong> — Append <code>_utf8</code> to any str
+encoding or decoding method. These validate UTF-8 and error on
+invalid byte sequences:</p>
+<div class="highlight"><pre><span></span><code><a id="L-6-1" name="L-6-1" href="#L-6-1"></a><span class="c1">// Encode — errors if bytes are not valid UTF-8</span>
+<a id="L-6-2" name="L-6-2" href="#L-6-2"></a><span class="n n-Type">MessagePackEncoder</span><span class="p">.</span><span class="n">str_utf8</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">value</span><span class="p">)?</span>
+<a id="L-6-3" name="L-6-3" href="#L-6-3"></a>
+<a id="L-6-4" name="L-6-4" href="#L-6-4"></a><span class="c1">// Decode — errors if decoded bytes are not valid UTF-8</span>
+<a id="L-6-5" name="L-6-5" href="#L-6-5"></a><span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n n-Type">MessagePackDecoder</span><span class="p">.</span><span class="n">str_utf8</span><span class="p">(</span><span class="n">r</span><span class="p">)?</span>
+<a id="L-6-6" name="L-6-6" href="#L-6-6"></a><span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n n-Type">MessagePackZeroCopyDecoder</span><span class="p">.</span><span class="n">str_utf8</span><span class="p">(</span><span class="n">r</span><span class="p">)?</span>
+</code></pre></div>
+<p><strong>Streaming decoder</strong> — Pass <code>validate_utf8' = true</code> to the
+constructor. Invalid str values return <code>InvalidUtf8</code> instead of
+the decoded string:</p>
+<div class="highlight"><pre><span></span><code><a id="L-7-1" name="L-7-1" href="#L-7-1"></a><span class="k">let</span> <span class="n">sd</span> <span class="o">=</span> <span class="n n-Type">MessagePackStreamingDecoder</span><span class="p">(</span>
+<a id="L-7-2" name="L-7-2" href="#L-7-2"></a>  <span class="k">where</span> <span class="n">validate_utf8&#39;</span> <span class="o">=</span> <span class="nb">true</span><span class="p">)</span>
+<a id="L-7-3" name="L-7-3" href="#L-7-3"></a><span class="k">match</span> <span class="n">sd</span><span class="p">.</span><span class="n">next</span><span class="p">()</span>
+<a id="L-7-4" name="L-7-4" href="#L-7-4"></a><span class="p">|</span> <span class="k">let</span> <span class="n">s</span><span class="p">:</span> <span class="nb nb-Type">String</span> <span class="k">val</span> <span class="p">=&gt;</span> <span class="c1">// valid UTF-8</span>
+<a id="L-7-5" name="L-7-5" href="#L-7-5"></a><span class="p">|</span> <span class="n n-Type">InvalidUtf8</span> <span class="p">=&gt;</span> <span class="c1">// invalid UTF-8, can continue decoding</span>
+<a id="L-7-6" name="L-7-6" href="#L-7-6"></a><span class="k">end</span>
+</code></pre></div>
+<p><strong>Decode then validate</strong> — Use <code>MessagePackValidateUTF8</code> for
+caller-side validation when you need access to the raw bytes on
+failure:</p>
+<div class="highlight"><pre><span></span><code><a id="L-8-1" name="L-8-1" href="#L-8-1"></a><span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n n-Type">MessagePackDecoder</span><span class="p">.</span><span class="n">str</span><span class="p">(</span><span class="n">r</span><span class="p">)?</span>
+<a id="L-8-2" name="L-8-2" href="#L-8-2"></a><span class="k">if</span> <span class="ow">not</span> <span class="n n-Type">MessagePackValidateUTF8</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">then</span>
+<a id="L-8-3" name="L-8-3" href="#L-8-3"></a>  <span class="c1">// s still available — log, reject, or use as raw bytes</span>
+<a id="L-8-4" name="L-8-4" href="#L-8-4"></a><span class="k">end</span>
 </code></pre></div>
 <h2 id="public-types">Public Types<a class="headerlink" href="#public-types" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../msgpack-DecodeResult/">type DecodeResult</a></li>
 <li><a href="../msgpack-InvalidData/">primitive InvalidData</a></li>
+<li><a href="../msgpack-InvalidUtf8/">primitive InvalidUtf8</a></li>
+<li><a href="../msgpack-LimitExceeded/">primitive LimitExceeded</a></li>
 <li><a href="../msgpack-MessagePackArray/">class MessagePackArray</a></li>
+<li><a href="../msgpack-MessagePackDecodeLimits/">class MessagePackDecodeLimits</a></li>
 <li><a href="../msgpack-MessagePackDecoder/">primitive MessagePackDecoder</a></li>
 <li><a href="../msgpack-MessagePackEncoder/">primitive MessagePackEncoder</a></li>
 <li><a href="../msgpack-MessagePackExt/">class MessagePackExt</a></li>
@@ -994,8 +1362,12 @@ caller then reads the elements.</p>
 <li><a href="../msgpack-MessagePackStreamingDecoder/">class MessagePackStreamingDecoder</a></li>
 <li><a href="../msgpack-MessagePackTimestamp/">class MessagePackTimestamp</a></li>
 <li><a href="../msgpack-MessagePackType/">type MessagePackType</a></li>
+<li><a href="../msgpack-MessagePackValidateUTF8/">primitive MessagePackValidateUTF8</a></li>
 <li><a href="../msgpack-MessagePackValue/">type MessagePackValue</a></li>
+<li><a href="../msgpack-MessagePackZeroCopyDecoder/">primitive MessagePackZeroCopyDecoder</a></li>
 <li><a href="../msgpack-NotEnoughData/">primitive NotEnoughData</a></li>
+<li><a href="../msgpack-SkipResult/">type SkipResult</a></li>
+<li><a href="../msgpack-ZeroCopyReader/">class ZeroCopyReader</a></li>
 </ul>
 
 

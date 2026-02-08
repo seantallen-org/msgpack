@@ -99,6 +99,14 @@ actor \nodoc\ _TestEncoder is TestList
     test(_TestEncodeTimestamp64NsecsTooLarge)
     test(_TestEncodeTimestamp96)
     test(_TestEncodeTimestamp96NsecsTooLarge)
+    test(_TestEncodeCompactUint)
+    test(_TestEncodeCompactInt)
+    test(_TestEncodeCompactStr)
+    test(_TestEncodeCompactBin)
+    test(_TestEncodeCompactArray)
+    test(_TestEncodeCompactMap)
+    test(_TestEncodeCompactExt)
+    test(_TestEncodeCompactTimestamp)
 ifdef not "ci" then
     // These 2 tests take up a lot of memory.
     // CircleCI where CI is run only has 4 gigs of memory
@@ -1592,3 +1600,384 @@ class \nodoc\ _TestEncodeTimestamp96NsecsTooLarge is UnitTest
       MessagePackEncoder.timestamp_96(w, 0, (_Limit.nsec() + 1))?
       h.fail()
     end
+
+class \nodoc\ _TestEncodeCompactUint is UnitTest
+  """
+  Verify that compact uint selects the smallest format at each
+  boundary.
+  """
+  fun name(): String =>
+    "msgpack/EncodeCompactUint"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, 0, 1, 0x00)?                      // fixint
+    _check(h, 127, 1, 127)?                      // fixint max
+    _check(h, 128, 2, _FormatName.uint_8())?     // uint_8 min
+    _check(h, 255, 2, _FormatName.uint_8())?     // uint_8 max
+    _check(h, 256, 3, _FormatName.uint_16())?    // uint_16 min
+    _check(h, 65535, 3, _FormatName.uint_16())?  // uint_16 max
+    _check(h, 65536, 5, _FormatName.uint_32())?  // uint_32 min
+    _check(h, U32.max_value().u64(), 5,
+      _FormatName.uint_32())?                    // uint_32 max
+    _check(h, U32.max_value().u64() + 1, 9,
+      _FormatName.uint_64())?                    // uint_64 min
+    _check(h, U64.max_value(), 9,
+      _FormatName.uint_64())?                    // uint_64 max
+
+  fun _check(
+    h: TestHelper,
+    v: U64,
+    expected_size: USize,
+    expected_format: U8)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.uint(w, v)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](expected_size, b.size(),
+      "size for " + v.string())
+    h.assert_eq[U8](expected_format, b.peek_u8()?,
+      "format for " + v.string())
+
+class \nodoc\ _TestEncodeCompactInt is UnitTest
+  """
+  Verify that compact int selects the smallest format at each
+  boundary. Positive values use unsigned formats.
+  """
+  fun name(): String =>
+    "msgpack/EncodeCompactInt"
+
+  fun ref apply(h: TestHelper) ? =>
+    // positive fixint
+    _check(h, 0, 1, 0x00)?
+    _check(h, 127, 1, 127)?
+    // negative fixint
+    _check(h, -1, 1, 0xFF)?
+    _check(h, -32, 1, 0xE0)?
+    // uint_8
+    _check(h, 128, 2, _FormatName.uint_8())?
+    // int_8
+    _check(h, -33, 2, _FormatName.int_8())?
+    _check(h, -128, 2, _FormatName.int_8())?
+    // uint_16
+    _check(h, 256, 3, _FormatName.uint_16())?
+    // int_16
+    _check(h, -129, 3, _FormatName.int_16())?
+    _check(h, -32768, 3, _FormatName.int_16())?
+    // uint_32
+    _check(h, 65536, 5, _FormatName.uint_32())?
+    // int_32
+    _check(h, -32769, 5, _FormatName.int_32())?
+    // uint_64
+    _check(h, U32.max_value().i64() + 1, 9,
+      _FormatName.uint_64())?
+    // int_64
+    _check(h, I64.min_value(), 9,
+      _FormatName.int_64())?
+
+  fun _check(
+    h: TestHelper,
+    v: I64,
+    expected_size: USize,
+    expected_format: U8)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.int(w, v)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](expected_size, b.size(),
+      "size for " + v.string())
+    h.assert_eq[U8](expected_format, b.peek_u8()?,
+      "format for " + v.string())
+
+class \nodoc\ _TestEncodeCompactStr is UnitTest
+  """
+  Verify that compact str selects the correct format by size.
+  """
+  fun name(): String =>
+    "msgpack/EncodeCompactStr"
+
+  fun ref apply(h: TestHelper) ? =>
+    // fixstr boundaries
+    let empty = recover val Array[U8] end
+    _check(h, empty, 1, 0xA0)?                  // 0: fixstr
+    let fix5 = recover val
+      Array[U8].init('A', 5)
+    end
+    _check(h, fix5, 6, 0xA5)?                   // 5: fixstr
+    let fix31 = recover val
+      Array[U8].init('A', 31)
+    end
+    _check(h, fix31, 32, 0xBF)?                  // 31: fixstr max
+
+    // str_8 boundaries
+    let s8_32 = recover val
+      Array[U8].init('B', 32)
+    end
+    _check(h, s8_32, 34, _FormatName.str_8())?   // 32: str_8 min
+    let s8_255 = recover val
+      Array[U8].init('B', 255)
+    end
+    _check(h, s8_255, 257, _FormatName.str_8())? // 255: str_8 max
+
+    // str_16 boundary
+    let s16_256 = recover val
+      Array[U8].init('C', 256)
+    end
+    _check(h, s16_256, 259, _FormatName.str_16())? // 256: str_16 min
+
+  fun _check(
+    h: TestHelper,
+    v: ByteSeq,
+    expected_size: USize,
+    expected_format: U8)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.str(w, v)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](expected_size, b.size(),
+      "size for len=" + v.size().string())
+    h.assert_eq[U8](expected_format, b.peek_u8()?,
+      "format for len=" + v.size().string())
+
+class \nodoc\ _TestEncodeCompactBin is UnitTest
+  """
+  Verify that compact bin selects the correct format by size.
+  """
+  fun name(): String =>
+    "msgpack/EncodeCompactBin"
+
+  fun ref apply(h: TestHelper) ? =>
+    // bin_8 boundaries
+    let empty = recover val Array[U8] end
+    _check(h, empty, 2, _FormatName.bin_8())?     // 0: bin_8 min
+    let b8_5 = recover val
+      Array[U8].init('A', 5)
+    end
+    _check(h, b8_5, 7, _FormatName.bin_8())?      // 5: bin_8
+    let b8_255 = recover val
+      Array[U8].init('A', 255)
+    end
+    _check(h, b8_255, 257, _FormatName.bin_8())?  // 255: bin_8 max
+
+    // bin_16 boundary
+    let b16_256 = recover val
+      Array[U8].init('B', 256)
+    end
+    _check(h, b16_256, 259, _FormatName.bin_16())? // 256: bin_16 min
+
+  fun _check(
+    h: TestHelper,
+    v: ByteSeq,
+    expected_size: USize,
+    expected_format: U8)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.bin(w, v)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](expected_size, b.size(),
+      "size for len=" + v.size().string())
+    h.assert_eq[U8](expected_format, b.peek_u8()?,
+      "format for len=" + v.size().string())
+
+class \nodoc\ _TestEncodeCompactArray is UnitTest
+  """
+  Verify that compact array selects the correct format by count.
+  """
+  fun name(): String =>
+    "msgpack/EncodeCompactArray"
+
+  fun ref apply(h: TestHelper) ? =>
+    // fixarray boundaries
+    _check(h, 0, 1, 0x90)?                          // 0: fixarray
+    _check(h, 5, 1, 0x95)?                          // 5: fixarray
+    _check(h, 15, 1, 0x9F)?                         // 15: fixarray max
+    // array_16 boundaries
+    _check(h, 16, 3, _FormatName.array_16())?       // 16: array_16 min
+    _check(h, 65535, 3, _FormatName.array_16())?    // 65535: array_16 max
+    // array_32 boundary
+    _check(h, 65536, 5, _FormatName.array_32())?    // 65536: array_32 min
+
+  fun _check(
+    h: TestHelper,
+    s: U32,
+    expected_size: USize,
+    expected_format: U8)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.array(w, s)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](expected_size, b.size(),
+      "size for " + s.string())
+    h.assert_eq[U8](expected_format, b.peek_u8()?,
+      "format for " + s.string())
+
+class \nodoc\ _TestEncodeCompactMap is UnitTest
+  """
+  Verify that compact map selects the correct format by count.
+  """
+  fun name(): String =>
+    "msgpack/EncodeCompactMap"
+
+  fun ref apply(h: TestHelper) ? =>
+    // fixmap boundaries
+    _check(h, 0, 1, 0x80)?                        // 0: fixmap
+    _check(h, 5, 1, 0x85)?                        // 5: fixmap
+    _check(h, 15, 1, 0x8F)?                       // 15: fixmap max
+    // map_16 boundaries
+    _check(h, 16, 3, _FormatName.map_16())?       // 16: map_16 min
+    _check(h, 65535, 3, _FormatName.map_16())?    // 65535: map_16 max
+    // map_32 boundary
+    _check(h, 65536, 5, _FormatName.map_32())?    // 65536: map_32 min
+
+  fun _check(
+    h: TestHelper,
+    s: U32,
+    expected_size: USize,
+    expected_format: U8)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.map(w, s)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[USize](expected_size, b.size(),
+      "size for " + s.string())
+    h.assert_eq[U8](expected_format, b.peek_u8()?,
+      "format for " + s.string())
+
+class \nodoc\ _TestEncodeCompactExt is UnitTest
+  """
+  Verify that compact ext prefers fixext formats for matching
+  sizes and falls back to ext_8 for non-fixext sizes.
+  """
+  fun name(): String =>
+    "msgpack/EncodeCompactExt"
+
+  fun ref apply(h: TestHelper) ? =>
+    let t: U8 = 42
+    // fixext sizes
+    _check(h, t, 1, _FormatName.fixext_1())?
+    _check(h, t, 2, _FormatName.fixext_2())?
+    _check(h, t, 4, _FormatName.fixext_4())?
+    _check(h, t, 8, _FormatName.fixext_8())?
+    _check(h, t, 16, _FormatName.fixext_16())?
+    // ext_8 for non-fixext sizes
+    _check(h, t, 3, _FormatName.ext_8())?
+    _check(h, t, 0, _FormatName.ext_8())?
+
+  fun _check(
+    h: TestHelper,
+    t: U8,
+    data_size: USize,
+    expected_format: U8)
+    ?
+  =>
+    let value = recover val
+      Array[U8].init('X', data_size)
+    end
+    let w: Writer ref = Writer
+    let b = Reader
+
+    MessagePackEncoder.ext(w, t, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U8](expected_format, b.peek_u8()?,
+      "format for size=" + data_size.string())
+
+class \nodoc\ _TestEncodeCompactTimestamp is UnitTest
+  """
+  Verify that compact timestamp selects the correct format.
+  """
+  fun name(): String =>
+    "msgpack/EncodeCompactTimestamp"
+
+  fun ref apply(h: TestHelper) ? =>
+    // timestamp_32 boundaries
+    _check(h, 0, 0, _FormatName.fixext_4(),
+      "ts32: sec=0 nsec=0")?
+    _check(h, 500, 0, _FormatName.fixext_4(),
+      "ts32: sec=500 nsec=0")?
+    _check(h, U32.max_value().i64(), 0,
+      _FormatName.fixext_4(),
+      "ts32: sec=U32.max nsec=0")?
+
+    // timestamp_64 boundaries
+    // nsec != 0 pushes to timestamp_64
+    _check(h, 500, 100, _FormatName.fixext_8(),
+      "ts64: sec=500 nsec=100")?
+    // sec > U32.max pushes to timestamp_64 even with nsec=0
+    _check(h, U32.max_value().i64() + 1, 0,
+      _FormatName.fixext_8(),
+      "ts64: sec=U32.max+1 nsec=0")?
+    // sec at 34-bit max
+    _check(h, _Limit.sec_34().i64(), 0,
+      _FormatName.fixext_8(),
+      "ts64: sec=2^34-1 nsec=0")?
+
+    // timestamp_96 boundaries
+    // sec exceeds 34-bit max
+    _check(h, _Limit.sec_34().i64() + 1, 0,
+      _FormatName.ext_8(),
+      "ts96: sec=2^34 nsec=0")?
+    // negative sec
+    _check(h, -1000, 500, _FormatName.ext_8(),
+      "ts96: sec=-1000 nsec=500")?
+
+  fun _check(
+    h: TestHelper,
+    sec: I64,
+    nsec: U32,
+    expected_format: U8,
+    label: String)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b = Reader
+    MessagePackEncoder.timestamp(w, sec, nsec)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[U8](expected_format, b.peek_u8()?,
+      label)

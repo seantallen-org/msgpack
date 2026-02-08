@@ -18,6 +18,7 @@ limitations under the License.
 
 use "buffered"
 use "collections"
+use "pony_check"
 use "pony_test"
 
 actor \nodoc\ _TestDecoder is TestList
@@ -64,6 +65,37 @@ actor \nodoc\ _TestDecoder is TestList
     test(_TestDecodeTimestamp32)
     test(_TestDecodeTimestamp64)
     test(_TestDecodeTimestamp96)
+    test(_TestDecodeCompactUint)
+    test(_TestDecodeCompactInt)
+    test(_TestDecodeCompactStr)
+    test(_TestDecodeCompactArray)
+    test(_TestDecodeCompactMap)
+    test(_TestDecodeCompactExt)
+    test(_TestDecodeCompactTimestamp)
+    test(Property1UnitTest[U64](
+      _PropertyCompactUintRoundtrip))
+    test(Property1UnitTest[I64](
+      _PropertyCompactIntRoundtrip))
+    test(Property1UnitTest[String](
+      _PropertyCompactStrRoundtrip))
+    test(Property1UnitTest[U32](
+      _PropertyCompactArrayRoundtrip))
+    test(Property1UnitTest[U32](
+      _PropertyCompactMapRoundtrip))
+    test(Property1UnitTest[U64](
+      _PropertyCompactUintSmallestSize))
+    test(Property1UnitTest[I64](
+      _PropertyCompactIntSmallestSize))
+    test(Property1UnitTest[String](
+      _PropertyCompactStrSmallestSize))
+    test(Property1UnitTest[U32](
+      _PropertyCompactArraySmallestSize))
+    test(Property1UnitTest[U32](
+      _PropertyCompactMapSmallestSize))
+    test(_TestDecodeCompactUintRejects)
+    test(_TestDecodeCompactIntRejects)
+    test(_TestDecodeCompactArrayRejects)
+    test(_TestDecodeCompactMapRejects)
 
 class \nodoc\ _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -816,3 +848,903 @@ class \nodoc\ _TestDecodeTimestamp96 is UnitTest
     (let decoded_sec, let decoded_nsec) = MessagePackDecoder.timestamp(b)?
     h.assert_eq[I64](decoded_sec, 0 - _Limit.sec_34().i64())
     h.assert_eq[U32](decoded_nsec, _Limit.nsec())
+
+class \nodoc\ _TestDecodeCompactUint is UnitTest
+  """
+  Compact uint encode-then-decode roundtrip at each format
+  boundary.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactUint"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, 0)?
+    _check(h, 127)?
+    _check(h, 128)?
+    _check(h, 255)?
+    _check(h, 256)?
+    _check(h, 65535)?
+    _check(h, 65536)?
+    _check(h, U64.max_value())?
+
+  fun _check(h: TestHelper, v: U64) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.uint(w, v)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U64](v, MessagePackDecoder.uint(b)?,
+      "roundtrip " + v.string())
+
+class \nodoc\ _TestDecodeCompactInt is UnitTest
+  """
+  Compact int encode-then-decode roundtrip at each format
+  boundary.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactInt"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, 0)?
+    _check(h, 127)?
+    _check(h, -1)?
+    _check(h, -32)?
+    _check(h, 128)?
+    _check(h, 255)?
+    _check(h, -33)?
+    _check(h, -128)?
+    _check(h, 256)?
+    _check(h, 65535)?
+    _check(h, -129)?
+    _check(h, -32768)?
+    _check(h, 65536)?
+    _check(h, U32.max_value().i64())?
+    _check(h, -32769)?
+    _check(h, I64.max_value())?
+    _check(h, I64.min_value())?
+
+  fun _check(h: TestHelper, v: I64) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.int(w, v)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[I64](v, MessagePackDecoder.int(b)?,
+      "roundtrip " + v.string())
+
+class \nodoc\ _TestDecodeCompactStr is UnitTest
+  """
+  Compact str encode-then-decode roundtrip across format
+  boundaries (fixstr and str_8).
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactStr"
+
+  fun ref apply(h: TestHelper) ? =>
+    // fixstr (short string)
+    _check(h, "Hello")?
+    // str_8 (32 bytes, above fixstr limit)
+    let medium = recover val
+      String.from_array(
+        recover val Array[U8].init('M', 32) end)
+    end
+    _check(h, medium)?
+
+  fun _check(h: TestHelper, v: String val) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str(w, v)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String](v,
+      MessagePackDecoder.str(b)?,
+      "roundtrip len=" + v.size().string())
+
+class \nodoc\ _TestDecodeCompactArray is UnitTest
+  """
+  Compact array encode-then-decode roundtrip across format
+  boundaries.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactArray"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, 5)?      // fixarray
+    _check(h, 300)?     // array_16
+    _check(h, 70000)?   // array_32
+
+  fun _check(h: TestHelper, v: U32) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.array(w, v)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U32](v, MessagePackDecoder.array(b)?,
+      "roundtrip " + v.string())
+
+class \nodoc\ _TestDecodeCompactMap is UnitTest
+  """
+  Compact map encode-then-decode roundtrip across format
+  boundaries.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactMap"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, 5)?      // fixmap
+    _check(h, 400)?     // map_16
+    _check(h, 80000)?   // map_32
+
+  fun _check(h: TestHelper, v: U32) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.map(w, v)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U32](v, MessagePackDecoder.map(b)?,
+      "roundtrip " + v.string())
+
+class \nodoc\ _TestDecodeCompactExt is UnitTest
+  """
+  Compact ext encode-then-decode roundtrip across fixext and
+  variable-length formats.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactExt"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, 42, 1)?    // fixext_1
+    _check(h, 42, 2)?    // fixext_2
+    _check(h, 42, 4)?    // fixext_4
+    _check(h, 42, 8)?    // fixext_8
+    _check(h, 42, 16)?   // fixext_16
+    _check(h, 42, 3)?    // ext_8 (non-fixext size)
+    _check(h, 42, 0)?    // ext_8 (zero-length)
+
+  fun _check(
+    h: TestHelper,
+    t: U8,
+    data_size: USize)
+    ?
+  =>
+    let value = recover val
+      Array[U8].init('X', data_size)
+    end
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.ext(w, t, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let dt, let dv) = MessagePackDecoder.ext(b)?
+    h.assert_eq[U8](t, dt,
+      "type for size=" + data_size.string())
+    h.assert_eq[USize](data_size, dv.size(),
+      "data size for size=" + data_size.string())
+    for i in Range(0, data_size) do
+      h.assert_eq[U8]('X', dv(i)?,
+        "data byte " + i.string())
+    end
+
+class \nodoc\ _TestDecodeCompactTimestamp is UnitTest
+  """
+  Compact timestamp encode-then-decode roundtrip across all
+  three timestamp formats.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactTimestamp"
+
+  fun ref apply(h: TestHelper) ? =>
+    // timestamp_32: nsec=0, sec fits in U32
+    _check(h, 500, 0)?
+    // timestamp_64: nsec != 0, sec fits in 34 bits
+    _check(h, 500, 100)?
+    // timestamp_96: negative sec
+    _check(h, -1000, 500)?
+
+  fun _check(
+    h: TestHelper,
+    sec: I64,
+    nsec: U32)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.timestamp(w, sec, nsec)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let ds, let dn) = MessagePackDecoder.timestamp(b)?
+    h.assert_eq[I64](sec, ds,
+      "sec for (" + sec.string() + ", "
+        + nsec.string() + ")")
+    h.assert_eq[U32](nsec, dn,
+      "nsec for (" + sec.string() + ", "
+        + nsec.string() + ")")
+
+class \nodoc\ _TestDecodeCompactUintRejects is UnitTest
+  """
+  Compact uint errors on format bytes outside the unsigned
+  integer family.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactUintRejects"
+
+  fun ref apply(h: TestHelper) =>
+    // nil (0xC0)
+    _rejects(h, _FormatName.nil())
+    // bool (0xC3)
+    _rejects(h, _FormatName.truthy())
+    // str_8 (0xD9)
+    _rejects(h, _FormatName.str_8())
+    // fixstr (0xA5)
+    _rejects(h, _FormatName.fixstr() or 0x05)
+    // negative fixint (0xE0)
+    _rejects(h, _FormatName.negative_fixint())
+
+  fun _rejects(h: TestHelper, format_byte: U8) =>
+    let b: Reader ref = Reader
+    b.append(
+      recover val [as U8: format_byte] end)
+    try
+      MessagePackDecoder.uint(b)?
+      h.fail("uint accepted 0x"
+        + format_byte.string())
+    end
+
+class \nodoc\ _TestDecodeCompactIntRejects is UnitTest
+  """
+  Compact int errors on format bytes outside the integer
+  family (signed + unsigned + fixint).
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactIntRejects"
+
+  fun ref apply(h: TestHelper) =>
+    // nil (0xC0)
+    _rejects(h, _FormatName.nil())
+    // float_32 (0xCA)
+    _rejects(h, _FormatName.float_32())
+    // str_8 (0xD9)
+    _rejects(h, _FormatName.str_8())
+    // fixarray (0x95)
+    _rejects(h, _FormatName.fixarray() or 0x05)
+
+  fun _rejects(h: TestHelper, format_byte: U8) =>
+    let b: Reader ref = Reader
+    b.append(
+      recover val [as U8: format_byte] end)
+    try
+      MessagePackDecoder.int(b)?
+      h.fail("int accepted 0x"
+        + format_byte.string())
+    end
+
+class \nodoc\ _TestDecodeCompactArrayRejects is UnitTest
+  """
+  Compact array errors on format bytes outside the array
+  family.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactArrayRejects"
+
+  fun ref apply(h: TestHelper) =>
+    // nil (0xC0)
+    _rejects(h, _FormatName.nil())
+    // uint_8 (0xCC)
+    _rejects(h, _FormatName.uint_8())
+    // fixmap (0x85)
+    _rejects(h, _FormatName.fixmap() or 0x05)
+
+  fun _rejects(h: TestHelper, format_byte: U8) =>
+    let b: Reader ref = Reader
+    b.append(
+      recover val [as U8: format_byte] end)
+    try
+      MessagePackDecoder.array(b)?
+      h.fail("array accepted 0x"
+        + format_byte.string())
+    end
+
+class \nodoc\ _TestDecodeCompactMapRejects is UnitTest
+  """
+  Compact map errors on format bytes outside the map family.
+  """
+  fun name(): String =>
+    "msgpack/DecodeCompactMapRejects"
+
+  fun ref apply(h: TestHelper) =>
+    // nil (0xC0)
+    _rejects(h, _FormatName.nil())
+    // uint_8 (0xCC)
+    _rejects(h, _FormatName.uint_8())
+    // fixarray (0x95)
+    _rejects(h, _FormatName.fixarray() or 0x05)
+
+  fun _rejects(h: TestHelper, format_byte: U8) =>
+    let b: Reader ref = Reader
+    b.append(
+      recover val [as U8: format_byte] end)
+    try
+      MessagePackDecoder.map(b)?
+      h.fail("map accepted 0x"
+        + format_byte.string())
+    end
+
+class \nodoc\ _PropertyCompactUintRoundtrip
+  is Property1[U64]
+  """
+  For any U64, compact uint encode then decode returns the
+  original value. Generator covers all five format ranges.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactUintRoundtrip"
+
+  fun gen(): Generator[U64] =>
+    Generators.frequency[U64]([
+      as WeightedGenerator[U64]:
+      (2, Generators.u8().map[U64]({(v) =>
+        (v and 0x7F).u64()}))              // fixint
+      (2, Generators.u8().map[U64]({(v) =>
+        (v or 0x80).u64()}))               // uint_8
+      (2, Generators.u16().map[U64]({(v) =>
+        v.u64() + 256}))                   // uint_16
+      (2, Generators.u32().map[U64]({(v) =>
+        v.u64() + 65536}))                 // uint_32
+      (2, Generators.u64())                // uint_64
+    ])
+
+  fun ref property(arg1: U64, h: PropertyHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.uint(w, arg1)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U64](arg1, MessagePackDecoder.uint(b)?)
+
+class \nodoc\ _PropertyCompactIntRoundtrip
+  is Property1[I64]
+  """
+  For any I64, compact int encode then decode returns the
+  original value. Generator covers all ten format ranges.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactIntRoundtrip"
+
+  fun gen(): Generator[I64] =>
+    Generators.frequency[I64]([
+      as WeightedGenerator[I64]:
+      (2, Generators.u8().map[I64]({(v) =>
+        (v and 0x7F).i64()}))              // pos fixint
+      (2, Generators.u8().map[I64]({(v) =>
+        -((v % 32).i64() + 1)}))           // neg fixint
+      (1, Generators.u8().map[I64]({(v) =>
+        (v or 0x80).i64()}))               // uint_8
+      (1, Generators.u8().map[I64]({(v) =>
+        -((v % 96).i64() + 33)}))          // int_8
+      (1, Generators.u16().map[I64]({(v) =>
+        v.i64() + 256}))                   // uint_16
+      (1, Generators.u16().map[I64]({(v) =>
+        -(v.i64() + 129)}))                // int_16
+      (1, Generators.u32().map[I64]({(v) =>
+        v.i64() + 65536}))                 // uint_32
+      (1, Generators.u32().map[I64]({(v) =>
+        -(v.i64() + 32769)}))              // int_32
+      (1, Generators.i64())                // int_64/uint_64
+    ])
+
+  fun ref property(arg1: I64, h: PropertyHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.int(w, arg1)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[I64](arg1, MessagePackDecoder.int(b)?)
+
+class \nodoc\ _PropertyCompactStrRoundtrip
+  is Property1[String]
+  """
+  For any ASCII string, compact str encode then decode returns
+  the original string. Generator covers all three format
+  boundaries: fixstr (0-31), str_8 (32-255), str_16 (256+).
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactStrRoundtrip"
+
+  fun gen(): Generator[String] =>
+    Generators.frequency[String]([
+      as WeightedGenerator[String]:
+      (5, Generators.ascii_printable(
+        0, _Limit.fixstr()))
+      (3, Generators.ascii_printable(
+        _Limit.fixstr() + 1,
+        U8.max_value().usize()))
+      (2, Generators.ascii_printable(
+        U8.max_value().usize() + 1, 300))
+    ])
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str(w, s)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String](s, MessagePackDecoder.str(b)?)
+
+class \nodoc\ _PropertyCompactArrayRoundtrip
+  is Property1[U32]
+  """
+  For any U32, compact array encode then decode returns the
+  original count. Generator covers all three format ranges.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactArrayRoundtrip"
+
+  fun gen(): Generator[U32] =>
+    Generators.frequency[U32]([
+      as WeightedGenerator[U32]:
+      (3, Generators.u8().map[U32]({(v) =>
+        (v and 0x0F).u32()}))              // fixarray
+      (3, Generators.u16().map[U32]({(v) =>
+        v.u32() + 16}))                    // array_16
+      (4, Generators.u32().map[U32]({(v) =>
+        if v < 65536 then v + 65536
+        else v end}))                      // array_32
+    ])
+
+  fun ref property(arg1: U32, h: PropertyHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.array(w, arg1)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U32](arg1, MessagePackDecoder.array(b)?)
+
+class \nodoc\ _PropertyCompactMapRoundtrip
+  is Property1[U32]
+  """
+  For any U32, compact map encode then decode returns the
+  original count. Generator covers all three format ranges.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactMapRoundtrip"
+
+  fun gen(): Generator[U32] =>
+    Generators.frequency[U32]([
+      as WeightedGenerator[U32]:
+      (3, Generators.u8().map[U32]({(v) =>
+        (v and 0x0F).u32()}))              // fixmap
+      (3, Generators.u16().map[U32]({(v) =>
+        v.u32() + 16}))                    // map_16
+      (4, Generators.u32().map[U32]({(v) =>
+        if v < 65536 then v + 65536
+        else v end}))                      // map_32
+    ])
+
+  fun ref property(arg1: U32, h: PropertyHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.map(w, arg1)
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[U32](arg1, MessagePackDecoder.map(b)?)
+
+class \nodoc\ _PropertyCompactUintSmallestSize
+  is Property1[U64]
+  """
+  For any U64, compact uint encoding produces output whose
+  size is <= every format-specific encoding that could
+  represent the same value. This verifies format selection
+  independently of decode correctness.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactUintSmallestSize"
+
+  fun gen(): Generator[U64] =>
+    Generators.frequency[U64]([
+      as WeightedGenerator[U64]:
+      (2, Generators.u8().map[U64]({(v) =>
+        (v and 0x7F).u64()}))              // fixint
+      (2, Generators.u8().map[U64]({(v) =>
+        (v or 0x80).u64()}))               // uint_8
+      (2, Generators.u16().map[U64]({(v) =>
+        v.u64() + 256}))                   // uint_16
+      (2, Generators.u32().map[U64]({(v) =>
+        v.u64() + 65536}))                 // uint_32
+      (2, Generators.u64())                // uint_64
+    ])
+
+  fun ref property(arg1: U64, h: PropertyHelper) ? =>
+    let wc: Writer ref = Writer
+    MessagePackEncoder.uint(wc, arg1)
+    let compact = _writer_size(wc)
+
+    // uint_64 is always applicable
+    let w64: Writer ref = Writer
+    MessagePackEncoder.uint_64(w64, arg1)
+    h.assert_true(compact <= _writer_size(w64),
+      "compact <= uint_64 for " + arg1.string())
+
+    if arg1 <= U32.max_value().u64() then
+      let w32: Writer ref = Writer
+      MessagePackEncoder.uint_32(w32, arg1.u32())
+      h.assert_true(compact <= _writer_size(w32),
+        "compact <= uint_32 for "
+          + arg1.string())
+    end
+
+    if arg1 <= U16.max_value().u64() then
+      let w16: Writer ref = Writer
+      MessagePackEncoder.uint_16(w16, arg1.u16())
+      h.assert_true(compact <= _writer_size(w16),
+        "compact <= uint_16 for "
+          + arg1.string())
+    end
+
+    if arg1 <= U8.max_value().u64() then
+      let w8: Writer ref = Writer
+      MessagePackEncoder.uint_8(w8, arg1.u8())
+      h.assert_true(compact <= _writer_size(w8),
+        "compact <= uint_8 for "
+          + arg1.string())
+    end
+
+    if arg1 <= _Limit.positive_fixint().u64() then
+      let wf: Writer ref = Writer
+      MessagePackEncoder.positive_fixint(wf,
+        arg1.u8())?
+      h.assert_true(compact <= _writer_size(wf),
+        "compact <= fixint for "
+          + arg1.string())
+    end
+
+  fun _writer_size(w: Writer ref): USize =>
+    let b = Reader
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    b.size()
+
+class \nodoc\ _PropertyCompactIntSmallestSize
+  is Property1[I64]
+  """
+  For any I64, compact int encoding produces output whose
+  size is <= every format-specific encoding that could
+  represent the same value.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactIntSmallestSize"
+
+  fun gen(): Generator[I64] =>
+    Generators.frequency[I64]([
+      as WeightedGenerator[I64]:
+      (2, Generators.u8().map[I64]({(v) =>
+        (v and 0x7F).i64()}))              // pos fixint
+      (2, Generators.u8().map[I64]({(v) =>
+        -((v % 32).i64() + 1)}))           // neg fixint
+      (1, Generators.u8().map[I64]({(v) =>
+        (v or 0x80).i64()}))               // uint_8
+      (1, Generators.u8().map[I64]({(v) =>
+        -((v % 96).i64() + 33)}))          // int_8
+      (1, Generators.u16().map[I64]({(v) =>
+        v.i64() + 256}))                   // uint_16
+      (1, Generators.u16().map[I64]({(v) =>
+        -(v.i64() + 129)}))                // int_16
+      (1, Generators.u32().map[I64]({(v) =>
+        v.i64() + 65536}))                 // uint_32
+      (1, Generators.u32().map[I64]({(v) =>
+        -(v.i64() + 32769)}))              // int_32
+      (1, Generators.i64())                // int_64/uint_64
+    ])
+
+  fun ref property(arg1: I64, h: PropertyHelper) =>
+    let wc: Writer ref = Writer
+    MessagePackEncoder.int(wc, arg1)
+    let compact = _writer_size(wc)
+
+    // int_64 is always applicable
+    let w64: Writer ref = Writer
+    MessagePackEncoder.int_64(w64, arg1)
+    h.assert_true(compact <= _writer_size(w64),
+      "compact <= int_64 for " + arg1.string())
+
+    if (arg1 >= I32.min_value().i64())
+      and (arg1 <= I32.max_value().i64())
+    then
+      let w32: Writer ref = Writer
+      MessagePackEncoder.int_32(w32, arg1.i32())
+      h.assert_true(compact <= _writer_size(w32),
+        "compact <= int_32 for "
+          + arg1.string())
+    end
+
+    if (arg1 >= I16.min_value().i64())
+      and (arg1 <= I16.max_value().i64())
+    then
+      let w16: Writer ref = Writer
+      MessagePackEncoder.int_16(w16, arg1.i16())
+      h.assert_true(compact <= _writer_size(w16),
+        "compact <= int_16 for "
+          + arg1.string())
+    end
+
+    if (arg1 >= I8.min_value().i64())
+      and (arg1 <= I8.max_value().i64())
+    then
+      let w8: Writer ref = Writer
+      MessagePackEncoder.int_8(w8, arg1.i8())
+      h.assert_true(compact <= _writer_size(w8),
+        "compact <= int_8 for "
+          + arg1.string())
+    end
+
+    if arg1 >= 0 then
+      if arg1 <= U8.max_value().i64() then
+        let wu8: Writer ref = Writer
+        MessagePackEncoder.uint_8(wu8, arg1.u8())
+        h.assert_true(
+          compact <= _writer_size(wu8),
+          "compact <= uint_8 for "
+            + arg1.string())
+      end
+      if arg1 <= U16.max_value().i64() then
+        let wu16: Writer ref = Writer
+        MessagePackEncoder.uint_16(wu16,
+          arg1.u16())
+        h.assert_true(
+          compact <= _writer_size(wu16),
+          "compact <= uint_16 for "
+            + arg1.string())
+      end
+      if arg1 <= U32.max_value().i64() then
+        let wu32: Writer ref = Writer
+        MessagePackEncoder.uint_32(wu32,
+          arg1.u32())
+        h.assert_true(
+          compact <= _writer_size(wu32),
+          "compact <= uint_32 for "
+            + arg1.string())
+      end
+      let wu64: Writer ref = Writer
+      MessagePackEncoder.uint_64(wu64, arg1.u64())
+      h.assert_true(
+        compact <= _writer_size(wu64),
+        "compact <= uint_64 for "
+          + arg1.string())
+    end
+
+  fun _writer_size(w: Writer ref): USize =>
+    let b = Reader
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    b.size()
+
+class \nodoc\ _PropertyCompactStrSmallestSize
+  is Property1[String]
+  """
+  For any string, compact str encoding produces output whose
+  size is <= every format-specific encoding that could
+  represent the same value.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactStrSmallestSize"
+
+  fun gen(): Generator[String] =>
+    Generators.frequency[String]([
+      as WeightedGenerator[String]:
+      (5, Generators.ascii_printable(
+        0, _Limit.fixstr()))
+      (3, Generators.ascii_printable(
+        _Limit.fixstr() + 1,
+        U8.max_value().usize()))
+      (2, Generators.ascii_printable(
+        U8.max_value().usize() + 1, 300))
+    ])
+
+  fun ref property(arg1: String, h: PropertyHelper)
+    ?
+  =>
+    let s: String val = arg1.clone()
+    let wc: Writer ref = Writer
+    MessagePackEncoder.str(wc, s)?
+    let compact = _writer_size(wc)
+
+    // str_32 is always applicable for test sizes
+    let w32: Writer ref = Writer
+    MessagePackEncoder.str_32(w32, s)?
+    h.assert_true(compact <= _writer_size(w32),
+      "compact <= str_32 for len="
+        + s.size().string())
+
+    if s.size() <= U16.max_value().usize() then
+      let w16: Writer ref = Writer
+      MessagePackEncoder.str_16(w16, s)?
+      h.assert_true(compact <= _writer_size(w16),
+        "compact <= str_16 for len="
+          + s.size().string())
+    end
+
+    if s.size() <= U8.max_value().usize() then
+      let w8: Writer ref = Writer
+      MessagePackEncoder.str_8(w8, s)?
+      h.assert_true(compact <= _writer_size(w8),
+        "compact <= str_8 for len="
+          + s.size().string())
+    end
+
+    if s.size() <= _Limit.fixstr() then
+      let wf: Writer ref = Writer
+      MessagePackEncoder.fixstr(wf, s)?
+      h.assert_true(compact <= _writer_size(wf),
+        "compact <= fixstr for len="
+          + s.size().string())
+    end
+
+  fun _writer_size(w: Writer ref): USize =>
+    let b = Reader
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    b.size()
+
+class \nodoc\ _PropertyCompactArraySmallestSize
+  is Property1[U32]
+  """
+  For any U32, compact array encoding produces output whose
+  size is <= every format-specific encoding that could
+  represent the same value.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactArraySmallestSize"
+
+  fun gen(): Generator[U32] =>
+    Generators.frequency[U32]([
+      as WeightedGenerator[U32]:
+      (3, Generators.u8().map[U32]({(v) =>
+        (v and 0x0F).u32()}))              // fixarray
+      (3, Generators.u16().map[U32]({(v) =>
+        v.u32() + 16}))                    // array_16
+      (4, Generators.u32().map[U32]({(v) =>
+        if v < 65536 then v + 65536
+        else v end}))                      // array_32
+    ])
+
+  fun ref property(arg1: U32, h: PropertyHelper) ? =>
+    let wc: Writer ref = Writer
+    MessagePackEncoder.array(wc, arg1)
+    let compact = _writer_size(wc)
+
+    // array_32 is always applicable
+    let w32: Writer ref = Writer
+    MessagePackEncoder.array_32(w32, arg1)
+    h.assert_true(compact <= _writer_size(w32),
+      "compact <= array_32 for "
+        + arg1.string())
+
+    if arg1 <= U16.max_value().u32() then
+      let w16: Writer ref = Writer
+      MessagePackEncoder.array_16(w16, arg1.u16())
+      h.assert_true(compact <= _writer_size(w16),
+        "compact <= array_16 for "
+          + arg1.string())
+    end
+
+    if arg1 <= _Limit.fixarray().u32() then
+      let wf: Writer ref = Writer
+      MessagePackEncoder.fixarray(wf, arg1.u8())?
+      h.assert_true(compact <= _writer_size(wf),
+        "compact <= fixarray for "
+          + arg1.string())
+    end
+
+  fun _writer_size(w: Writer ref): USize =>
+    let b = Reader
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    b.size()
+
+class \nodoc\ _PropertyCompactMapSmallestSize
+  is Property1[U32]
+  """
+  For any U32, compact map encoding produces output whose
+  size is <= every format-specific encoding that could
+  represent the same value.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactMapSmallestSize"
+
+  fun gen(): Generator[U32] =>
+    Generators.frequency[U32]([
+      as WeightedGenerator[U32]:
+      (3, Generators.u8().map[U32]({(v) =>
+        (v and 0x0F).u32()}))              // fixmap
+      (3, Generators.u16().map[U32]({(v) =>
+        v.u32() + 16}))                    // map_16
+      (4, Generators.u32().map[U32]({(v) =>
+        if v < 65536 then v + 65536
+        else v end}))                      // map_32
+    ])
+
+  fun ref property(arg1: U32, h: PropertyHelper) ? =>
+    let wc: Writer ref = Writer
+    MessagePackEncoder.map(wc, arg1)
+    let compact = _writer_size(wc)
+
+    // map_32 is always applicable
+    let w32: Writer ref = Writer
+    MessagePackEncoder.map_32(w32, arg1)
+    h.assert_true(compact <= _writer_size(w32),
+      "compact <= map_32 for "
+        + arg1.string())
+
+    if arg1 <= U16.max_value().u32() then
+      let w16: Writer ref = Writer
+      MessagePackEncoder.map_16(w16, arg1.u16())
+      h.assert_true(compact <= _writer_size(w16),
+        "compact <= map_16 for "
+          + arg1.string())
+    end
+
+    if arg1 <= _Limit.fixmap().u32() then
+      let wf: Writer ref = Writer
+      MessagePackEncoder.fixmap(wf, arg1.u8())?
+      h.assert_true(compact <= _writer_size(wf),
+        "compact <= fixmap for "
+          + arg1.string())
+    end
+
+  fun _writer_size(w: Writer ref): USize =>
+    let b = Reader
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    b.size()

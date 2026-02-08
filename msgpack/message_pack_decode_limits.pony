@@ -18,14 +18,15 @@ limitations under the License.
 
 class val MessagePackDecodeLimits
   """
-  Size limits for the streaming decoder. Protects against
+  Limits for the streaming decoder. Protects against
   denial-of-service attacks where a malicious payload claims
-  enormous sizes for variable-length values.
+  enormous sizes for variable-length values or deeply nested
+  containers.
 
-  The default constructor applies conservative limits matching
-  msgpack-python: 1 MB for str/bin/ext data and 131,072 for
-  array/map element counts. Use `unlimited()` to disable all
-  limits, or override individual limits:
+  The default constructor applies conservative limits: 1 MB for
+  str/bin/ext data, 131,072 for array/map element counts, and
+  512 for container nesting depth. Use `unlimited()` to disable
+  all limits, or override individual limits:
 
   ```pony
   // Default conservative limits:
@@ -44,19 +45,22 @@ class val MessagePackDecodeLimits
   let max_ext_len: USize
   let max_array_len: U32
   let max_map_len: U32
+  let max_depth: USize
 
   new val create(
     max_str_len': USize = 1_048_576,
     max_bin_len': USize = 1_048_576,
     max_ext_len': USize = 1_048_576,
     max_array_len': U32 = 131_072,
-    max_map_len': U32 = 131_072)
+    max_map_len': U32 = 131_072,
+    max_depth': USize = 512)
   =>
     max_str_len = max_str_len'
     max_bin_len = max_bin_len'
     max_ext_len = max_ext_len'
     max_array_len = max_array_len'
     max_map_len = max_map_len'
+    max_depth = max_depth'
 
   new val unlimited() =>
     max_str_len = USize.max_value()
@@ -64,3 +68,4 @@ class val MessagePackDecodeLimits
     max_ext_len = USize.max_value()
     max_array_len = U32.max_value()
     max_map_len = U32.max_value()
+    max_depth = USize.max_value()

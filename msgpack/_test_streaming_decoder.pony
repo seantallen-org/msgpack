@@ -129,6 +129,20 @@ actor \nodoc\ _TestStreamingDecoder is TestList
       _PropertyStreamLimitArray))
     test(Property1UnitTest[U8](
       _PropertyStreamLimitExt))
+    // Depth limit tests
+    test(_TestStreamDepthBasic)
+    test(_TestStreamDepthExact)
+    test(_TestStreamDepthAutoTrack)
+    test(_TestStreamDepthMap)
+    test(_TestStreamDepthMixed)
+    test(_TestStreamDepthNoConsume)
+    test(_TestStreamDepthUnlimited)
+    test(_TestStreamDepthZero)
+    test(_TestStreamDepthEmptyContainer)
+    test(_TestStreamDepthDefault)
+    // Depth property-based tests
+    test(Property1UnitTest[U8](
+      _PropertyStreamDepth))
 
 //
 // Roundtrip tests
@@ -1889,4 +1903,548 @@ class \nodoc\ _PropertyStreamLimitExt
           "expected MessagePackExt for size "
             + arg1.string())
       end
+    end
+
+//
+// Depth limit tests
+//
+
+class \nodoc\ _TestStreamDepthBasic is UnitTest
+  """
+  Nested arrays at depth 2 succeed with max_depth=2.
+  A third nesting level returns LimitExceeded.
+  """
+  fun name(): String => "msgpack/StreamDepthBasic"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Encode: [[1]]  (depth 2)
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 1)?
+    MessagePackEncoder.fixarray(w, 1)?
+    MessagePackEncoder.uint(w, 1)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_depth' = 2))
+    sd.append(_WriterBytes(w))
+
+    // Outer array at depth 1 — succeeds
+    match sd.next()
+    | let a: MessagePackArray =>
+      h.assert_eq[U32](1, a.size)
+    else h.fail("expected outer array")
+    end
+
+    // Inner array at depth 2 — succeeds
+    match sd.next()
+    | let a: MessagePackArray =>
+      h.assert_eq[U32](1, a.size)
+    else h.fail("expected inner array")
+    end
+
+    // Element inside inner array
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](1, v)
+    else h.fail("expected U8(1)")
+    end
+
+    // Now encode depth 3 and verify rejection
+    let w2: Writer ref = Writer
+    MessagePackEncoder.fixarray(w2, 1)?
+    MessagePackEncoder.fixarray(w2, 1)?
+    MessagePackEncoder.fixarray(w2, 1)?
+    MessagePackEncoder.uint(w2, 1)
+
+    let sd2 = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_depth' = 2))
+    sd2.append(_WriterBytes(w2))
+
+    // Depth 1 — succeeds
+    match sd2.next()
+    | let a: MessagePackArray => None
+    else h.fail("expected outer array")
+    end
+
+    // Depth 2 — succeeds
+    match sd2.next()
+    | let a: MessagePackArray => None
+    else h.fail("expected middle array")
+    end
+
+    // Depth 3 — rejected
+    match sd2.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded at depth 3")
+    end
+
+class \nodoc\ _TestStreamDepthExact is UnitTest
+  """
+  Nesting exactly to max_depth succeeds.
+  One deeper fails.
+  """
+  fun name(): String => "msgpack/StreamDepthExact"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Build depth=5 nested arrays, each containing one U8
+    let w: Writer ref = Writer
+    var i: USize = 0
+    while i < 5 do
+      MessagePackEncoder.fixarray(w, 1)?
+      i = i + 1
+    end
+    MessagePackEncoder.uint(w, 42)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_depth' = 5))
+    sd.append(_WriterBytes(w))
+
+    // All 5 arrays should succeed
+    i = 0
+    while i < 5 do
+      match sd.next()
+      | let a: MessagePackArray => None
+      else h.fail("expected array at depth "
+        + (i + 1).string())
+      end
+      i = i + 1
+    end
+
+    // The scalar at the bottom
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](42, v)
+    else h.fail("expected U8(42)")
+    end
+
+    // Now try depth=6 with max_depth=5
+    let w2: Writer ref = Writer
+    i = 0
+    while i < 6 do
+      MessagePackEncoder.fixarray(w2, 1)?
+      i = i + 1
+    end
+    MessagePackEncoder.uint(w2, 42)
+
+    let sd2 = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_depth' = 5))
+    sd2.append(_WriterBytes(w2))
+
+    // First 5 succeed
+    i = 0
+    while i < 5 do
+      match sd2.next()
+      | let a: MessagePackArray => None
+      else h.fail("expected array at depth "
+        + (i + 1).string())
+      end
+      i = i + 1
+    end
+
+    // 6th fails
+    match sd2.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded at depth 6")
+    end
+
+class \nodoc\ _TestStreamDepthAutoTrack is UnitTest
+  """
+  Decode [[1,2],3] and verify depth() at each step.
+  """
+  fun name(): String => "msgpack/StreamDepthAutoTrack"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Encode [[1, 2], 3]
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 2)?
+    MessagePackEncoder.fixarray(w, 2)?
+    MessagePackEncoder.uint(w, 1)
+    MessagePackEncoder.uint(w, 2)
+    MessagePackEncoder.uint(w, 3)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits.unlimited())
+    sd.append(_WriterBytes(w))
+
+    // Array(2) -> depth 1
+    match sd.next()
+    | let a: MessagePackArray =>
+      h.assert_eq[U32](2, a.size)
+    else h.fail("expected outer array")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // Array(2) -> depth 2
+    match sd.next()
+    | let a: MessagePackArray =>
+      h.assert_eq[U32](2, a.size)
+    else h.fail("expected inner array")
+    end
+    h.assert_eq[USize](2, sd.depth())
+
+    // U8(1) -> depth 2
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](1, v)
+    else h.fail("expected U8(1)")
+    end
+    h.assert_eq[USize](2, sd.depth())
+
+    // U8(2) -> inner exhausted, depth 1
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](2, v)
+    else h.fail("expected U8(2)")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // U8(3) -> outer exhausted, depth 0
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](3, v)
+    else h.fail("expected U8(3)")
+    end
+    h.assert_eq[USize](0, sd.depth())
+
+class \nodoc\ _TestStreamDepthMap is UnitTest
+  """
+  Maps increment depth. Nested map triggers limit.
+  """
+  fun name(): String => "msgpack/StreamDepthMap"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Encode {"a": {"b": 1}}
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixmap(w, 1)?
+    MessagePackEncoder.str(w, "a")?
+    MessagePackEncoder.fixmap(w, 1)?
+    MessagePackEncoder.str(w, "b")?
+    MessagePackEncoder.uint(w, 1)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_depth' = 1))
+    sd.append(_WriterBytes(w))
+
+    // Outer map at depth 1 — succeeds
+    match sd.next()
+    | let m: MessagePackMap =>
+      h.assert_eq[U32](1, m.size)
+    else h.fail("expected outer map")
+    end
+
+    // Key "a" — scalar, depth stays 1
+    match sd.next()
+    | let s: String val =>
+      h.assert_eq[String val]("a", s)
+    else h.fail("expected string key")
+    end
+
+    // Inner map — depth 2, exceeds limit
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded for nested map")
+    end
+
+class \nodoc\ _TestStreamDepthMixed is UnitTest
+  """
+  Array containing map containing array — all contribute
+  to depth.
+  """
+  fun name(): String => "msgpack/StreamDepthMixed"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Encode [{"k": [1]}]
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 1)?
+    MessagePackEncoder.fixmap(w, 1)?
+    MessagePackEncoder.str(w, "k")?
+    MessagePackEncoder.fixarray(w, 1)?
+    MessagePackEncoder.uint(w, 1)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits.unlimited())
+    sd.append(_WriterBytes(w))
+
+    // Array -> depth 1
+    match sd.next()
+    | let a: MessagePackArray => None
+    else h.fail("expected array")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // Map -> depth 2
+    match sd.next()
+    | let m: MessagePackMap => None
+    else h.fail("expected map")
+    end
+    h.assert_eq[USize](2, sd.depth())
+
+    // Key "k" -> depth 2
+    match sd.next()
+    | let s: String val => None
+    else h.fail("expected string key")
+    end
+    h.assert_eq[USize](2, sd.depth())
+
+    // Inner array -> depth 3
+    match sd.next()
+    | let a: MessagePackArray => None
+    else h.fail("expected inner array")
+    end
+    h.assert_eq[USize](3, sd.depth())
+
+    // U8(1) -> cascading pops, depth 0
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](1, v)
+    else h.fail("expected U8(1)")
+    end
+    h.assert_eq[USize](0, sd.depth())
+
+class \nodoc\ _TestStreamDepthNoConsume is UnitTest
+  """
+  LimitExceeded from depth: no bytes consumed, retrying
+  returns LimitExceeded again.
+  """
+  fun name(): String => "msgpack/StreamDepthNoConsume"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Encode [[1]]
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 1)?
+    MessagePackEncoder.fixarray(w, 1)?
+    MessagePackEncoder.uint(w, 1)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_depth' = 1))
+    sd.append(_WriterBytes(w))
+
+    // Depth 1 — succeeds
+    match sd.next()
+    | let a: MessagePackArray => None
+    else h.fail("expected array")
+    end
+
+    // Depth 2 — rejected, no bytes consumed
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+    // Retry — same result
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded on retry")
+    end
+
+class \nodoc\ _TestStreamDepthUnlimited is UnitTest
+  """
+  unlimited() allows deep nesting.
+  """
+  fun name(): String => "msgpack/StreamDepthUnlimited"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Build 50 levels of nesting
+    let w: Writer ref = Writer
+    var i: USize = 0
+    while i < 50 do
+      MessagePackEncoder.fixarray(w, 1)?
+      i = i + 1
+    end
+    MessagePackEncoder.uint(w, 99)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits.unlimited())
+    sd.append(_WriterBytes(w))
+
+    // All 50 arrays should decode
+    i = 0
+    while i < 50 do
+      match sd.next()
+      | let a: MessagePackArray => None
+      else h.fail("expected array at depth "
+        + (i + 1).string())
+      end
+      i = i + 1
+    end
+
+    // The scalar
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](99, v)
+    else h.fail("expected U8(99)")
+    end
+    h.assert_eq[USize](0, sd.depth())
+
+class \nodoc\ _TestStreamDepthZero is UnitTest
+  """
+  max_depth=0: any container returns LimitExceeded.
+  Scalars still work.
+  """
+  fun name(): String => "msgpack/StreamDepthZero"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.uint(w, 42)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_depth' = 0))
+    sd.append(_WriterBytes(w))
+
+    // Scalar at depth 0 — works
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](42, v)
+    else h.fail("expected U8(42)")
+    end
+
+    // Array at depth 0 — rejected
+    let w2: Writer ref = Writer
+    MessagePackEncoder.array_16(w2, 1)
+    sd.append(_WriterBytes(w2))
+
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded for array")
+    end
+
+class \nodoc\ _TestStreamDepthEmptyContainer is UnitTest
+  """
+  Empty array increments then immediately decrements depth.
+  """
+  fun name(): String => "msgpack/StreamDepthEmptyContainer"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Encode [[], 1]
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 2)?
+    MessagePackEncoder.fixarray(w, 0)?
+    MessagePackEncoder.uint(w, 1)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits.unlimited())
+    sd.append(_WriterBytes(w))
+
+    // Outer array
+    match sd.next()
+    | let a: MessagePackArray =>
+      h.assert_eq[U32](2, a.size)
+    else h.fail("expected outer array")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // Empty inner array — pushed 0, immediately drained
+    match sd.next()
+    | let a: MessagePackArray =>
+      h.assert_eq[U32](0, a.size)
+    else h.fail("expected empty array")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // U8(1) — outer exhausted
+    match sd.next()
+    | let v: U8 =>
+      h.assert_eq[U8](1, v)
+    else h.fail("expected U8(1)")
+    end
+    h.assert_eq[USize](0, sd.depth())
+
+class \nodoc\ _TestStreamDepthDefault is UnitTest
+  """
+  Default max_depth is 512.
+  """
+  fun name(): String => "msgpack/StreamDepthDefault"
+
+  fun ref apply(h: TestHelper) =>
+    let limits = MessagePackDecodeLimits
+    h.assert_eq[USize](512, limits.max_depth)
+
+class \nodoc\ _PropertyStreamDepth is Property1[U8]
+  """
+  Generate a random nesting depth (0-15). Build nested
+  fixarrays to that depth, each containing one U8. With
+  max_depth=10, nesting beyond 10 returns LimitExceeded;
+  within limit, all values decode and depth returns to 0.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamDepth"
+
+  fun gen(): Generator[U8] =>
+    Generators.u8(0, 15)
+
+  fun ref property(
+    arg1: U8,
+    h: PropertyHelper)
+  =>
+    let nesting = arg1.usize()
+    let max_depth: USize = 10
+
+    let w: Writer ref = Writer
+    var i: USize = 0
+    try
+      while i < nesting do
+        MessagePackEncoder.fixarray(w, 1)?
+        i = i + 1
+      end
+    else
+      h.fail("encoding failed")
+      return
+    end
+    MessagePackEncoder.uint(w, 42)
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_depth' = max_depth))
+    sd.append(_WriterBytes(w))
+
+    if nesting > max_depth then
+      // Decode containers up to the limit
+      i = 0
+      while i < max_depth do
+        match sd.next()
+        | let a: MessagePackArray => None
+        else
+          h.fail("expected array at depth "
+            + (i + 1).string())
+          return
+        end
+        i = i + 1
+      end
+      // Next container exceeds limit
+      match sd.next()
+      | LimitExceeded => None
+      else
+        h.fail("expected LimitExceeded at depth "
+          + (max_depth + 1).string()
+          + " with nesting " + nesting.string())
+      end
+    else
+      // All containers should decode
+      i = 0
+      while i < nesting do
+        match sd.next()
+        | let a: MessagePackArray => None
+        else
+          h.fail("expected array at depth "
+            + (i + 1).string())
+          return
+        end
+        i = i + 1
+      end
+      // Scalar at the bottom
+      match sd.next()
+      | let v: U8 =>
+        h.assert_eq[U8](42, v)
+      else
+        h.fail("expected U8(42)")
+        return
+      end
+      // Depth should be back to 0
+      h.assert_eq[USize](0, sd.depth())
     end

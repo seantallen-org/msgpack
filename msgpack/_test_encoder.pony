@@ -18,6 +18,7 @@ limitations under the License.
 
 use "buffered"
 use "collections"
+use "pony_check"
 use "pony_test"
 
 actor \nodoc\ _TestEncoder is TestList
@@ -107,6 +108,20 @@ actor \nodoc\ _TestEncoder is TestList
     test(_TestEncodeCompactMap)
     test(_TestEncodeCompactExt)
     test(_TestEncodeCompactTimestamp)
+    // UTF-8 validating variants
+    test(_TestEncodeFixstrUtf8)
+    test(_TestEncodeFixstrUtf8Invalid)
+    test(_TestEncodeStr8Utf8)
+    test(_TestEncodeStr8Utf8Invalid)
+    test(_TestEncodeStr16Utf8)
+    test(_TestEncodeStr16Utf8Invalid)
+    test(_TestEncodeStr32Utf8)
+    test(_TestEncodeStr32Utf8Invalid)
+    test(_TestEncodeCompactStrUtf8)
+    test(_TestEncodeCompactStrUtf8Invalid)
+    test(_TestEncodeStrUtf8ByteArray)
+    test(Property1UnitTest[String](
+      _PropertyCompactStrUtf8EncoderRoundtrip))
 ifdef not "ci" then
     // These 2 tests take up a lot of memory.
     // CircleCI where CI is run only has 4 gigs of memory
@@ -1981,3 +1996,198 @@ class \nodoc\ _TestEncodeCompactTimestamp is UnitTest
     end
     h.assert_eq[U8](expected_format, b.peek_u8()?,
       label)
+
+class \nodoc\ _TestEncodeFixstrUtf8 is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeFixstrUtf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = "Hello"
+    let b = Reader
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixstr_utf8(w, value)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](6, b.size())
+    h.assert_eq[U8](0xA5, b.peek_u8()?)
+
+class \nodoc\ _TestEncodeFixstrUtf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeFixstrUtf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    let w: Writer ref = Writer
+    try
+      MessagePackEncoder.fixstr_utf8(w, invalid)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestEncodeStr8Utf8 is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeStr8Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = "Hello"
+    let b = Reader
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_8_utf8(w, value)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](7, b.size())
+    h.assert_eq[U8](_FormatName.str_8(), b.peek_u8()?)
+
+class \nodoc\ _TestEncodeStr8Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeStr8Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    let w: Writer ref = Writer
+    try
+      MessagePackEncoder.str_8_utf8(w, invalid)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestEncodeStr16Utf8 is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeStr16Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = "Hello"
+    let b = Reader
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_16_utf8(w, value)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](8, b.size())
+    h.assert_eq[U8](_FormatName.str_16(), b.peek_u8()?)
+
+class \nodoc\ _TestEncodeStr16Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeStr16Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    let w: Writer ref = Writer
+    try
+      MessagePackEncoder.str_16_utf8(w, invalid)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestEncodeStr32Utf8 is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeStr32Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = "Hello"
+    let b = Reader
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_32_utf8(w, value)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](10, b.size())
+    h.assert_eq[U8](_FormatName.str_32(), b.peek_u8()?)
+
+class \nodoc\ _TestEncodeStr32Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeStr32Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    let w: Writer ref = Writer
+    try
+      MessagePackEncoder.str_32_utf8(w, invalid)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestEncodeCompactStrUtf8 is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeCompactStrUtf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let value = "Hello"
+    let b = Reader
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_utf8(w, value)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](6, b.size())
+    h.assert_eq[U8](0xA5, b.peek_u8()?)
+
+class \nodoc\ _TestEncodeCompactStrUtf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/EncodeCompactStrUtf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    let w: Writer ref = Writer
+    try
+      MessagePackEncoder.str_utf8(w, invalid)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestEncodeStrUtf8ByteArray is UnitTest
+  """
+  Tests the Array[U8] val match arm in encoder _utf8 methods.
+  """
+  fun name(): String =>
+    "msgpack/EncodeStrUtf8ByteArray"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Valid UTF-8 as Array[U8] val
+    let valid = recover val [as U8: 'H'; 'i'] end
+    let w1: Writer ref = Writer
+    MessagePackEncoder.str_utf8(w1, valid)?
+    let b1 = Reader
+    for bs in w1.done().values() do
+      b1.append(bs)
+    end
+    h.assert_eq[USize](3, b1.size())
+
+    // Invalid UTF-8 as Array[U8] val
+    let invalid = recover val [as U8: 0xFF] end
+    let w2: Writer ref = Writer
+    try
+      MessagePackEncoder.str_utf8(w2, invalid)?
+      h.fail("expected error for invalid UTF-8 array")
+    end
+
+class \nodoc\ _PropertyCompactStrUtf8EncoderRoundtrip
+  is Property1[String]
+  """
+  For any ASCII string, compact str_utf8 encode then str_utf8
+  decode returns the original string.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactStrUtf8EncoderRoundtrip"
+
+  fun gen(): Generator[String] =>
+    Generators.frequency[String]([
+      as WeightedGenerator[String]:
+      (5, Generators.ascii_printable(
+        0, _Limit.fixstr()))
+      (3, Generators.ascii_printable(
+        _Limit.fixstr() + 1,
+        U8.max_value().usize()))
+      (2, Generators.ascii_printable(
+        U8.max_value().usize() + 1, 300))
+    ])
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str_utf8(w, s)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String](s, MessagePackDecoder.str_utf8(b)?)

@@ -29,6 +29,13 @@ primitive InvalidData
   byte. The stream is corrupt and decoding should stop.
   """
 
+primitive InvalidUtf8
+  """
+  Returned when a decoded string value contains invalid UTF-8
+  byte sequences. The MessagePack framing is valid and decoding
+  can continue.
+  """
+
 primitive LimitExceeded
   """
   Returned when a decoded value's size or element count exceeds
@@ -134,6 +141,7 @@ type DecodeResult is
   ( MessagePackValue
   | NotEnoughData
   | InvalidData
+  | InvalidUtf8
   | LimitExceeded )
 
 type SkipResult is

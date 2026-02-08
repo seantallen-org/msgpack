@@ -364,6 +364,78 @@ primitive MessagePackEncoder
     _write_byte_array_32(b, v, _FormatName.str_32())?
 
   //
+  // str format family — UTF-8 validating variants
+  //
+
+  fun str_utf8(b: Writer, v: ByteSeq) ? =>
+    """
+    Encodes a string using the smallest format that fits the
+    byte length, after validating that the bytes are valid
+    UTF-8.
+
+    Errors if the bytes are not valid UTF-8 or if the value is
+    too large to encode. For the non-validating variant, use
+    `str()`.
+    """
+    _validate_utf8(v)?
+    str(b, v)?
+
+  fun fixstr_utf8(b: Writer, v: ByteSeq) ? =>
+    """
+    Encodes a fixstr value after validating that the bytes are
+    valid UTF-8.
+
+    Errors if the bytes are not valid UTF-8 or if the value
+    exceeds 31 bytes. For the non-validating variant, use
+    `fixstr()`.
+    """
+    _validate_utf8(v)?
+    fixstr(b, v)?
+
+  fun str_8_utf8(b: Writer, v: ByteSeq) ? =>
+    """
+    Encodes a str 8 value after validating that the bytes are
+    valid UTF-8.
+
+    Errors if the bytes are not valid UTF-8 or if the value
+    exceeds (2^8)-1 bytes. For the non-validating variant, use
+    `str_8()`.
+    """
+    _validate_utf8(v)?
+    str_8(b, v)?
+
+  fun str_16_utf8(b: Writer, v: ByteSeq) ? =>
+    """
+    Encodes a str 16 value after validating that the bytes are
+    valid UTF-8.
+
+    Errors if the bytes are not valid UTF-8 or if the value
+    exceeds (2^16)-1 bytes. For the non-validating variant, use
+    `str_16()`.
+    """
+    _validate_utf8(v)?
+    str_16(b, v)?
+
+  fun str_32_utf8(b: Writer, v: ByteSeq) ? =>
+    """
+    Encodes a str 32 value after validating that the bytes are
+    valid UTF-8.
+
+    Errors if the bytes are not valid UTF-8 or if the value
+    exceeds (2^32)-1 bytes. For the non-validating variant, use
+    `str_32()`.
+    """
+    _validate_utf8(v)?
+    str_32(b, v)?
+
+  fun _validate_utf8(v: ByteSeq) ? =>
+    let s = match v
+    | let s': String val => s'
+    | let a: Array[U8] val => String.from_array(a)
+    end
+    if not MessagePackValidateUTF8(s) then error end
+
+  //
   // bin format family
   //
 

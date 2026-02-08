@@ -9,7 +9,7 @@ msgpack is currently beta software. It provides compact encoding/decoding method
 ## Installation
 
 * Install [corral](https://github.com/ponylang/corral)
-* `corral add github.com/seantallen-org/msgpack.git --version 0.2.5`
+* `corral add github.com/seantallen-org/msgpack.git --version 0.3.0`
 * `corral fetch` to fetch your dependencies
 * `use "msgpack"` to include this package
 * `corral run -- ponyc` to compile your application

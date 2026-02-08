@@ -131,6 +131,50 @@ actor \nodoc\ _TestDecoder is TestList
     test(_TestDecodeBinRejects)
     test(_TestDecodeFixextRejects)
     test(_TestDecodeExtRejects)
+    test(_TestSkipNil)
+    test(_TestSkipBool)
+    test(_TestSkipFixint)
+    test(_TestSkipUint)
+    test(_TestSkipInt)
+    test(_TestSkipFloat)
+    test(_TestSkipFixstr)
+    test(_TestSkipStr8)
+    test(_TestSkipStr16)
+    test(_TestSkipStr32)
+    test(_TestSkipBin8)
+    test(_TestSkipBin16)
+    test(_TestSkipBin32)
+    test(_TestSkipFixext)
+    test(_TestSkipExt8)
+    test(_TestSkipExt16)
+    test(_TestSkipExt32)
+    test(_TestSkipTimestamp)
+    test(_TestSkipFixarray)
+    test(_TestSkipArray16)
+    test(_TestSkipArray32)
+    test(_TestSkipFixmap)
+    test(_TestSkipMap16)
+    test(_TestSkipMap32)
+    test(_TestSkipNestedContainers)
+    test(_TestSkipEmptyContainers)
+    test(_TestSkipPositionPreserving)
+    test(_TestSkipInvalidFormatByte)
+    test(_TestSkipTruncatedData)
+    test(Property1UnitTest[U64](
+      _PropertySkipUint))
+    test(Property1UnitTest[I64](
+      _PropertySkipInt))
+    test(Property1UnitTest[String](
+      _PropertySkipStr))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertySkipBin))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertySkipExt))
+    test(Property1UnitTest[
+      (U64, U64)](
+      _PropertySkipPositionPreserving))
 
 class \nodoc\ _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -2356,3 +2400,838 @@ class \nodoc\ _TestDecodeExtRejects is UnitTest
       decode(b)?
       h.fail(msg)
     end
+
+//
+// Skip tests
+//
+
+class \nodoc\ _TestSkipNil is UnitTest
+  fun name(): String =>
+    "msgpack/SkipNil"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.nil(w)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](1, b.size())
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipBool is UnitTest
+  fun name(): String =>
+    "msgpack/SkipBool"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, true)?
+    _check(h, false)?
+
+  fun _check(h: TestHelper, v: Bool) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.bool(w, v)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size(),
+      "skip bool " + v.string())
+
+class \nodoc\ _TestSkipFixint is UnitTest
+  fun name(): String =>
+    "msgpack/SkipFixint"
+
+  fun ref apply(h: TestHelper) ? =>
+    // positive fixint
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.positive_fixint(w, 42)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size(),
+      "skip positive fixint")
+
+    // negative fixint
+    let w2: Writer ref = Writer
+    let b2: Reader ref = Reader
+    MessagePackEncoder.negative_fixint(w2, -5)?
+    for bs in w2.done().values() do
+      b2.append(bs)
+    end
+    MessagePackDecoder.skip(b2)?
+    h.assert_eq[USize](0, b2.size(),
+      "skip negative fixint")
+
+class \nodoc\ _TestSkipUint is UnitTest
+  fun name(): String =>
+    "msgpack/SkipUint"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, 200, 2, "uint_8")?
+    _check(h, 1000, 3, "uint_16")?
+    _check(h, 100000, 5, "uint_32")?
+    _check(h, (U32.max_value().u64() + 1),
+      9, "uint_64")?
+
+  fun _check(
+    h: TestHelper,
+    v: U64,
+    expected_size: USize,
+    label: String)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.uint(w, v)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](expected_size, b.size(),
+      "size " + label)
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size(),
+      "skip " + label)
+
+class \nodoc\ _TestSkipInt is UnitTest
+  fun name(): String =>
+    "msgpack/SkipInt"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, -100, 2, "int_8")?
+    _check(h, -1000, 3, "int_16")?
+    _check(h, -100000, 5, "int_32")?
+    _check(h, I32.min_value().i64() - 1,
+      9, "int_64")?
+
+  fun _check(
+    h: TestHelper,
+    v: I64,
+    expected_size: USize,
+    label: String)
+    ?
+  =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.int(w, v)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](expected_size, b.size(),
+      "size " + label)
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size(),
+      "skip " + label)
+
+class \nodoc\ _TestSkipFloat is UnitTest
+  fun name(): String =>
+    "msgpack/SkipFloat"
+
+  fun ref apply(h: TestHelper) ? =>
+    // F32
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.float_32(w, 3.14)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[USize](5, b.size())
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size(), "skip F32")
+
+    // F64
+    let w2: Writer ref = Writer
+    let b2: Reader ref = Reader
+    MessagePackEncoder.float_64(w2, 3.14159)
+    for bs in w2.done().values() do
+      b2.append(bs)
+    end
+    h.assert_eq[USize](9, b2.size())
+    MessagePackDecoder.skip(b2)?
+    h.assert_eq[USize](0, b2.size(), "skip F64")
+
+class \nodoc\ _TestSkipFixstr is UnitTest
+  fun name(): String =>
+    "msgpack/SkipFixstr"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.fixstr(w, "hello")?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipStr8 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipStr8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let s = String.from_array(
+      recover val Array[U8].init('A', 40) end)
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str_8(w, s)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipStr16 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipStr16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let s = String.from_array(
+      recover val Array[U8].init('A', 300) end)
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str_16(w, s)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipStr32 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipStr32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let s = String.from_array(
+      recover val
+        Array[U8].init('A',
+          U16.max_value().usize() + 1)
+      end)
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str_32(w, s)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipBin8 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipBin8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data: Array[U8] val =
+      recover val Array[U8].init(0xFF, 50) end
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.bin_8(w, data)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipBin16 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipBin16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data: Array[U8] val =
+      recover val Array[U8].init(0xFF, 300) end
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.bin_16(w, data)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipBin32 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipBin32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data: Array[U8] val =
+      recover val
+        Array[U8].init(0xFF,
+          U16.max_value().usize() + 1)
+      end
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.bin_32(w, data)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipFixext is UnitTest
+  fun name(): String =>
+    "msgpack/SkipFixext"
+
+  fun ref apply(h: TestHelper) ? =>
+    _check(h, 1, "fixext_1")?
+    _check(h, 2, "fixext_2")?
+    _check(h, 4, "fixext_4")?
+    _check(h, 8, "fixext_8")?
+    _check(h, 16, "fixext_16")?
+
+  fun _check(
+    h: TestHelper,
+    data_size: USize,
+    label: String)
+    ?
+  =>
+    let data: Array[U8] val =
+      recover val
+        Array[U8].init('X', data_size)
+      end
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    // ext() dispatches to the right fixext_N
+    MessagePackEncoder.ext(w, 1, data)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size(),
+      "skip " + label)
+
+class \nodoc\ _TestSkipExt8 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipExt8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data: Array[U8] val =
+      recover val Array[U8].init('X', 50) end
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.ext_8(w, 1, data)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipExt16 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipExt16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data: Array[U8] val =
+      recover val Array[U8].init('X', 300) end
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.ext_16(w, 1, data)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipExt32 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipExt32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data: Array[U8] val =
+      recover val
+        Array[U8].init('X',
+          U16.max_value().usize() + 1)
+      end
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.ext_32(w, 1, data)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipTimestamp is UnitTest
+  fun name(): String =>
+    "msgpack/SkipTimestamp"
+
+  fun ref apply(h: TestHelper) ? =>
+    // timestamp_32 (fixext_4 wire format)
+    _check(h, 1000, 0)?
+    // timestamp_64 (fixext_8 wire format)
+    _check(h, 1000, 500)?
+    // timestamp_96 (ext_8 wire format)
+    _check(h, -1000, 500)?
+
+  fun _check(h: TestHelper, sec: I64, nsec: U32) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.timestamp(w, sec, nsec)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size(),
+      "skip timestamp sec=" + sec.string()
+        + " nsec=" + nsec.string())
+
+class \nodoc\ _TestSkipFixarray is UnitTest
+  fun name(): String =>
+    "msgpack/SkipFixarray"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.fixarray(w, 3)?
+    MessagePackEncoder.uint_8(w, 1)
+    MessagePackEncoder.uint_8(w, 2)
+    MessagePackEncoder.uint_8(w, 3)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipArray16 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipArray16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.array_16(w, 3)
+    MessagePackEncoder.uint_8(w, 10)
+    MessagePackEncoder.uint_8(w, 20)
+    MessagePackEncoder.uint_8(w, 30)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipArray32 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipArray32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let count: U32 = U16.max_value().u32() + 1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.array_32(w, count)
+    var i: U32 = 0
+    while i < count do
+      MessagePackEncoder.positive_fixint(w, 0)?
+      i = i + 1
+    end
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipFixmap is UnitTest
+  fun name(): String =>
+    "msgpack/SkipFixmap"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.fixmap(w, 2)?
+    MessagePackEncoder.fixstr(w, "a")?
+    MessagePackEncoder.uint_8(w, 1)
+    MessagePackEncoder.fixstr(w, "b")?
+    MessagePackEncoder.uint_8(w, 2)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipMap16 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipMap16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.map_16(w, 2)
+    MessagePackEncoder.fixstr(w, "x")?
+    MessagePackEncoder.uint_8(w, 10)
+    MessagePackEncoder.fixstr(w, "y")?
+    MessagePackEncoder.uint_8(w, 20)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipMap32 is UnitTest
+  fun name(): String =>
+    "msgpack/SkipMap32"
+
+  fun ref apply(h: TestHelper) ? =>
+    let count: U32 = U16.max_value().u32() + 1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.map_32(w, count)
+    var i: U32 = 0
+    while i < count do
+      MessagePackEncoder.positive_fixint(w, 0)?
+      MessagePackEncoder.positive_fixint(w, 0)?
+      i = i + 1
+    end
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipNestedContainers is UnitTest
+  fun name(): String =>
+    "msgpack/SkipNestedContainers"
+
+  fun ref apply(h: TestHelper) ? =>
+    // [array[1, 2], map{"a": 3}]
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.fixarray(w, 2)?
+    MessagePackEncoder.fixarray(w, 2)?
+    MessagePackEncoder.uint_8(w, 1)
+    MessagePackEncoder.uint_8(w, 2)
+    MessagePackEncoder.fixmap(w, 1)?
+    MessagePackEncoder.fixstr(w, "a")?
+    MessagePackEncoder.uint_8(w, 3)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _TestSkipEmptyContainers is UnitTest
+  fun name(): String =>
+    "msgpack/SkipEmptyContainers"
+
+  fun ref apply(h: TestHelper) ? =>
+    // empty array
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.fixarray(w, 0)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size(),
+      "skip empty array")
+
+    // empty map
+    let w2: Writer ref = Writer
+    let b2: Reader ref = Reader
+    MessagePackEncoder.fixmap(w2, 0)?
+    for bs in w2.done().values() do
+      b2.append(bs)
+    end
+    MessagePackDecoder.skip(b2)?
+    h.assert_eq[USize](0, b2.size(),
+      "skip empty map")
+
+class \nodoc\ _TestSkipPositionPreserving is UnitTest
+  fun name(): String =>
+    "msgpack/SkipPositionPreserving"
+
+  fun ref apply(h: TestHelper) ? =>
+    // skip str, decode uint
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str(w, "hello world")?
+    MessagePackEncoder.uint(w, 42)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[U64](42, MessagePackDecoder.uint(b)?,
+      "skip str then decode uint")
+
+    // skip array with contents, decode str
+    let w2: Writer ref = Writer
+    let b2: Reader ref = Reader
+    MessagePackEncoder.fixarray(w2, 2)?
+    MessagePackEncoder.uint_8(w2, 1)
+    MessagePackEncoder.uint_8(w2, 2)
+    MessagePackEncoder.str(w2, "after")?
+    for bs in w2.done().values() do
+      b2.append(bs)
+    end
+    MessagePackDecoder.skip(b2)?
+    let result = MessagePackDecoder.str(b2)?
+    h.assert_eq[String val](
+      "after", consume result,
+      "skip array then decode str")
+
+class \nodoc\ _TestSkipInvalidFormatByte is UnitTest
+  fun name(): String =>
+    "msgpack/SkipInvalidFormatByte"
+
+  fun ref apply(h: TestHelper) =>
+    let b: Reader ref = Reader
+    b.append(recover val [as U8: 0xC1] end)
+    try
+      MessagePackDecoder.skip(b)?
+      h.fail("skip accepted 0xC1")
+    end
+    h.assert_eq[USize](1, b.size())
+
+class \nodoc\ _TestSkipTruncatedData is UnitTest
+  fun name(): String =>
+    "msgpack/SkipTruncatedData"
+
+  fun ref apply(h: TestHelper) =>
+    // truncated uint_32 (only format byte)
+    let b: Reader ref = Reader
+    b.append(
+      recover val
+        [as U8: _FormatName.uint_32()]
+      end)
+    try
+      MessagePackDecoder.skip(b)?
+      h.fail("skip accepted truncated uint_32")
+    end
+    h.assert_eq[USize](1, b.size(),
+      "truncated header: no bytes consumed")
+
+    // truncated str_8 (header + length, no data)
+    let b2: Reader ref = Reader
+    b2.append(
+      recover val
+        [as U8: _FormatName.str_8(); 0x0A]
+      end)
+    try
+      MessagePackDecoder.skip(b2)?
+      h.fail("skip accepted truncated str_8")
+    end
+    h.assert_eq[USize](2, b2.size(),
+      "truncated payload: no bytes consumed")
+
+//
+// Skip property tests
+//
+
+class \nodoc\ _PropertySkipUint
+  is Property1[U64]
+  """
+  For any U64, compact uint encode then skip consumes all
+  bytes. Generator covers all five format ranges.
+  """
+  fun name(): String =>
+    "msgpack/PropertySkipUint"
+
+  fun gen(): Generator[U64] =>
+    Generators.frequency[U64]([
+      as WeightedGenerator[U64]:
+      (2, Generators.u8().map[U64]({(v) =>
+        (v and 0x7F).u64()}))
+      (2, Generators.u8().map[U64]({(v) =>
+        (v or 0x80).u64()}))
+      (2, Generators.u16().map[U64]({(v) =>
+        v.u64() + 256}))
+      (2, Generators.u32().map[U64]({(v) =>
+        v.u64() + 65536}))
+      (2, Generators.u64())
+    ])
+
+  fun ref property(arg1: U64, h: PropertyHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.uint(w, arg1)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _PropertySkipInt
+  is Property1[I64]
+  """
+  For any I64, compact int encode then skip consumes all
+  bytes. Generator covers all ten format ranges.
+  """
+  fun name(): String =>
+    "msgpack/PropertySkipInt"
+
+  fun gen(): Generator[I64] =>
+    Generators.frequency[I64]([
+      as WeightedGenerator[I64]:
+      (2, Generators.u8().map[I64]({(v) =>
+        (v and 0x7F).i64()}))
+      (2, Generators.u8().map[I64]({(v) =>
+        -((v % 32).i64() + 1)}))
+      (1, Generators.u8().map[I64]({(v) =>
+        (v or 0x80).i64()}))
+      (1, Generators.u8().map[I64]({(v) =>
+        -((v % 96).i64() + 33)}))
+      (1, Generators.u16().map[I64]({(v) =>
+        v.i64() + 256}))
+      (1, Generators.u16().map[I64]({(v) =>
+        -(v.i64() + 129)}))
+      (1, Generators.u32().map[I64]({(v) =>
+        v.i64() + 65536}))
+      (1, Generators.u32().map[I64]({(v) =>
+        -(v.i64() + 32769)}))
+      (1, Generators.i64())
+    ])
+
+  fun ref property(arg1: I64, h: PropertyHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.int(w, arg1)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _PropertySkipStr
+  is Property1[String]
+  """
+  For any ASCII string, compact str encode then skip consumes
+  all bytes. Generator covers fixstr, str_8, and str_16.
+  """
+  fun name(): String =>
+    "msgpack/PropertySkipStr"
+
+  fun gen(): Generator[String] =>
+    Generators.frequency[String]([
+      as WeightedGenerator[String]:
+      (5, Generators.ascii_printable(
+        0, _Limit.fixstr()))
+      (3, Generators.ascii_printable(
+        _Limit.fixstr() + 1,
+        U8.max_value().usize()))
+      (2, Generators.ascii_printable(
+        U8.max_value().usize() + 1, 300))
+    ])
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str(w, s)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _PropertySkipBin
+  is Property1[(U8, Array[U8] val)]
+  """
+  For any byte array, compact bin encode then skip consumes
+  all bytes.
+  """
+  fun name(): String =>
+    "msgpack/PropertySkipBin"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, USize,
+      (U8, Array[U8] val)](
+      Generators.u8(),
+      Generators.usize(0, U8.max_value().usize()),
+      {(fill, len) =>
+        (fill,
+          recover val
+            Array[U8].init(fill, len)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (_, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.bin(w, value)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _PropertySkipExt
+  is Property1[(U8, Array[U8] val)]
+  """
+  For any ext value, encode then skip consumes all bytes.
+  Generator covers fixext and ext_8 sizes.
+  """
+  fun name(): String =>
+    "msgpack/PropertySkipExt"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, USize,
+      (U8, Array[U8] val)](
+      Generators.u8().filter(
+        {(v) => (v, v != 0xFF) }),
+      Generators.frequency[USize]([
+        as WeightedGenerator[USize]:
+        (2, Generators.usize(1, 1))
+        (2, Generators.usize(2, 2))
+        (2, Generators.usize(4, 4))
+        (2, Generators.usize(8, 8))
+        (2, Generators.usize(16, 16))
+        (3, Generators.usize(0,
+          U8.max_value().usize()))
+      ]),
+      {(ext_type, len) =>
+        (ext_type,
+          recover val
+            Array[U8].init('X', len)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (let ext_type, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.ext(w, ext_type, value)?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[USize](0, b.size())
+
+class \nodoc\ _PropertySkipPositionPreserving
+  is Property1[(U64, U64)]
+  """
+  Encode two uint values, skip the first, decode the second.
+  The decoded value must match the original.
+  """
+  fun name(): String =>
+    "msgpack/PropertySkipPositionPreserving"
+
+  fun gen(): Generator[(U64, U64)] =>
+    Generators.map2[U64, U64, (U64, U64)](
+      Generators.u64(),
+      Generators.u64(),
+      {(a, b) => (a, b) })
+
+  fun ref property(
+    arg1: (U64, U64),
+    h: PropertyHelper)
+    ?
+  =>
+    (let first, let second) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.uint(w, first)
+    MessagePackEncoder.uint(w, second)
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    MessagePackDecoder.skip(b)?
+    h.assert_eq[U64](second,
+      MessagePackDecoder.uint(b)?)

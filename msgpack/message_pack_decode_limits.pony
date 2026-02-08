@@ -46,6 +46,7 @@ class val MessagePackDecodeLimits
   let max_array_len: U32
   let max_map_len: U32
   let max_depth: USize
+  let max_skip_values: USize
 
   new val create(
     max_str_len': USize = 1_048_576,
@@ -53,7 +54,8 @@ class val MessagePackDecodeLimits
     max_ext_len': USize = 1_048_576,
     max_array_len': U32 = 131_072,
     max_map_len': U32 = 131_072,
-    max_depth': USize = 512)
+    max_depth': USize = 512,
+    max_skip_values': USize = 1_048_576)
   =>
     max_str_len = max_str_len'
     max_bin_len = max_bin_len'
@@ -61,6 +63,7 @@ class val MessagePackDecodeLimits
     max_array_len = max_array_len'
     max_map_len = max_map_len'
     max_depth = max_depth'
+    max_skip_values = max_skip_values'
 
   new val unlimited() =>
     max_str_len = USize.max_value()
@@ -69,3 +72,4 @@ class val MessagePackDecodeLimits
     max_array_len = U32.max_value()
     max_map_len = U32.max_value()
     max_depth = USize.max_value()
+    max_skip_values = USize.max_value()

@@ -143,6 +143,36 @@ actor \nodoc\ _TestStreamingDecoder is TestList
     // Depth property-based tests
     test(Property1UnitTest[U8](
       _PropertyStreamDepth))
+    // Skip tests
+    test(_TestStreamSkipNil)
+    test(_TestStreamSkipStr)
+    test(_TestStreamSkipFixarray)
+    test(_TestStreamSkipArray32)
+    test(_TestStreamSkipFixmap)
+    test(_TestStreamSkipMap32)
+    test(_TestStreamSkipNestedContainers)
+    test(_TestStreamSkipEmptyContainers)
+    test(_TestStreamSkipTimestamp)
+    test(_TestStreamSkipNotEnoughData)
+    test(_TestStreamSkipInvalidData)
+    test(_TestStreamSkipLimitExceeded)
+    test(_TestStreamSkipLimitNoConsume)
+    test(_TestStreamSkipDepthTracking)
+    test(_TestStreamSkipPositionPreserving)
+    test(_TestStreamSkipInsideContainer)
+    // Skip property-based tests
+    test(Property1UnitTest[U32](
+      _PropertyStreamSkipU32Safety))
+    test(Property1UnitTest[I16](
+      _PropertyStreamSkipI16Safety))
+    test(Property1UnitTest[String](
+      _PropertyStreamSkipStr8Safety))
+    test(Property1UnitTest[U8](
+      _PropertyStreamSkipFixext4Safety))
+    test(Property1UnitTest[U8](
+      _PropertyStreamSkipBin16Safety))
+    test(Property1UnitTest[U16](
+      _PropertyStreamSkipLimitArray))
 
 //
 // Roundtrip tests
@@ -2447,4 +2477,794 @@ class \nodoc\ _PropertyStreamDepth is Property1[U8]
       end
       // Depth should be back to 0
       h.assert_eq[USize](0, sd.depth())
+    end
+
+//
+// Skip tests
+//
+
+class \nodoc\ _TestStreamSkipNil is UnitTest
+  fun name(): String => "msgpack/StreamSkipNil"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.nil(w)
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+    match sd.skip()
+    | None => None
+    else h.fail("expected None")
+    end
+    // Reader should be empty
+    match sd.next()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData after skip")
+    end
+
+class \nodoc\ _TestStreamSkipStr is UnitTest
+  fun name(): String => "msgpack/StreamSkipStr"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_8(w, "hello world")?
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+    match sd.skip()
+    | None => None
+    else h.fail("expected None")
+    end
+    match sd.next()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData after skip")
+    end
+
+class \nodoc\ _TestStreamSkipFixarray is UnitTest
+  """
+  Skip a fixarray with scalar elements.
+  """
+  fun name(): String => "msgpack/StreamSkipFixarray"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 3)?
+    MessagePackEncoder.uint(w, 1)
+    MessagePackEncoder.uint(w, 2)
+    MessagePackEncoder.uint(w, 3)
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+    match sd.skip()
+    | None => None
+    else h.fail("expected None")
+    end
+    match sd.next()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData after skip")
+    end
+
+class \nodoc\ _TestStreamSkipArray32 is UnitTest
+  """
+  Skip an array_32 with 65536 fixint elements.
+  """
+  fun name(): String => "msgpack/StreamSkipArray32"
+
+  fun ref apply(h: TestHelper) =>
+    ifdef not "ci" then
+      let count = U16.max_value().u32() + 1
+      let w: Writer ref = Writer
+      MessagePackEncoder.array_32(w, count)
+      var i: U32 = 0
+      while i < count do
+        MessagePackEncoder.uint(w, 1)
+        i = i + 1
+      end
+      let sd = MessagePackStreamingDecoder(
+        MessagePackDecodeLimits.unlimited())
+      sd.append(_WriterBytes(w))
+      match sd.skip()
+      | None => None
+      else h.fail("expected None")
+      end
+      match sd.next()
+      | NotEnoughData => None
+      else
+        h.fail("expected NotEnoughData after skip")
+      end
+    end
+
+class \nodoc\ _TestStreamSkipFixmap is UnitTest
+  """
+  Skip a fixmap with key-value pairs.
+  """
+  fun name(): String => "msgpack/StreamSkipFixmap"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixmap(w, 2)?
+    MessagePackEncoder.uint(w, 1)
+    MessagePackEncoder.uint(w, 10)
+    MessagePackEncoder.uint(w, 2)
+    MessagePackEncoder.uint(w, 20)
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+    match sd.skip()
+    | None => None
+    else h.fail("expected None")
+    end
+    match sd.next()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData after skip")
+    end
+
+class \nodoc\ _TestStreamSkipMap32 is UnitTest
+  """
+  Skip a map_32 with 65536 fixint key-value pairs.
+  """
+  fun name(): String => "msgpack/StreamSkipMap32"
+
+  fun ref apply(h: TestHelper) =>
+    ifdef not "ci" then
+      let count = U16.max_value().u32() + 1
+      let w: Writer ref = Writer
+      MessagePackEncoder.map_32(w, count)
+      var i: U32 = 0
+      while i < count do
+        MessagePackEncoder.uint(w, 1)
+        MessagePackEncoder.uint(w, 2)
+        i = i + 1
+      end
+      let sd = MessagePackStreamingDecoder(
+        MessagePackDecodeLimits.unlimited())
+      sd.append(_WriterBytes(w))
+      match sd.skip()
+      | None => None
+      else h.fail("expected None")
+      end
+      match sd.next()
+      | NotEnoughData => None
+      else
+        h.fail("expected NotEnoughData after skip")
+      end
+    end
+
+class \nodoc\ _TestStreamSkipNestedContainers is UnitTest
+  """
+  Skip deeply nested containers: [[1, [2]], {3: 4}].
+  """
+  fun name(): String => "msgpack/StreamSkipNestedContainers"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 2)?
+    // First element: [1, [2]]
+    MessagePackEncoder.fixarray(w, 2)?
+    MessagePackEncoder.uint(w, 1)
+    MessagePackEncoder.fixarray(w, 1)?
+    MessagePackEncoder.uint(w, 2)
+    // Second element: {3: 4}
+    MessagePackEncoder.fixmap(w, 1)?
+    MessagePackEncoder.uint(w, 3)
+    MessagePackEncoder.uint(w, 4)
+
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+    match sd.skip()
+    | None => None
+    else h.fail("expected None")
+    end
+    match sd.next()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData after skip")
+    end
+
+class \nodoc\ _TestStreamSkipEmptyContainers is UnitTest
+  """
+  Skip empty fixarray and empty fixmap.
+  """
+  fun name(): String => "msgpack/StreamSkipEmptyContainers"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 0)?
+    MessagePackEncoder.fixmap(w, 0)?
+
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+
+    // Skip empty array
+    match sd.skip()
+    | None => None
+    else h.fail("expected None for empty array")
+    end
+
+    // Skip empty map
+    match sd.skip()
+    | None => None
+    else h.fail("expected None for empty map")
+    end
+
+    match sd.next()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData after skip")
+    end
+
+class \nodoc\ _TestStreamSkipTimestamp is UnitTest
+  """
+  Skip a timestamp (fixext_4 wire format).
+  """
+  fun name(): String => "msgpack/StreamSkipTimestamp"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.timestamp_32(w, 1000)
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+    match sd.skip()
+    | None => None
+    else h.fail("expected None")
+    end
+    match sd.next()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData after skip")
+    end
+
+class \nodoc\ _TestStreamSkipNotEnoughData is UnitTest
+  """
+  Partial data returns NotEnoughData, no bytes consumed.
+  """
+  fun name(): String => "msgpack/StreamSkipNotEnoughData"
+
+  fun ref apply(h: TestHelper) =>
+    let sd = MessagePackStreamingDecoder
+
+    // Empty reader
+    match sd.skip()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData on empty")
+    end
+
+    // Partial uint_32 (only 3 of 5 bytes)
+    sd.append(
+      recover val [as U8: 0xCE; 0x00; 0x01] end)
+    match sd.skip()
+    | NotEnoughData => None
+    else h.fail("expected NotEnoughData on partial")
+    end
+
+    // Feed remaining bytes to verify no consumption
+    sd.append(
+      recover val [as U8: 0xE2; 0x40] end)
+    match sd.skip()
+    | None => None
+    else h.fail("expected None after completing data")
+    end
+
+class \nodoc\ _TestStreamSkipInvalidData is UnitTest
+  """
+  0xC1 returns InvalidData.
+  """
+  fun name(): String => "msgpack/StreamSkipInvalidData"
+
+  fun ref apply(h: TestHelper) =>
+    let sd = MessagePackStreamingDecoder
+    sd.append(
+      recover val [as U8: 0xC1] end)
+    match sd.skip()
+    | InvalidData => None
+    else h.fail("expected InvalidData")
+    end
+
+    // Calling skip again returns InvalidData again
+    match sd.skip()
+    | InvalidData => None
+    else h.fail("expected InvalidData on retry")
+    end
+
+class \nodoc\ _TestStreamSkipLimitExceeded is UnitTest
+  """
+  Nested containers exceeding max_skip_values returns
+  LimitExceeded.
+  """
+  fun name(): String => "msgpack/StreamSkipLimitExceeded"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Array with 10 elements — skip traverses 11 values
+    // (the array header + 10 elements)
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 10)?
+    var i: U32 = 0
+    while i < 10 do
+      MessagePackEncoder.uint(w, 1)
+      i = i + 1
+    end
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_skip_values' = 10))
+    sd.append(_WriterBytes(w))
+
+    // 11 values to traverse, limit is 10
+    match sd.skip()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+class \nodoc\ _TestStreamSkipLimitNoConsume is UnitTest
+  """
+  LimitExceeded consumes no bytes.
+  """
+  fun name(): String => "msgpack/StreamSkipLimitNoConsume"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 5)?
+    var i: U32 = 0
+    while i < 5 do
+      MessagePackEncoder.uint(w, 1)
+      i = i + 1
+    end
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_skip_values' = 1))
+    sd.append(_WriterBytes(w))
+
+    // First call: LimitExceeded
+    match sd.skip()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+    // Second call: still LimitExceeded (no bytes consumed)
+    match sd.skip()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded on retry")
+    end
+
+class \nodoc\ _TestStreamSkipDepthTracking is UnitTest
+  """
+  Skip inside a container updates depth correctly.
+  Decode array header via next(), skip elements, verify
+  depth returns to 0.
+  """
+  fun name(): String => "msgpack/StreamSkipDepthTracking"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Encode [1, "hello", [2, 3]]
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixarray(w, 3)?
+    MessagePackEncoder.uint(w, 1)
+    MessagePackEncoder.str(w, "hello")?
+    MessagePackEncoder.fixarray(w, 2)?
+    MessagePackEncoder.uint(w, 2)
+    MessagePackEncoder.uint(w, 3)
+
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+
+    // Decode the outer array header
+    match sd.next()
+    | let a: MessagePackArray =>
+      h.assert_eq[U32](3, a.size)
+    else h.fail("expected array header")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // Skip first element (1)
+    match sd.skip()
+    | None => None
+    else h.fail("expected None for skip 1")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // Skip second element ("hello")
+    match sd.skip()
+    | None => None
+    else h.fail("expected None for skip 2")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // Skip third element ([2, 3]) — this pops the outer
+    match sd.skip()
+    | None => None
+    else h.fail("expected None for skip 3")
+    end
+    h.assert_eq[USize](0, sd.depth())
+
+class \nodoc\ _TestStreamSkipPositionPreserving is UnitTest
+  """
+  Encode [value_a, value_b], skip value_a, decode value_b,
+  verify match.
+  """
+  fun name(): String =>
+    "msgpack/StreamSkipPositionPreserving"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Skip a string, then decode a uint
+    let w: Writer ref = Writer
+    MessagePackEncoder.str(w, "skip me")?
+    MessagePackEncoder.uint_32(w, 42)
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+
+    match sd.skip()
+    | None => None
+    else h.fail("expected None on skip")
+    end
+
+    match sd.next()
+    | let v: U32 => h.assert_eq[U32](42, v)
+    else h.fail("expected U32(42)")
+    end
+
+    // Skip an array, then decode a string
+    let w2: Writer ref = Writer
+    MessagePackEncoder.fixarray(w2, 2)?
+    MessagePackEncoder.uint(w2, 1)
+    MessagePackEncoder.uint(w2, 2)
+    MessagePackEncoder.str(w2, "after")?
+    let sd2 = MessagePackStreamingDecoder
+    sd2.append(_WriterBytes(w2))
+
+    match sd2.skip()
+    | None => None
+    else h.fail("expected None on skip array")
+    end
+
+    match sd2.next()
+    | let v: String val =>
+      h.assert_eq[String]("after", v)
+    else h.fail("expected String")
+    end
+
+class \nodoc\ _TestStreamSkipInsideContainer is UnitTest
+  """
+  Decode array header via next(), skip elements, verify
+  depth returns to 0.
+  """
+  fun name(): String =>
+    "msgpack/StreamSkipInsideContainer"
+
+  fun ref apply(h: TestHelper) ? =>
+    // Encode {"name": "Alice", "age": 30, "scores": [1]}
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixmap(w, 3)?
+    MessagePackEncoder.str(w, "name")?
+    MessagePackEncoder.str(w, "Alice")?
+    MessagePackEncoder.str(w, "age")?
+    MessagePackEncoder.uint(w, 30)
+    MessagePackEncoder.str(w, "scores")?
+    MessagePackEncoder.fixarray(w, 1)?
+    MessagePackEncoder.uint(w, 1)
+
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+
+    // Decode map header
+    match sd.next()
+    | let m: MessagePackMap =>
+      h.assert_eq[U32](3, m.size)
+    else h.fail("expected map header")
+    end
+    h.assert_eq[USize](1, sd.depth())
+
+    // Read key "name", skip value "Alice"
+    match sd.next()
+    | let s: String val =>
+      h.assert_eq[String]("name", s)
+    else h.fail("expected key 'name'")
+    end
+    match sd.skip()
+    | None => None
+    else h.fail("expected None skipping 'Alice'")
+    end
+
+    // Read key "age", skip value 30
+    match sd.next()
+    | let s: String val =>
+      h.assert_eq[String]("age", s)
+    else h.fail("expected key 'age'")
+    end
+    match sd.skip()
+    | None => None
+    else h.fail("expected None skipping 30")
+    end
+
+    // Read key "scores", skip value [1]
+    match sd.next()
+    | let s: String val =>
+      h.assert_eq[String]("scores", s)
+    else h.fail("expected key 'scores'")
+    end
+    match sd.skip()
+    | None => None
+    else h.fail("expected None skipping [1]")
+    end
+
+    h.assert_eq[USize](0, sd.depth())
+
+//
+// Skip property-based tests
+//
+
+class \nodoc\ _PropertyStreamSkipU32Safety
+  is Property1[U32]
+  """
+  For any U32, encoding as uint_32 and feeding byte-by-byte,
+  skip() returns NotEnoughData until the last byte, then None.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamSkipU32Safety"
+
+  fun gen(): Generator[U32] =>
+    Generators.u32()
+
+  fun ref property(arg1: U32, h: PropertyHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.uint_32(w, arg1)
+    let bytes = _WriterBytes(w)
+    let sd = MessagePackStreamingDecoder
+
+    var i: USize = 0
+    while i < (bytes.size() - 1) do
+      sd.append(
+        recover val [as U8: bytes(i)?] end)
+      match sd.skip()
+      | NotEnoughData => None
+      else
+        h.fail(
+          "NotEnoughData expected at byte "
+            + i.string())
+        return
+      end
+      i = i + 1
+    end
+
+    sd.append(
+      recover val
+        [as U8: bytes(bytes.size() - 1)?]
+      end)
+
+    match sd.skip()
+    | None => None
+    else
+      h.fail("expected None after all bytes")
+    end
+
+class \nodoc\ _PropertyStreamSkipI16Safety
+  is Property1[I16]
+  """
+  For any I16, encoding as int_16 and feeding byte-by-byte,
+  skip() returns NotEnoughData until the last byte, then None.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamSkipI16Safety"
+
+  fun gen(): Generator[I16] =>
+    Generators.i16()
+
+  fun ref property(arg1: I16, h: PropertyHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.int_16(w, arg1)
+    let bytes = _WriterBytes(w)
+    let sd = MessagePackStreamingDecoder
+
+    var i: USize = 0
+    while i < (bytes.size() - 1) do
+      sd.append(
+        recover val [as U8: bytes(i)?] end)
+      match sd.skip()
+      | NotEnoughData => None
+      else
+        h.fail(
+          "NotEnoughData expected at byte "
+            + i.string())
+        return
+      end
+      i = i + 1
+    end
+
+    sd.append(
+      recover val
+        [as U8: bytes(bytes.size() - 1)?]
+      end)
+
+    match sd.skip()
+    | None => None
+    else
+      h.fail("expected None after all bytes")
+    end
+
+class \nodoc\ _PropertyStreamSkipStr8Safety
+  is Property1[String]
+  """
+  For any short ASCII string, encoding as str_8 and feeding
+  byte-by-byte, skip() returns NotEnoughData until the last
+  byte, then None.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamSkipStr8Safety"
+
+  fun gen(): Generator[String] =>
+    Generators.ascii_printable(0, 100)
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_8(w, s)?
+    let bytes = _WriterBytes(w)
+    let sd = MessagePackStreamingDecoder
+
+    var i: USize = 0
+    while i < (bytes.size() - 1) do
+      sd.append(
+        recover val [as U8: bytes(i)?] end)
+      match sd.skip()
+      | NotEnoughData => None
+      else
+        h.fail(
+          "NotEnoughData expected at byte "
+            + i.string())
+        return
+      end
+      i = i + 1
+    end
+
+    sd.append(
+      recover val
+        [as U8: bytes(bytes.size() - 1)?]
+      end)
+
+    match sd.skip()
+    | None => None
+    else
+      h.fail("expected None after all bytes")
+    end
+
+class \nodoc\ _PropertyStreamSkipFixext4Safety
+  is Property1[U8]
+  """
+  For any ext_type byte, encoding a fixext_4 and feeding
+  byte-by-byte, skip() returns NotEnoughData until the last
+  byte, then None.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamSkipFixext4Safety"
+
+  fun gen(): Generator[U8] =>
+    Generators.u8()
+
+  fun ref property(arg1: U8, h: PropertyHelper) ? =>
+    let data =
+      recover val [as U8: 'A'; 'B'; 'C'; 'D'] end
+    let w: Writer ref = Writer
+    if arg1 == 0xFF then
+      // Timestamp wire format for ext_type 0xFF
+      MessagePackEncoder.timestamp_32(w, 1000)
+    else
+      MessagePackEncoder.fixext_4(w, arg1, data)?
+    end
+    let bytes = _WriterBytes(w)
+    let sd = MessagePackStreamingDecoder
+
+    var i: USize = 0
+    while i < (bytes.size() - 1) do
+      sd.append(
+        recover val [as U8: bytes(i)?] end)
+      match sd.skip()
+      | NotEnoughData => None
+      else
+        h.fail(
+          "NotEnoughData expected at byte "
+            + i.string())
+        return
+      end
+      i = i + 1
+    end
+
+    sd.append(
+      recover val
+        [as U8: bytes(bytes.size() - 1)?]
+      end)
+
+    match sd.skip()
+    | None => None
+    else
+      h.fail("expected None after all bytes")
+    end
+
+class \nodoc\ _PropertyStreamSkipBin16Safety
+  is Property1[U8]
+  """
+  For any small byte array, encoding as bin_16 and feeding
+  byte-by-byte, skip() returns NotEnoughData until the last
+  byte, then None.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamSkipBin16Safety"
+
+  fun gen(): Generator[U8] =>
+    Generators.u8()
+
+  fun ref property(arg1: U8, h: PropertyHelper) ? =>
+    let data = recover val
+      Array[U8].init('X', arg1.usize())
+    end
+    let w: Writer ref = Writer
+    MessagePackEncoder.bin_16(w, data)?
+    let bytes = _WriterBytes(w)
+    let sd = MessagePackStreamingDecoder
+
+    var i: USize = 0
+    while i < (bytes.size() - 1) do
+      sd.append(
+        recover val [as U8: bytes(i)?] end)
+      match sd.skip()
+      | NotEnoughData => None
+      else
+        h.fail(
+          "NotEnoughData expected at byte "
+            + i.string())
+        return
+      end
+      i = i + 1
+    end
+
+    sd.append(
+      recover val
+        [as U8: bytes(bytes.size() - 1)?]
+      end)
+
+    match sd.skip()
+    | None => None
+    else
+      h.fail("expected None after all bytes")
+    end
+
+class \nodoc\ _PropertyStreamSkipLimitArray
+  is Property1[U16]
+  """
+  Generate arrays with varying element counts, skip with
+  small max_skip_values, verify LimitExceeded when element
+  count + 1 exceeds limit and None when within limit.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamSkipLimitArray"
+
+  fun gen(): Generator[U16] =>
+    Generators.u16(0, 100)
+
+  fun ref property(arg1: U16, h: PropertyHelper) =>
+    let count = arg1.u32()
+    let max_skip: USize = 50
+
+    let w: Writer ref = Writer
+    MessagePackEncoder.array(w, count)
+    var i: U32 = 0
+    while i < count do
+      MessagePackEncoder.uint(w, 1)
+      i = i + 1
+    end
+
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_skip_values' = max_skip))
+    sd.append(_WriterBytes(w))
+
+    // Total values traversed = count + 1 (the array itself)
+    if (count.usize() + 1) > max_skip then
+      match sd.skip()
+      | LimitExceeded => None
+      else
+        h.fail(
+          "expected LimitExceeded for count "
+            + count.string())
+      end
+    else
+      match sd.skip()
+      | None => None
+      else
+        h.fail(
+          "expected None for count "
+            + count.string())
+      end
     end

@@ -162,6 +162,245 @@ class MessagePackStreamingDecoder
       end
     )
 
+  fun ref skip(): SkipResult =>
+    """
+    Advances past one complete MessagePack value without
+    decoding it. For containers (arrays and maps), skips all
+    contained elements.
+
+    Returns `None` on success, `NotEnoughData` if more bytes
+    are needed (no bytes consumed), `InvalidData` if the
+    format byte is invalid (no bytes consumed), or
+    `LimitExceeded` if the number of values traversed exceeds
+    the configured `max_skip_values` limit (no bytes
+    consumed).
+
+    Like `next()`, a successful skip decrements the parent
+    container's remaining element count when called inside a
+    container.
+    """
+    if _reader.size() == 0 then
+      return NotEnoughData
+    end
+
+    var offset: USize = 0
+    var remaining: USize = 1
+    var values_seen: USize = 0
+
+    while remaining > 0 do
+      remaining = remaining - 1
+      values_seen = values_seen + 1
+      if values_seen > _limits.max_skip_values then
+        return LimitExceeded
+      end
+
+      let fb =
+        try _reader.peek_u8(offset)?
+        else return NotEnoughData
+        end
+
+      if fb <= 0x7F then
+        // positive fixint: 1 byte
+        offset = offset + 1
+      elseif fb <= 0x8F then
+        // fixmap: 1 byte header, count * 2 values
+        remaining = remaining
+          + ((fb and 0x0F).usize() * 2)
+        offset = offset + 1
+      elseif fb <= 0x9F then
+        // fixarray: 1 byte header, count values
+        remaining = remaining
+          + (fb and 0x0F).usize()
+        offset = offset + 1
+      elseif fb <= 0xBF then
+        // fixstr: 1 byte header + data
+        offset = offset + 1
+          + (fb and 0x1F).usize()
+      elseif fb == 0xC0 then
+        // nil: 1 byte
+        offset = offset + 1
+      elseif fb == 0xC1 then
+        return InvalidData
+      elseif fb <= 0xC3 then
+        // bool: 1 byte
+        offset = offset + 1
+      elseif fb <= 0xC6 then
+        // bin_8/16/32
+        if fb == _FormatName.bin_8() then
+          let len =
+            try _reader.peek_u8(offset + 1)?.usize()
+            else return NotEnoughData
+            end
+          offset = offset + 2 + len
+        elseif fb == _FormatName.bin_16() then
+          let len =
+            try
+              _reader.peek_u16_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          offset = offset + 3 + len
+        else
+          let len =
+            try
+              _reader.peek_u32_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          offset = offset + 5 + len
+        end
+      elseif fb <= 0xC9 then
+        // ext_8/16/32: header + 1 ext_type + data
+        if fb == _FormatName.ext_8() then
+          let len =
+            try _reader.peek_u8(offset + 1)?.usize()
+            else return NotEnoughData
+            end
+          offset = offset + 3 + len
+        elseif fb == _FormatName.ext_16() then
+          let len =
+            try
+              _reader.peek_u16_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          offset = offset + 4 + len
+        else
+          let len =
+            try
+              _reader.peek_u32_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          offset = offset + 6 + len
+        end
+      elseif fb == 0xCA then
+        // float_32: 5 bytes
+        offset = offset + 5
+      elseif fb == 0xCB then
+        // float_64: 9 bytes
+        offset = offset + 9
+      elseif fb <= 0xCF then
+        // uint_8/16/32/64
+        if fb == _FormatName.uint_8() then
+          offset = offset + 2
+        elseif fb == _FormatName.uint_16() then
+          offset = offset + 3
+        elseif fb == _FormatName.uint_32() then
+          offset = offset + 5
+        else
+          offset = offset + 9
+        end
+      elseif fb <= 0xD3 then
+        // int_8/16/32/64
+        if fb == _FormatName.int_8() then
+          offset = offset + 2
+        elseif fb == _FormatName.int_16() then
+          offset = offset + 3
+        elseif fb == _FormatName.int_32() then
+          offset = offset + 5
+        else
+          offset = offset + 9
+        end
+      elseif fb <= 0xD8 then
+        // fixext_1/2/4/8/16
+        if fb == _FormatName.fixext_1() then
+          offset = offset + 3
+        elseif fb == _FormatName.fixext_2() then
+          offset = offset + 4
+        elseif fb == _FormatName.fixext_4() then
+          offset = offset + 6
+        elseif fb == _FormatName.fixext_8() then
+          offset = offset + 10
+        else
+          offset = offset + 18
+        end
+      elseif fb <= 0xDB then
+        // str_8/16/32
+        if fb == _FormatName.str_8() then
+          let len =
+            try _reader.peek_u8(offset + 1)?.usize()
+            else return NotEnoughData
+            end
+          offset = offset + 2 + len
+        elseif fb == _FormatName.str_16() then
+          let len =
+            try
+              _reader.peek_u16_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          offset = offset + 3 + len
+        else
+          let len =
+            try
+              _reader.peek_u32_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          offset = offset + 5 + len
+        end
+      elseif fb <= 0xDD then
+        // array_16/32
+        if fb == _FormatName.array_16() then
+          let count =
+            try
+              _reader.peek_u16_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          remaining = remaining + count
+          offset = offset + 3
+        else
+          let count =
+            try
+              _reader.peek_u32_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          remaining = remaining + count
+          offset = offset + 5
+        end
+      elseif fb <= 0xDF then
+        // map_16/32
+        if fb == _FormatName.map_16() then
+          let count =
+            try
+              _reader.peek_u16_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          remaining = remaining + (count * 2)
+          offset = offset + 3
+        else
+          let count =
+            try
+              _reader.peek_u32_be(offset + 1)?
+                .usize()
+            else return NotEnoughData
+            end
+          remaining = remaining + (count * 2)
+          offset = offset + 5
+        end
+      else
+        // negative fixint: 1 byte
+        offset = offset + 1
+      end
+    end
+
+    if _reader.size() < offset then
+      return NotEnoughData
+    end
+
+    try _reader.skip(offset)?
+    else
+      _Unreachable()
+      return InvalidData
+    end
+    _decrement_parent()
+    _drain_completed()
+    None
+
   //
   // Fixed-size single-byte formats
   //

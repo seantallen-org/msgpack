@@ -691,6 +691,165 @@ primitive MessagePackDecoder
     (sec, nsec)
 
   //
+  // skip
+  //
+
+  fun skip(b: Reader ref) ? =>
+    """
+    Advances past one complete MessagePack value without
+    decoding it. For containers (arrays and maps), skips all
+    contained elements.
+
+    Errors if insufficient data is available or if the format
+    byte is invalid (0xC1). On error, no bytes are consumed.
+
+    This method has no limit on the number of values
+    traversed. For protection against container amplification
+    attacks, use `MessagePackStreamingDecoder.skip` which
+    enforces a configurable `max_skip_values` limit.
+    """
+    var offset: USize = 0
+    var remaining: USize = 1
+    while remaining > 0 do
+      remaining = remaining - 1
+      let fb = b.peek_u8(offset)?
+      if fb <= 0x7F then
+        // positive fixint: 1 byte
+        offset = offset + 1
+      elseif fb <= 0x8F then
+        // fixmap: 1 byte header, count * 2 values
+        remaining = remaining
+          + ((fb and 0x0F).usize() * 2)
+        offset = offset + 1
+      elseif fb <= 0x9F then
+        // fixarray: 1 byte header, count values
+        remaining = remaining
+          + (fb and 0x0F).usize()
+        offset = offset + 1
+      elseif fb <= 0xBF then
+        // fixstr: 1 byte header + data
+        offset = offset + 1
+          + (fb and 0x1F).usize()
+      elseif fb == _FormatName.nil() then
+        offset = offset + 1
+      elseif fb == 0xC1 then
+        error
+      elseif fb <= _FormatName.truthy() then
+        // bool: 1 byte
+        offset = offset + 1
+      elseif fb <= _FormatName.bin_32() then
+        // bin_8/16/32
+        if fb == _FormatName.bin_8() then
+          let len = b.peek_u8(offset + 1)?.usize()
+          offset = offset + 2 + len
+        elseif fb == _FormatName.bin_16() then
+          let len =
+            b.peek_u16_be(offset + 1)?.usize()
+          offset = offset + 3 + len
+        else
+          let len =
+            b.peek_u32_be(offset + 1)?.usize()
+          offset = offset + 5 + len
+        end
+      elseif fb <= _FormatName.ext_32() then
+        // ext_8/16/32: header + 1 ext_type + data
+        if fb == _FormatName.ext_8() then
+          let len = b.peek_u8(offset + 1)?.usize()
+          offset = offset + 3 + len
+        elseif fb == _FormatName.ext_16() then
+          let len =
+            b.peek_u16_be(offset + 1)?.usize()
+          offset = offset + 4 + len
+        else
+          let len =
+            b.peek_u32_be(offset + 1)?.usize()
+          offset = offset + 6 + len
+        end
+      elseif fb == _FormatName.float_32() then
+        offset = offset + 5
+      elseif fb == _FormatName.float_64() then
+        offset = offset + 9
+      elseif fb <= _FormatName.uint_64() then
+        // uint_8/16/32/64
+        if fb == _FormatName.uint_8() then
+          offset = offset + 2
+        elseif fb == _FormatName.uint_16() then
+          offset = offset + 3
+        elseif fb == _FormatName.uint_32() then
+          offset = offset + 5
+        else
+          offset = offset + 9
+        end
+      elseif fb <= _FormatName.int_64() then
+        // int_8/16/32/64
+        if fb == _FormatName.int_8() then
+          offset = offset + 2
+        elseif fb == _FormatName.int_16() then
+          offset = offset + 3
+        elseif fb == _FormatName.int_32() then
+          offset = offset + 5
+        else
+          offset = offset + 9
+        end
+      elseif fb <= _FormatName.fixext_16() then
+        // fixext_1/2/4/8/16
+        if fb == _FormatName.fixext_1() then
+          offset = offset + 3
+        elseif fb == _FormatName.fixext_2() then
+          offset = offset + 4
+        elseif fb == _FormatName.fixext_4() then
+          offset = offset + 6
+        elseif fb == _FormatName.fixext_8() then
+          offset = offset + 10
+        else
+          offset = offset + 18
+        end
+      elseif fb <= _FormatName.str_32() then
+        // str_8/16/32
+        if fb == _FormatName.str_8() then
+          let len = b.peek_u8(offset + 1)?.usize()
+          offset = offset + 2 + len
+        elseif fb == _FormatName.str_16() then
+          let len =
+            b.peek_u16_be(offset + 1)?.usize()
+          offset = offset + 3 + len
+        else
+          let len =
+            b.peek_u32_be(offset + 1)?.usize()
+          offset = offset + 5 + len
+        end
+      elseif fb <= _FormatName.array_32() then
+        // array_16/32
+        if fb == _FormatName.array_16() then
+          remaining = remaining
+            + b.peek_u16_be(offset + 1)?.usize()
+          offset = offset + 3
+        else
+          remaining = remaining
+            + b.peek_u32_be(offset + 1)?.usize()
+          offset = offset + 5
+        end
+      elseif fb <= _FormatName.map_32() then
+        // map_16/32
+        if fb == _FormatName.map_16() then
+          remaining = remaining
+            + (b.peek_u16_be(offset + 1)?.usize()
+              * 2)
+          offset = offset + 3
+        else
+          remaining = remaining
+            + (b.peek_u32_be(offset + 1)?.usize()
+              * 2)
+          offset = offset + 5
+        end
+      else
+        // negative fixint: 1 byte
+        offset = offset + 1
+      end
+    end
+    b.skip(offset)?
+
+  //
   // support functions
   //
 

@@ -109,6 +109,26 @@ actor \nodoc\ _TestStreamingDecoder is TestList
       _PropertyStreamStr32Safety))
     test(Property1UnitTest[U8](
       _PropertyStreamFixext4Safety))
+    // Limit tests
+    test(_TestStreamLimitFixext)
+    test(_TestStreamLimitMap)
+    test(_TestStreamLimitArray32)
+    test(_TestStreamLimitMap32)
+    test(_TestStreamLimitStr16)
+    test(_TestStreamLimitBin16)
+    test(_TestStreamLimitExt16)
+    test(_TestStreamLimitNoConsume)
+    test(_TestStreamLimitUnlimited)
+    test(_TestStreamLimitAtBoundary)
+    // Limit property-based tests
+    test(Property1UnitTest[String](
+      _PropertyStreamLimitStr))
+    test(Property1UnitTest[U8](
+      _PropertyStreamLimitBin))
+    test(Property1UnitTest[U16](
+      _PropertyStreamLimitArray))
+    test(Property1UnitTest[U8](
+      _PropertyStreamLimitExt))
 
 //
 // Roundtrip tests
@@ -1487,5 +1507,386 @@ class \nodoc\ _PropertyStreamFixext4Safety is Property1[U8]
         h.assert_eq[USize](4, v.data.size())
       else
         h.fail("expected MessagePackExt")
+      end
+    end
+
+//
+// Limit tests
+//
+
+class \nodoc\ _TestStreamLimitFixext is UnitTest
+  """
+  A fixext_16 (16 bytes data) is rejected when max_ext_len is 15.
+  """
+  fun name(): String => "msgpack/StreamLimitFixext"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let value = recover val Array[U8].init('V', 16) end
+    MessagePackEncoder.fixext_16(w, 40, value)?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(where max_ext_len' = 15))
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+class \nodoc\ _TestStreamLimitMap is UnitTest
+  """
+  A map_16 with count 100 is rejected when max_map_len is 99.
+  """
+  fun name(): String => "msgpack/StreamLimitMap"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.map_16(w, 100)
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(where max_map_len' = 99))
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+class \nodoc\ _TestStreamLimitArray32 is UnitTest
+  """
+  An array_32 with count 200000 is rejected when max_array_len
+  is 131072.
+  """
+  fun name(): String => "msgpack/StreamLimitArray32"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.array_32(w, 200_000)
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_array_len' = 131_072))
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+class \nodoc\ _TestStreamLimitMap32 is UnitTest
+  """
+  A map_32 with count 200000 is rejected when max_map_len
+  is 131072.
+  """
+  fun name(): String => "msgpack/StreamLimitMap32"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.map_32(w, 200_000)
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_map_len' = 131_072))
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+class \nodoc\ _TestStreamLimitStr16 is UnitTest
+  """
+  A str_16 with 300 bytes is rejected when max_str_len is 250.
+  Exercises the peek_u16_be length path in _decode_str.
+  """
+  fun name(): String => "msgpack/StreamLimitStr16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data = recover iso Array[U8].init('A', 300) end
+    let s: String val =
+      String.from_iso_array(consume data)
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_16(w, s)?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_str_len' = 250))
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+class \nodoc\ _TestStreamLimitBin16 is UnitTest
+  """
+  A bin_16 with 300 bytes is rejected when max_bin_len is 250.
+  Exercises the peek_u16_be length path in _decode_bin.
+  """
+  fun name(): String => "msgpack/StreamLimitBin16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data = recover val
+      Array[U8].init('B', 300)
+    end
+    let w: Writer ref = Writer
+    MessagePackEncoder.bin_16(w, data)?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_bin_len' = 250))
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+class \nodoc\ _TestStreamLimitExt16 is UnitTest
+  """
+  An ext_16 with 300 bytes is rejected when max_ext_len is 250.
+  Exercises the peek_u16_be length path in _decode_ext_variable.
+  """
+  fun name(): String => "msgpack/StreamLimitExt16"
+
+  fun ref apply(h: TestHelper) ? =>
+    let data = recover val
+      Array[U8].init('C', 300)
+    end
+    let w: Writer ref = Writer
+    MessagePackEncoder.ext_16(w, 42, data)?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_ext_len' = 250))
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+class \nodoc\ _TestStreamLimitNoConsume is UnitTest
+  """
+  When LimitExceeded is returned, no bytes are consumed.
+  Calling next() again on the same data returns LimitExceeded
+  again, confirming the reader state is unchanged.
+  """
+  fun name(): String => "msgpack/StreamLimitNoConsume"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_8(w, "hello world")?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(where max_str_len' = 5))
+    sd.append(_WriterBytes(w))
+
+    // First call: LimitExceeded
+    match sd.next()
+    | LimitExceeded => None
+    else h.fail("expected LimitExceeded")
+    end
+
+    // Second call: still LimitExceeded (bytes not consumed)
+    match sd.next()
+    | LimitExceeded => None
+    else
+      h.fail(
+        "expected LimitExceeded on second call")
+    end
+
+class \nodoc\ _TestStreamLimitUnlimited is UnitTest
+  """
+  With unlimited() limits, large counts are accepted.
+  """
+  fun name(): String => "msgpack/StreamLimitUnlimited"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.array_32(w, 200_000)
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits.unlimited())
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | let v: MessagePackArray =>
+      h.assert_eq[U32](200_000, v.size)
+    else h.fail("expected MessagePackArray")
+    end
+
+class \nodoc\ _TestStreamLimitAtBoundary is UnitTest
+  """
+  A value whose size exactly equals the limit is accepted.
+  """
+  fun name(): String => "msgpack/StreamLimitAtBoundary"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_8(w, "1234567890")?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(where max_str_len' = 10))
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | let v: String val =>
+      h.assert_eq[USize](10, v.size())
+    else h.fail("expected String at limit boundary")
+    end
+
+//
+// Limit property-based tests
+//
+
+class \nodoc\ _PropertyStreamLimitStr
+  is Property1[String]
+  """
+  For any ASCII string 0-100 chars with max_str_len=50:
+  strings longer than 50 return LimitExceeded, others succeed.
+  Exercises both fixstr (<=31) and str_8 (32-100) paths.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamLimitStr"
+
+  fun gen(): Generator[String] =>
+    Generators.ascii_printable(0, 100)
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    MessagePackEncoder.str(w, s)?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_str_len' = 50))
+    sd.append(_WriterBytes(w))
+
+    if s.size() > 50 then
+      match sd.next()
+      | LimitExceeded => None
+      else
+        h.fail(
+          "expected LimitExceeded for size "
+            + s.size().string())
+      end
+    else
+      match sd.next()
+      | let v: String val =>
+        h.assert_eq[String](s, v)
+      else
+        h.fail(
+          "expected String for size "
+            + s.size().string())
+      end
+    end
+
+class \nodoc\ _PropertyStreamLimitBin
+  is Property1[U8]
+  """
+  For any byte array of size 0-255 with max_bin_len=100:
+  arrays larger than 100 return LimitExceeded, others succeed.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamLimitBin"
+
+  fun gen(): Generator[U8] =>
+    Generators.u8()
+
+  fun ref property(arg1: U8, h: PropertyHelper) ? =>
+    let data = recover val
+      Array[U8].init('X', arg1.usize())
+    end
+    let w: Writer ref = Writer
+    MessagePackEncoder.bin(w, data)?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_bin_len' = 100))
+    sd.append(_WriterBytes(w))
+
+    if arg1.usize() > 100 then
+      match sd.next()
+      | LimitExceeded => None
+      else
+        h.fail(
+          "expected LimitExceeded for size "
+            + arg1.string())
+      end
+    else
+      match sd.next()
+      | let v: Array[U8] val =>
+        h.assert_eq[USize](
+          arg1.usize(), v.size())
+      else
+        h.fail(
+          "expected Array[U8] for size "
+            + arg1.string())
+      end
+    end
+
+class \nodoc\ _PropertyStreamLimitArray
+  is Property1[U16]
+  """
+  For any U16 count with max_array_len=1000: counts above 1000
+  return LimitExceeded, others succeed. Exercises both fixarray
+  (<=15) and array_16 (16-65535) paths.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamLimitArray"
+
+  fun gen(): Generator[U16] =>
+    Generators.u16()
+
+  fun ref property(arg1: U16, h: PropertyHelper) =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.array(w, arg1.u32())
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_array_len' = 1000))
+    sd.append(_WriterBytes(w))
+
+    if arg1.u32() > 1000 then
+      match sd.next()
+      | LimitExceeded => None
+      else
+        h.fail(
+          "expected LimitExceeded for count "
+            + arg1.string())
+      end
+    else
+      match sd.next()
+      | let v: MessagePackArray =>
+        h.assert_eq[U32](arg1.u32(), v.size)
+      else
+        h.fail(
+          "expected MessagePackArray for count "
+            + arg1.string())
+      end
+    end
+
+class \nodoc\ _PropertyStreamLimitExt
+  is Property1[U8]
+  """
+  For any ext data of size 0-255 with max_ext_len=100: data
+  larger than 100 return LimitExceeded, others succeed. Uses
+  ext_type 42 to avoid timestamp detection.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamLimitExt"
+
+  fun gen(): Generator[U8] =>
+    Generators.u8()
+
+  fun ref property(arg1: U8, h: PropertyHelper) ? =>
+    let data = recover val
+      Array[U8].init('Z', arg1.usize())
+    end
+    let w: Writer ref = Writer
+    MessagePackEncoder.ext(w, 42, data)?
+    let sd = MessagePackStreamingDecoder(
+      MessagePackDecodeLimits(
+        where max_ext_len' = 100))
+    sd.append(_WriterBytes(w))
+
+    if arg1.usize() > 100 then
+      match sd.next()
+      | LimitExceeded => None
+      else
+        h.fail(
+          "expected LimitExceeded for size "
+            + arg1.string())
+      end
+    else
+      match sd.next()
+      | let v: MessagePackExt =>
+        h.assert_eq[U8](42, v.ext_type)
+        h.assert_eq[USize](
+          arg1.usize(), v.data.size())
+      else
+        h.fail(
+          "expected MessagePackExt for size "
+            + arg1.string())
       end
     end

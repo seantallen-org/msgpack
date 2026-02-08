@@ -135,3 +135,9 @@ type DecodeResult is
   | NotEnoughData
   | InvalidData
   | LimitExceeded )
+
+type SkipResult is
+  ( None
+  | NotEnoughData
+  | InvalidData
+  | LimitExceeded )

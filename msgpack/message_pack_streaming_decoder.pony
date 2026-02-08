@@ -30,12 +30,20 @@ class MessagePackStreamingDecoder
   `NotEnoughData` with zero bytes consumed, allowing the caller to
   append more data and retry.
 
-  Size limits protect against denial-of-service attacks where a
+  Limits protect against denial-of-service attacks where a
   malicious payload claims enormous sizes for variable-length
-  values. By default, conservative limits are applied (1 MB for
-  str/bin/ext, 131,072 for array/map counts). When a value
-  exceeds its limit, `next()` returns `LimitExceeded` with zero
-  bytes consumed.
+  values or deeply nested containers. By default, conservative
+  limits are applied (1 MB for str/bin/ext, 131,072 for
+  array/map counts, 512 for container nesting depth). When a
+  value exceeds its limit, `next()` returns `LimitExceeded`
+  with zero bytes consumed.
+
+  The decoder automatically tracks container nesting depth.
+  When `next()` returns a `MessagePackArray` or
+  `MessagePackMap`, the depth counter increments. As the
+  caller reads elements and containers are exhausted, the
+  depth counter decrements automatically. Use `depth()` to
+  inspect the current nesting level.
 
   Usage:
   ```pony
@@ -45,13 +53,14 @@ class MessagePackStreamingDecoder
   match decoder.next()
   | let v: U32 => // got a value
   | NotEnoughData => // need more data, append and retry
-  | LimitExceeded => // value too large, reject
+  | LimitExceeded => // value too large or too deep, reject
   | InvalidData => // corrupt stream, abort
   end
 
   // Custom limits:
   let limits = MessagePackDecodeLimits(
-    where max_str_len' = 4096)
+    where max_str_len' = 4096,
+          max_depth' = 16)
   let decoder = MessagePackStreamingDecoder(limits)
 
   // No limits:
@@ -66,6 +75,7 @@ class MessagePackStreamingDecoder
   """
   let _reader: Reader ref
   let _limits: MessagePackDecodeLimits val
+  let _stack: Array[USize]
 
   new create(
     limits: MessagePackDecodeLimits val
@@ -73,12 +83,21 @@ class MessagePackStreamingDecoder
   =>
     _reader = Reader
     _limits = limits
+    _stack = Array[USize]
 
   fun ref append(data: ByteSeq) =>
     """
     Append data to the internal reader. Call this as chunks arrive.
     """
     _reader.append(data)
+
+  fun depth(): USize =>
+    """
+    Returns the current container nesting depth. Depth increases
+    when `next()` returns `MessagePackArray` or `MessagePackMap`,
+    and decreases automatically as elements are consumed.
+    """
+    _stack.size()
 
   fun ref next(): DecodeResult =>
     """
@@ -103,43 +122,45 @@ class MessagePackStreamingDecoder
       else return NotEnoughData
       end
 
-    if fb <= 0x7F then
-      _decode_positive_fixint()
-    elseif fb <= 0x8F then
-      _decode_fixmap(fb)
-    elseif fb <= 0x9F then
-      _decode_fixarray(fb)
-    elseif fb <= 0xBF then
-      _decode_fixstr(fb)
-    elseif fb == 0xC0 then
-      _decode_nil()
-    elseif fb == 0xC1 then
-      InvalidData
-    elseif fb <= 0xC3 then
-      _decode_bool()
-    elseif fb <= 0xC6 then
-      _decode_bin(fb)
-    elseif fb <= 0xC9 then
-      _decode_ext_variable(fb)
-    elseif fb == 0xCA then
-      _decode_float_32()
-    elseif fb == 0xCB then
-      _decode_float_64()
-    elseif fb <= 0xCF then
-      _decode_uint(fb)
-    elseif fb <= 0xD3 then
-      _decode_int(fb)
-    elseif fb <= 0xD8 then
-      _decode_fixext(fb)
-    elseif fb <= 0xDB then
-      _decode_str(fb)
-    elseif fb <= 0xDD then
-      _decode_array(fb)
-    elseif fb <= 0xDF then
-      _decode_map(fb)
-    else
-      _decode_negative_fixint()
-    end
+    _track(
+      if fb <= 0x7F then
+        _decode_positive_fixint()
+      elseif fb <= 0x8F then
+        _decode_fixmap(fb)
+      elseif fb <= 0x9F then
+        _decode_fixarray(fb)
+      elseif fb <= 0xBF then
+        _decode_fixstr(fb)
+      elseif fb == 0xC0 then
+        _decode_nil()
+      elseif fb == 0xC1 then
+        InvalidData
+      elseif fb <= 0xC3 then
+        _decode_bool()
+      elseif fb <= 0xC6 then
+        _decode_bin(fb)
+      elseif fb <= 0xC9 then
+        _decode_ext_variable(fb)
+      elseif fb == 0xCA then
+        _decode_float_32()
+      elseif fb == 0xCB then
+        _decode_float_64()
+      elseif fb <= 0xCF then
+        _decode_uint(fb)
+      elseif fb <= 0xD3 then
+        _decode_int(fb)
+      elseif fb <= 0xD8 then
+        _decode_fixext(fb)
+      elseif fb <= 0xDB then
+        _decode_str(fb)
+      elseif fb <= 0xDD then
+        _decode_array(fb)
+      elseif fb <= 0xDF then
+        _decode_map(fb)
+      else
+        _decode_negative_fixint()
+      end
+    )
 
   //
   // Fixed-size single-byte formats
@@ -388,6 +409,9 @@ class MessagePackStreamingDecoder
     if count > _limits.max_array_len then
       return LimitExceeded
     end
+    if _stack.size() >= _limits.max_depth then
+      return LimitExceeded
+    end
     try
       MessagePackArray(
         MessagePackDecoder.fixarray(_reader)?.u32())
@@ -420,6 +444,9 @@ class MessagePackStreamingDecoder
     if count > _limits.max_array_len then
       return LimitExceeded
     end
+    if _stack.size() >= _limits.max_depth then
+      return LimitExceeded
+    end
 
     try
       if fb == _FormatName.array_16() then
@@ -442,6 +469,9 @@ class MessagePackStreamingDecoder
     // 0x80-0x8F: 1 byte header, count in low 4 bits
     let count = (fb and 0x0F).u32()
     if count > _limits.max_map_len then
+      return LimitExceeded
+    end
+    if _stack.size() >= _limits.max_depth then
       return LimitExceeded
     end
     try
@@ -474,6 +504,9 @@ class MessagePackStreamingDecoder
       end
 
     if count > _limits.max_map_len then
+      return LimitExceeded
+    end
+    if _stack.size() >= _limits.max_depth then
       return LimitExceeded
     end
 
@@ -627,4 +660,47 @@ class MessagePackStreamingDecoder
     else
       _Unreachable()
       InvalidData
+    end
+
+  //
+  // Container depth tracking
+  //
+
+  fun ref _track(result: DecodeResult): DecodeResult =>
+    match result
+    | let a: MessagePackArray =>
+      _decrement_parent()
+      _stack.push(a.size.usize())
+      _drain_completed()
+      result
+    | let m: MessagePackMap =>
+      _decrement_parent()
+      _stack.push(m.size.usize() * 2)
+      _drain_completed()
+      result
+    | NotEnoughData => result
+    | InvalidData => result
+    | LimitExceeded => result
+    else
+      // scalar value
+      _decrement_parent()
+      _drain_completed()
+      result
+    end
+
+  fun ref _decrement_parent() =>
+    if _stack.size() > 0 then
+      try
+        let idx = _stack.size() - 1
+        _stack(idx)? = _stack(idx)? - 1
+      end
+    end
+
+  fun ref _drain_completed() =>
+    try
+      while (_stack.size() > 0)
+        and (_stack(_stack.size() - 1)? == 0)
+      do
+        _stack.pop()?
+      end
     end

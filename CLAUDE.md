@@ -46,7 +46,7 @@ Two stateless primitives provide encoding/decoding:
 
 A streaming-safe decoder wraps the low-level primitives:
 
-- **`MessagePackStreamingDecoder`** — A class that peeks at format bytes and length fields before consuming data. Enforces configurable size limits on variable-length values via `MessagePackDecodeLimits` (conservative defaults: 1 MB for str/bin/ext, 131,072 for array/map counts). Returns `DecodeResult` (a union of `MessagePackValue | NotEnoughData | InvalidData | LimitExceeded`). Container types return header objects (`MessagePackArray` / `MessagePackMap`); timestamps return `MessagePackTimestamp`. Types defined in `message_pack_types.pony`.
+- **`MessagePackStreamingDecoder`** — A class that peeks at format bytes and length fields before consuming data. Enforces configurable size and depth limits via `MessagePackDecodeLimits` (conservative defaults: 1 MB for str/bin/ext, 131,072 for array/map counts, 512 for container nesting depth). Returns `DecodeResult` (a union of `MessagePackValue | NotEnoughData | InvalidData | LimitExceeded`). Container types return header objects (`MessagePackArray` / `MessagePackMap`); timestamps return `MessagePackTimestamp`. Types defined in `message_pack_types.pony`.
 
 Internal helpers (`_FormatName`, `_Limit`, `_Size`) are private primitives prefixed with `_`.
 

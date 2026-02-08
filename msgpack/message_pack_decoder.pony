@@ -30,6 +30,16 @@ primitive MessagePackDecoder
   `array` and `map` format family decoding methods, which only read
   headers — the caller must read each element individually afterward.
 
+  Two styles of decode methods are provided:
+
+  - **Compact methods** (`uint`, `int`, `str`, `byte_array`, `ext`,
+    `array`, `map`) peek at the format byte to determine the wire
+    format and accept any format within the family.
+  - **Format-specific methods** (`u8`, `u16`, `str_8`, `str_16`,
+    `bin_8`, `fixext_1`, `ext_8`, etc.) validate a single expected
+    format byte, then read the data directly. Use these when you
+    know the exact wire format in advance.
+
   This decoder assumes all data is available when decoding begins. If data
   may arrive incrementally, use `MessagePackStreamingDecoder` instead.
   """
@@ -266,16 +276,13 @@ primitive MessagePackDecoder
   // str family
   //
 
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_fixstr.
   fun fixstr(b: Reader): String iso^ ? =>
     let len = (b.u8()?.usize() and _Limit.fixstr())
     String.from_iso_array(b.block(len)?)
 
-  // Note: MessagePackStreamingDecoder pre-validates total size
-  // before calling this method for str_8/str_16/str_32. The
-  // fixstr branch below is NOT reached from the streaming
-  // decoder (it dispatches fixstr to _decode_fixstr). If the
-  // str_8/str_16/str_32 read sequence changes, update the size
-  // checks in _decode_str.
   fun str(b: Reader): String iso^ ? =>
     let t = _read_type(b)?
 
@@ -293,13 +300,61 @@ primitive MessagePackDecoder
 
     String.from_iso_array(b.block(len.usize())?)
 
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_str.
+  fun str_8(b: Reader): String iso^ ? =>
+    """
+    Decodes a MessagePack str 8 value. Validates that the format
+    byte is str_8 (0xD9), then reads the 1-byte length prefix and
+    data.
+
+    Errors if the format byte does not match or if insufficient
+    data is available. For a method that accepts any string wire
+    format, use `str()` instead.
+    """
+    if _read_type(b)? != _FormatName.str_8() then error end
+    let len = b.u8()?.usize()
+    String.from_iso_array(b.block(len)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_str.
+  fun str_16(b: Reader): String iso^ ? =>
+    """
+    Decodes a MessagePack str 16 value. Validates that the format
+    byte is str_16 (0xDA), then reads the 2-byte length prefix and
+    data.
+
+    Errors if the format byte does not match or if insufficient
+    data is available. For a method that accepts any string wire
+    format, use `str()` instead.
+    """
+    if _read_type(b)? != _FormatName.str_16() then error end
+    let len = b.u16_be()?.usize()
+    String.from_iso_array(b.block(len)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_str.
+  fun str_32(b: Reader): String iso^ ? =>
+    """
+    Decodes a MessagePack str 32 value. Validates that the format
+    byte is str_32 (0xDB), then reads the 4-byte length prefix and
+    data.
+
+    Errors if the format byte does not match or if insufficient
+    data is available. For a method that accepts any string wire
+    format, use `str()` instead.
+    """
+    if _read_type(b)? != _FormatName.str_32() then error end
+    let len = b.u32_be()?.usize()
+    String.from_iso_array(b.block(len)?)
+
   //
   // byte array family
   //
 
-  // Note: MessagePackStreamingDecoder pre-validates total size
-  // before calling this method. If the read sequence here changes,
-  // update the size checks in _decode_bin.
   fun byte_array(b: Reader): Array[U8] iso^ ? =>
     let t = _read_type(b)?
 
@@ -314,6 +369,57 @@ primitive MessagePackDecoder
     end
 
     b.block(len.usize())?
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_bin.
+  fun bin_8(b: Reader): Array[U8] iso^ ? =>
+    """
+    Decodes a MessagePack bin 8 value. Validates that the format
+    byte is bin_8 (0xC4), then reads the 1-byte length prefix and
+    data.
+
+    Errors if the format byte does not match or if insufficient
+    data is available. For a method that accepts any bin wire
+    format, use `byte_array()` instead.
+    """
+    if _read_type(b)? != _FormatName.bin_8() then error end
+    let len = b.u8()?.usize()
+    b.block(len)?
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_bin.
+  fun bin_16(b: Reader): Array[U8] iso^ ? =>
+    """
+    Decodes a MessagePack bin 16 value. Validates that the format
+    byte is bin_16 (0xC5), then reads the 2-byte length prefix and
+    data.
+
+    Errors if the format byte does not match or if insufficient
+    data is available. For a method that accepts any bin wire
+    format, use `byte_array()` instead.
+    """
+    if _read_type(b)? != _FormatName.bin_16() then error end
+    let len = b.u16_be()?.usize()
+    b.block(len)?
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_bin.
+  fun bin_32(b: Reader): Array[U8] iso^ ? =>
+    """
+    Decodes a MessagePack bin 32 value. Validates that the format
+    byte is bin_32 (0xC6), then reads the 4-byte length prefix and
+    data.
+
+    Errors if the format byte does not match or if insufficient
+    data is available. For a method that accepts any bin wire
+    format, use `byte_array()` instead.
+    """
+    if _read_type(b)? != _FormatName.bin_32() then error end
+    let len = b.u32_be()?.usize()
+    b.block(len)?
 
   //
   // array format family
@@ -391,10 +497,6 @@ primitive MessagePackDecoder
   // ext format family
   //
 
-  // Note: MessagePackStreamingDecoder pre-validates total size
-  // before calling this method. If the read sequence here changes,
-  // update the size checks in _decode_fixext and
-  // _decode_ext_variable.
   fun ext(b: Reader): (U8, Array[U8] val) ? =>
     """
     Allows for the reading of user supplied extensions to the MessagePack
@@ -427,6 +529,137 @@ primitive MessagePackDecoder
     end
 
     (b.u8()?, b.block(size)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_fixext.
+  fun fixext_1(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Decodes a MessagePack fixext 1 value. Validates that the
+    format byte is fixext_1 (0xD4), then reads the ext type byte
+    and 1 byte of data.
+
+    Returns `(ext_type, data)`. Errors if the format byte does
+    not match. For a method that accepts any ext wire format, use
+    `ext()` instead.
+    """
+    if _read_type(b)? != _FormatName.fixext_1() then error end
+    (b.u8()?, b.block(1)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_fixext.
+  fun fixext_2(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Decodes a MessagePack fixext 2 value. Validates that the
+    format byte is fixext_2 (0xD5), then reads the ext type byte
+    and 2 bytes of data.
+
+    Returns `(ext_type, data)`. Errors if the format byte does
+    not match. For a method that accepts any ext wire format, use
+    `ext()` instead.
+    """
+    if _read_type(b)? != _FormatName.fixext_2() then error end
+    (b.u8()?, b.block(2)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_fixext.
+  fun fixext_4(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Decodes a MessagePack fixext 4 value. Validates that the
+    format byte is fixext_4 (0xD6), then reads the ext type byte
+    and 4 bytes of data.
+
+    Returns `(ext_type, data)`. Errors if the format byte does
+    not match. For a method that accepts any ext wire format, use
+    `ext()` instead.
+    """
+    if _read_type(b)? != _FormatName.fixext_4() then error end
+    (b.u8()?, b.block(4)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_fixext.
+  fun fixext_8(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Decodes a MessagePack fixext 8 value. Validates that the
+    format byte is fixext_8 (0xD7), then reads the ext type byte
+    and 8 bytes of data.
+
+    Returns `(ext_type, data)`. Errors if the format byte does
+    not match. For a method that accepts any ext wire format, use
+    `ext()` instead.
+    """
+    if _read_type(b)? != _FormatName.fixext_8() then error end
+    (b.u8()?, b.block(8)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_fixext.
+  fun fixext_16(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Decodes a MessagePack fixext 16 value. Validates that the
+    format byte is fixext_16 (0xD8), then reads the ext type byte
+    and 16 bytes of data.
+
+    Returns `(ext_type, data)`. Errors if the format byte does
+    not match. For a method that accepts any ext wire format, use
+    `ext()` instead.
+    """
+    if _read_type(b)? != _FormatName.fixext_16() then error end
+    (b.u8()?, b.block(16)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_ext_variable.
+  fun ext_8(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Decodes a MessagePack ext 8 value. Validates that the format
+    byte is ext_8 (0xC7), then reads the 1-byte length prefix,
+    ext type byte, and data.
+
+    Returns `(ext_type, data)`. Errors if the format byte does
+    not match. For a method that accepts any ext wire format, use
+    `ext()` instead.
+    """
+    if _read_type(b)? != _FormatName.ext_8() then error end
+    let len = b.u8()?.usize()
+    (b.u8()?, b.block(len)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_ext_variable.
+  fun ext_16(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Decodes a MessagePack ext 16 value. Validates that the format
+    byte is ext_16 (0xC8), then reads the 2-byte length prefix,
+    ext type byte, and data.
+
+    Returns `(ext_type, data)`. Errors if the format byte does
+    not match. For a method that accepts any ext wire format, use
+    `ext()` instead.
+    """
+    if _read_type(b)? != _FormatName.ext_16() then error end
+    let len = b.u16_be()?.usize()
+    (b.u8()?, b.block(len)?)
+
+  // Note: MessagePackStreamingDecoder pre-validates total size
+  // before calling this method. If the read sequence changes,
+  // update the size check in _decode_ext_variable.
+  fun ext_32(b: Reader): (U8, Array[U8] val) ? =>
+    """
+    Decodes a MessagePack ext 32 value. Validates that the format
+    byte is ext_32 (0xC9), then reads the 4-byte length prefix,
+    ext type byte, and data.
+
+    Returns `(ext_type, data)`. Errors if the format byte does
+    not match. For a method that accepts any ext wire format, use
+    `ext()` instead.
+    """
+    if _read_type(b)? != _FormatName.ext_32() then error end
+    let len = b.u32_be()?.usize()
+    (b.u8()?, b.block(len)?)
 
   //
   // timestamp format family

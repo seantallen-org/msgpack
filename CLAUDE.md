@@ -41,7 +41,7 @@ examples/streaming-decode/           # Streaming decoder example
 Two stateless primitives provide encoding/decoding:
 
 - **`MessagePackEncoder`** — All `fun` methods take a `Writer` and encode values into MessagePack format. Compact methods (`uint`, `int`, `str`, `bin`, `array`, `map`, `ext`, `timestamp`) automatically select the smallest wire format for a given value. Format-specific methods (`uint_8`, `uint_32`, `fixstr`, `str_8`, `fixarray`, `array_16`, etc.) are available for explicit control.
-- **`MessagePackDecoder`** — All `fun` methods take a `Reader ref` and decode MessagePack-encoded bytes. Compact methods (`uint`, `int`, `str`, `array`, `map`) peek at the format byte and accept any wire format within the family. `str()` handles all string formats (fixstr, str_8, str_16, str_32). `array()` and `map()` handle all their respective formats. Format-specific methods remain available for callers who know the exact wire format.
+- **`MessagePackDecoder`** — All `fun` methods take a `Reader ref` and decode MessagePack-encoded bytes. Compact methods (`uint`, `int`, `str`, `byte_array`, `ext`, `array`, `map`) peek at the format byte and accept any wire format within the family. Format-specific methods (`u8`, `u16`, `str_8`, `str_16`, `bin_8`, `bin_16`, `fixext_1`, `ext_8`, `array_16`, etc.) validate a single expected format byte and are available for callers who know the exact wire format.
 
 A streaming-safe decoder wraps the low-level primitives:
 

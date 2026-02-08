@@ -281,7 +281,14 @@ class MessagePackStreamingDecoder
       return NotEnoughData
     end
 
-    try MessagePackDecoder.str(_reader)?
+    try
+      if fb == _FormatName.str_8() then
+        MessagePackDecoder.str_8(_reader)?
+      elseif fb == _FormatName.str_16() then
+        MessagePackDecoder.str_16(_reader)?
+      else
+        MessagePackDecoder.str_32(_reader)?
+      end
     else
       _Unreachable()
       InvalidData
@@ -322,7 +329,14 @@ class MessagePackStreamingDecoder
       return NotEnoughData
     end
 
-    try MessagePackDecoder.byte_array(_reader)?
+    try
+      if fb == _FormatName.bin_8() then
+        MessagePackDecoder.bin_8(_reader)?
+      elseif fb == _FormatName.bin_16() then
+        MessagePackDecoder.bin_16(_reader)?
+      else
+        MessagePackDecoder.bin_32(_reader)?
+      end
     else
       _Unreachable()
       InvalidData
@@ -437,7 +451,18 @@ class MessagePackStreamingDecoder
     end
 
     try
-      (let t, let d) = MessagePackDecoder.ext(_reader)?
+      (let t, let d) =
+        if fb == _FormatName.fixext_1() then
+          MessagePackDecoder.fixext_1(_reader)?
+        elseif fb == _FormatName.fixext_2() then
+          MessagePackDecoder.fixext_2(_reader)?
+        elseif fb == _FormatName.fixext_4() then
+          MessagePackDecoder.fixext_4(_reader)?
+        elseif fb == _FormatName.fixext_8() then
+          MessagePackDecoder.fixext_8(_reader)?
+        else
+          MessagePackDecoder.fixext_16(_reader)?
+        end
       MessagePackExt(t, d)
     else
       _Unreachable()
@@ -494,7 +519,14 @@ class MessagePackStreamingDecoder
     end
 
     try
-      (let t, let d) = MessagePackDecoder.ext(_reader)?
+      (let t, let d) =
+        if fb == _FormatName.ext_8() then
+          MessagePackDecoder.ext_8(_reader)?
+        elseif fb == _FormatName.ext_16() then
+          MessagePackDecoder.ext_16(_reader)?
+        else
+          MessagePackDecoder.ext_32(_reader)?
+        end
       MessagePackExt(t, d)
     else
       _Unreachable()

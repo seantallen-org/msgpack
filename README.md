@@ -44,7 +44,15 @@ MessagePackDecoder.uint(r)?   // 42
 MessagePackDecoder.str(r)?    // "hello"
 ```
 
-Format-specific methods (`uint_8`, `uint_32`, `fixstr`, `str_8`, etc.) are available when you need explicit control over the wire format.
+Format-specific methods (`uint_8`, `uint_32`, `fixstr`, `str_8`, `bin_8`, `fixext_1`, `ext_8`, etc.) are available when you need explicit control over the wire format:
+
+```pony
+// Compact — accepts any string wire format:
+MessagePackDecoder.str(reader)?
+
+// Format-specific — decodes str_8 only, errors on other formats:
+MessagePackDecoder.str_8(reader)?
+```
 
 ### Streaming Decoder
 

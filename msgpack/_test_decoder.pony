@@ -92,10 +92,45 @@ actor \nodoc\ _TestDecoder is TestList
       _PropertyCompactArraySmallestSize))
     test(Property1UnitTest[U32](
       _PropertyCompactMapSmallestSize))
+    test(Property1UnitTest[String](
+      _PropertyStr8Roundtrip))
+    test(Property1UnitTest[String](
+      _PropertyStr16Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyBin8Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyBin16Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyFixext1Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyFixext2Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyFixext4Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyFixext8Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyFixext16Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyExt8Roundtrip))
+    test(Property1UnitTest[
+      (U8, Array[U8] val)](
+      _PropertyExt16Roundtrip))
     test(_TestDecodeCompactUintRejects)
     test(_TestDecodeCompactIntRejects)
     test(_TestDecodeCompactArrayRejects)
     test(_TestDecodeCompactMapRejects)
+    test(_TestDecodeStrRejects)
+    test(_TestDecodeBinRejects)
+    test(_TestDecodeFixextRejects)
+    test(_TestDecodeExtRejects)
 
 class \nodoc\ _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -397,7 +432,7 @@ class \nodoc\ _TestDecodeStr8 is UnitTest
       b.append(bs)
     end
 
-    h.assert_eq[String]("str8", MessagePackDecoder.str(b)?)
+    h.assert_eq[String]("str8", MessagePackDecoder.str_8(b)?)
 
 class \nodoc\ _TestDecodeStr16 is UnitTest
   fun name(): String =>
@@ -413,7 +448,7 @@ class \nodoc\ _TestDecodeStr16 is UnitTest
       b.append(bs)
     end
 
-    h.assert_eq[String]("str16", MessagePackDecoder.str(b)?)
+    h.assert_eq[String]("str16", MessagePackDecoder.str_16(b)?)
 
 class \nodoc\ _TestDecodeStr32 is UnitTest
   fun name(): String =>
@@ -429,7 +464,7 @@ class \nodoc\ _TestDecodeStr32 is UnitTest
       b.append(bs)
     end
 
-    h.assert_eq[String]("str32", MessagePackDecoder.str(b)?)
+    h.assert_eq[String]("str32", MessagePackDecoder.str_32(b)?)
 
 class \nodoc\ _TestDecodeBin8 is UnitTest
   fun name(): String =>
@@ -446,7 +481,7 @@ class \nodoc\ _TestDecodeBin8 is UnitTest
       b.append(bs)
     end
 
-    let decoded = MessagePackDecoder.byte_array(b)?
+    let decoded = MessagePackDecoder.bin_8(b)?
     h.assert_eq[U8]('H', decoded(0)?)
     h.assert_eq[U8]('e', decoded(1)?)
     h.assert_eq[U8]('l', decoded(2)?)
@@ -468,7 +503,7 @@ class \nodoc\ _TestDecodeBin16 is UnitTest
       b.append(bs)
     end
 
-    let decoded = MessagePackDecoder.byte_array(b)?
+    let decoded = MessagePackDecoder.bin_16(b)?
     h.assert_eq[U8]('H', decoded(0)?)
     h.assert_eq[U8]('e', decoded(1)?)
     h.assert_eq[U8]('l', decoded(2)?)
@@ -490,7 +525,7 @@ class \nodoc\ _TestDecodeBin32 is UnitTest
       b.append(bs)
     end
 
-    let decoded = MessagePackDecoder.byte_array(b)?
+    let decoded = MessagePackDecoder.bin_32(b)?
     h.assert_eq[U8]('H', decoded(0)?)
     h.assert_eq[U8]('e', decoded(1)?)
     h.assert_eq[U8]('l', decoded(2)?)
@@ -611,7 +646,8 @@ class \nodoc\ _TestDecodeFixext1 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    (let decoded_type, let decoded_value) =
+      MessagePackDecoder.fixext_1(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -636,7 +672,8 @@ class \nodoc\ _TestDecodeFixext2 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    (let decoded_type, let decoded_value) =
+      MessagePackDecoder.fixext_2(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -661,7 +698,8 @@ class \nodoc\ _TestDecodeFixext4 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    (let decoded_type, let decoded_value) =
+      MessagePackDecoder.fixext_4(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -686,7 +724,8 @@ class \nodoc\ _TestDecodeFixext8 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    (let decoded_type, let decoded_value) =
+      MessagePackDecoder.fixext_8(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -711,7 +750,8 @@ class \nodoc\ _TestDecodeFixext16 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    (let decoded_type, let decoded_value) =
+      MessagePackDecoder.fixext_16(b)?
     h.assert_eq[U8](user_type, decoded_type)
     h.assert_eq[USize](size, decoded_value.size())
     for i in Range(0, size) do
@@ -734,7 +774,8 @@ class \nodoc\ _TestDecodeExt8 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    (let decoded_type, let decoded_value) =
+      MessagePackDecoder.ext_8(b)?
     h.assert_eq[U8](ext_type, decoded_type)
     h.assert_eq[U8]('Y', decoded_value(0)?)
     h.assert_eq[U8]('e', decoded_value(1)?)
@@ -758,7 +799,8 @@ class \nodoc\ _TestDecodeExt16 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    (let decoded_type, let decoded_value) =
+      MessagePackDecoder.ext_16(b)?
     h.assert_eq[U8](ext_type, decoded_type)
     h.assert_eq[U8]('H', decoded_value(0)?)
     h.assert_eq[U8]('e', decoded_value(1)?)
@@ -782,7 +824,8 @@ class \nodoc\ _TestDecodeExt32 is UnitTest
       b.append(bs)
     end
 
-    (let decoded_type, let decoded_value) = MessagePackDecoder.ext(b)?
+    (let decoded_type, let decoded_value) =
+      MessagePackDecoder.ext_32(b)?
     h.assert_eq[U8](ext_type, decoded_type)
     h.assert_eq[U8]('Y', decoded_value(0)?)
     h.assert_eq[U8]('e', decoded_value(1)?)
@@ -1748,3 +1791,568 @@ class \nodoc\ _PropertyCompactMapSmallestSize
       b.append(bs)
     end
     b.size()
+
+class \nodoc\ _PropertyStr8Roundtrip
+  is Property1[String]
+  """
+  For any string 0-255 bytes, str_8 encode then decode returns
+  the original string.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStr8Roundtrip"
+
+  fun gen(): Generator[String] =>
+    Generators.ascii_printable(
+      0, U8.max_value().usize())
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str_8(w, s)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String](s, MessagePackDecoder.str_8(b)?)
+
+class \nodoc\ _PropertyStr16Roundtrip
+  is Property1[String]
+  """
+  For any string 0-65535 bytes, str_16 encode then decode
+  returns the original string. Biased toward smaller strings.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStr16Roundtrip"
+
+  fun gen(): Generator[String] =>
+    Generators.frequency[String]([
+      as WeightedGenerator[String]:
+      (7, Generators.ascii_printable(0, 300))
+      (3, Generators.ascii_printable(
+        301, U16.max_value().usize()))
+    ])
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str_16(w, s)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String](s, MessagePackDecoder.str_16(b)?)
+
+class \nodoc\ _PropertyBin8Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  For any byte array 0-255 bytes, bin_8 encode then decode
+  returns the original data.
+  """
+  fun name(): String =>
+    "msgpack/PropertyBin8Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, USize,
+      (U8, Array[U8] val)](
+      Generators.u8(),
+      Generators.usize(0, U8.max_value().usize()),
+      {(fill, len) =>
+        (fill,
+          recover val
+            Array[U8].init(fill, len)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (_, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.bin_8(w, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    let decoded = MessagePackDecoder.bin_8(b)?
+    h.assert_eq[USize](value.size(), decoded.size())
+
+class \nodoc\ _PropertyBin16Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  For any byte array 0-300 bytes, bin_16 encode then decode
+  returns the original data. Biased toward smaller sizes.
+  """
+  fun name(): String =>
+    "msgpack/PropertyBin16Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, USize,
+      (U8, Array[U8] val)](
+      Generators.u8(),
+      Generators.usize(0, 300),
+      {(fill, len) =>
+        (fill,
+          recover val
+            Array[U8].init(fill, len)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (_, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.bin_16(w, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    let decoded = MessagePackDecoder.bin_16(b)?
+    h.assert_eq[USize](value.size(), decoded.size())
+
+class \nodoc\ _PropertyFixext1Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  fixext_1 encode then decode roundtrip.
+  """
+  fun name(): String =>
+    "msgpack/PropertyFixext1Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, U8, (U8, Array[U8] val)](
+      Generators.u8().filter({(v) => (v, v != 0xFF) }),
+      Generators.u8(),
+      {(ext_type, data_byte) =>
+        (ext_type,
+          recover val [as U8: data_byte] end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (let ext_type, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.fixext_1(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let dt, let dv) = MessagePackDecoder.fixext_1(b)?
+    h.assert_eq[U8](ext_type, dt)
+    h.assert_eq[USize](1, dv.size())
+
+class \nodoc\ _PropertyFixext2Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  fixext_2 encode then decode roundtrip.
+  """
+  fun name(): String =>
+    "msgpack/PropertyFixext2Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, U8, (U8, Array[U8] val)](
+      Generators.u8().filter({(v) => (v, v != 0xFF) }),
+      Generators.u8(),
+      {(ext_type, data_byte) =>
+        (ext_type,
+          recover val
+            Array[U8].init(data_byte, 2)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (let ext_type, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.fixext_2(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let dt, let dv) = MessagePackDecoder.fixext_2(b)?
+    h.assert_eq[U8](ext_type, dt)
+    h.assert_eq[USize](2, dv.size())
+
+class \nodoc\ _PropertyFixext4Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  fixext_4 encode then decode roundtrip.
+  """
+  fun name(): String =>
+    "msgpack/PropertyFixext4Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, U8, (U8, Array[U8] val)](
+      Generators.u8().filter({(v) => (v, v != 0xFF) }),
+      Generators.u8(),
+      {(ext_type, data_byte) =>
+        (ext_type,
+          recover val
+            Array[U8].init(data_byte, 4)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (let ext_type, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.fixext_4(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let dt, let dv) = MessagePackDecoder.fixext_4(b)?
+    h.assert_eq[U8](ext_type, dt)
+    h.assert_eq[USize](4, dv.size())
+
+class \nodoc\ _PropertyFixext8Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  fixext_8 encode then decode roundtrip.
+  """
+  fun name(): String =>
+    "msgpack/PropertyFixext8Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, U8, (U8, Array[U8] val)](
+      Generators.u8().filter({(v) => (v, v != 0xFF) }),
+      Generators.u8(),
+      {(ext_type, data_byte) =>
+        (ext_type,
+          recover val
+            Array[U8].init(data_byte, 8)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (let ext_type, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.fixext_8(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let dt, let dv) = MessagePackDecoder.fixext_8(b)?
+    h.assert_eq[U8](ext_type, dt)
+    h.assert_eq[USize](8, dv.size())
+
+class \nodoc\ _PropertyFixext16Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  fixext_16 encode then decode roundtrip.
+  """
+  fun name(): String =>
+    "msgpack/PropertyFixext16Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, U8, (U8, Array[U8] val)](
+      Generators.u8().filter({(v) => (v, v != 0xFF) }),
+      Generators.u8(),
+      {(ext_type, data_byte) =>
+        (ext_type,
+          recover val
+            Array[U8].init(data_byte, 16)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (let ext_type, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.fixext_16(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let dt, let dv) = MessagePackDecoder.fixext_16(b)?
+    h.assert_eq[U8](ext_type, dt)
+    h.assert_eq[USize](16, dv.size())
+
+class \nodoc\ _PropertyExt8Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  ext_8 encode then decode roundtrip with variable-length
+  data.
+  """
+  fun name(): String =>
+    "msgpack/PropertyExt8Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, USize,
+      (U8, Array[U8] val)](
+      Generators.u8().filter({(v) => (v, v != 0xFF) }),
+      Generators.usize(0, U8.max_value().usize()),
+      {(ext_type, len) =>
+        (ext_type,
+          recover val
+            Array[U8].init('X', len)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (let ext_type, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.ext_8(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let dt, let dv) = MessagePackDecoder.ext_8(b)?
+    h.assert_eq[U8](ext_type, dt)
+    h.assert_eq[USize](value.size(), dv.size())
+
+class \nodoc\ _PropertyExt16Roundtrip
+  is Property1[(U8, Array[U8] val)]
+  """
+  ext_16 encode then decode roundtrip with variable-length
+  data. Biased toward smaller sizes for speed.
+  """
+  fun name(): String =>
+    "msgpack/PropertyExt16Roundtrip"
+
+  fun gen(): Generator[(U8, Array[U8] val)] =>
+    Generators.map2[U8, USize,
+      (U8, Array[U8] val)](
+      Generators.u8().filter({(v) => (v, v != 0xFF) }),
+      Generators.frequency[USize]([
+        as WeightedGenerator[USize]:
+        (7, Generators.usize(0, 300))
+        (3, Generators.usize(301, 1000))
+      ]),
+      {(ext_type, len) =>
+        (ext_type,
+          recover val
+            Array[U8].init('X', len)
+          end)
+      })
+
+  fun ref property(
+    arg1: (U8, Array[U8] val),
+    h: PropertyHelper)
+    ?
+  =>
+    (let ext_type, let value) = arg1
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.ext_16(w, ext_type, value)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    (let dt, let dv) = MessagePackDecoder.ext_16(b)?
+    h.assert_eq[U8](ext_type, dt)
+    h.assert_eq[USize](value.size(), dv.size())
+
+class \nodoc\ _TestDecodeStrRejects is UnitTest
+  """
+  Format-specific str methods error on wrong format bytes.
+  """
+  fun name(): String =>
+    "msgpack/DecodeStrRejects"
+
+  fun ref apply(h: TestHelper) =>
+    // str_8 rejects str_16 data
+    _rejects[String](h, _FormatName.str_16(),
+      {(b) ? => MessagePackDecoder.str_8(b)? },
+      "str_8 accepted str_16")
+    // str_16 rejects str_8 data
+    _rejects[String](h, _FormatName.str_8(),
+      {(b) ? => MessagePackDecoder.str_16(b)? },
+      "str_16 accepted str_8")
+    // str_32 rejects str_8 data
+    _rejects[String](h, _FormatName.str_8(),
+      {(b) ? => MessagePackDecoder.str_32(b)? },
+      "str_32 accepted str_8")
+
+  fun _rejects[T](
+    h: TestHelper,
+    format_byte: U8,
+    decode: {(Reader): T ?} val,
+    msg: String)
+  =>
+    let b: Reader ref = Reader
+    b.append(
+      recover val [as U8: format_byte] end)
+    try
+      decode(b)?
+      h.fail(msg)
+    end
+
+class \nodoc\ _TestDecodeBinRejects is UnitTest
+  """
+  Format-specific bin methods error on wrong format bytes.
+  """
+  fun name(): String =>
+    "msgpack/DecodeBinRejects"
+
+  fun ref apply(h: TestHelper) =>
+    // bin_8 rejects bin_16 data
+    _rejects[Array[U8] iso^](h,
+      _FormatName.bin_16(),
+      {(b) ? => MessagePackDecoder.bin_8(b)? },
+      "bin_8 accepted bin_16")
+    // bin_16 rejects bin_8 data
+    _rejects[Array[U8] iso^](h,
+      _FormatName.bin_8(),
+      {(b) ? => MessagePackDecoder.bin_16(b)? },
+      "bin_16 accepted bin_8")
+    // bin_32 rejects bin_8 data
+    _rejects[Array[U8] iso^](h,
+      _FormatName.bin_8(),
+      {(b) ? => MessagePackDecoder.bin_32(b)? },
+      "bin_32 accepted bin_8")
+
+  fun _rejects[T](
+    h: TestHelper,
+    format_byte: U8,
+    decode: {(Reader): T ?} val,
+    msg: String)
+  =>
+    let b: Reader ref = Reader
+    b.append(
+      recover val [as U8: format_byte] end)
+    try
+      decode(b)?
+      h.fail(msg)
+    end
+
+class \nodoc\ _TestDecodeFixextRejects is UnitTest
+  """
+  Format-specific fixext methods error on wrong format bytes.
+  """
+  fun name(): String =>
+    "msgpack/DecodeFixextRejects"
+
+  fun ref apply(h: TestHelper) =>
+    // fixext_1 rejects fixext_2
+    _rejects(h, _FormatName.fixext_2(),
+      {(b) ? =>
+        MessagePackDecoder.fixext_1(b)? },
+      "fixext_1 accepted fixext_2")
+    // fixext_2 rejects fixext_1
+    _rejects(h, _FormatName.fixext_1(),
+      {(b) ? =>
+        MessagePackDecoder.fixext_2(b)? },
+      "fixext_2 accepted fixext_1")
+    // fixext_4 rejects fixext_8
+    _rejects(h, _FormatName.fixext_8(),
+      {(b) ? =>
+        MessagePackDecoder.fixext_4(b)? },
+      "fixext_4 accepted fixext_8")
+    // fixext_8 rejects fixext_16
+    _rejects(h, _FormatName.fixext_16(),
+      {(b) ? =>
+        MessagePackDecoder.fixext_8(b)? },
+      "fixext_8 accepted fixext_16")
+    // fixext_16 rejects fixext_1
+    _rejects(h, _FormatName.fixext_1(),
+      {(b) ? =>
+        MessagePackDecoder.fixext_16(b)? },
+      "fixext_16 accepted fixext_1")
+
+  fun _rejects(
+    h: TestHelper,
+    format_byte: U8,
+    decode: {(Reader): (U8, Array[U8] val) ?} val,
+    msg: String)
+  =>
+    let b: Reader ref = Reader
+    b.append(
+      recover val [as U8: format_byte] end)
+    try
+      decode(b)?
+      h.fail(msg)
+    end
+
+class \nodoc\ _TestDecodeExtRejects is UnitTest
+  """
+  Format-specific ext methods error on wrong format bytes.
+  """
+  fun name(): String =>
+    "msgpack/DecodeExtRejects"
+
+  fun ref apply(h: TestHelper) =>
+    // ext_8 rejects ext_16
+    _rejects(h, _FormatName.ext_16(),
+      {(b) ? =>
+        MessagePackDecoder.ext_8(b)? },
+      "ext_8 accepted ext_16")
+    // ext_16 rejects ext_8
+    _rejects(h, _FormatName.ext_8(),
+      {(b) ? =>
+        MessagePackDecoder.ext_16(b)? },
+      "ext_16 accepted ext_8")
+    // ext_32 rejects ext_8
+    _rejects(h, _FormatName.ext_8(),
+      {(b) ? =>
+        MessagePackDecoder.ext_32(b)? },
+      "ext_32 accepted ext_8")
+
+  fun _rejects(
+    h: TestHelper,
+    format_byte: U8,
+    decode: {(Reader): (U8, Array[U8] val) ?} val,
+    msg: String)
+  =>
+    let b: Reader ref = Reader
+    b.append(
+      recover val [as U8: format_byte] end)
+    try
+      decode(b)?
+      h.fail(msg)
+    end

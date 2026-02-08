@@ -8,7 +8,7 @@
     "homepage": "https://github.com/seantallen-org/msgpack",
     "license": "BSD-2-Clause",
     "documentation_url": "https://seantallen-org.github.io/msgpack/",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "name": "msgpack"
   }
 }

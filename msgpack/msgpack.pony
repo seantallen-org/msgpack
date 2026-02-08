@@ -164,7 +164,50 @@ match sd.next()
     i = i + 1
   end
 | NotEnoughData => None // need more bytes
+| LimitExceeded => None // value too large
 | InvalidData => None // stream is corrupt
 end
 ```
+
+## Decoding Untrusted Data
+
+MessagePack headers declare the size of variable-length values
+(strings, byte arrays, extensions) and the element count of
+containers (arrays, maps). A malicious or malformed payload can
+claim sizes far larger than the actual data — for example, a
+5-byte message whose header declares a 2 GB string. Without
+limits, a decoder may attempt to allocate memory proportional to
+the declared size, enabling denial-of-service attacks.
+
+**`MessagePackDecoder` provides no protection.** It trusts the
+declared sizes and will attempt to read whatever the header says.
+Use it only when you control both ends of the connection or have
+already validated the payload.
+
+**`MessagePackStreamingDecoder` enforces size limits.** By
+default, conservative limits are applied: 1 MB for str/bin/ext
+data and 131,072 for array/map element counts. When a value
+exceeds its limit, `next()` returns `LimitExceeded` with zero
+bytes consumed.
+
+For network-facing code that decodes data from untrusted sources,
+use `MessagePackStreamingDecoder`:
+
+```pony
+// Default limits — safe for most applications:
+let sd = MessagePackStreamingDecoder
+
+// Tighter limits for a constrained protocol:
+let limits = MessagePackDecodeLimits(
+  where max_str_len' = 4096,
+        max_array_len' = 100)
+let sd = MessagePackStreamingDecoder(limits)
+
+// No limits (trusted data only):
+let sd = MessagePackStreamingDecoder(
+  MessagePackDecodeLimits.unlimited())
+```
+
+See `MessagePackDecodeLimits` for the full set of configurable
+limits.
 """

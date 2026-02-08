@@ -30,15 +30,33 @@ class MessagePackStreamingDecoder
   `NotEnoughData` with zero bytes consumed, allowing the caller to
   append more data and retry.
 
+  Size limits protect against denial-of-service attacks where a
+  malicious payload claims enormous sizes for variable-length
+  values. By default, conservative limits are applied (1 MB for
+  str/bin/ext, 131,072 for array/map counts). When a value
+  exceeds its limit, `next()` returns `LimitExceeded` with zero
+  bytes consumed.
+
   Usage:
   ```pony
+  // Default conservative limits:
   let decoder = MessagePackStreamingDecoder
   decoder.append(chunk1)
   match decoder.next()
   | let v: U32 => // got a value
   | NotEnoughData => // need more data, append and retry
+  | LimitExceeded => // value too large, reject
   | InvalidData => // corrupt stream, abort
   end
+
+  // Custom limits:
+  let limits = MessagePackDecodeLimits(
+    where max_str_len' = 4096)
+  let decoder = MessagePackStreamingDecoder(limits)
+
+  // No limits:
+  let decoder = MessagePackStreamingDecoder(
+    MessagePackDecodeLimits.unlimited())
   ```
 
   Container types (arrays and maps) return header objects
@@ -47,9 +65,14 @@ class MessagePackStreamingDecoder
   many values.
   """
   let _reader: Reader ref
+  let _limits: MessagePackDecodeLimits val
 
-  new create() =>
+  new create(
+    limits: MessagePackDecodeLimits val
+      = MessagePackDecodeLimits)
+  =>
     _reader = Reader
+    _limits = limits
 
   fun ref append(data: ByteSeq) =>
     """
@@ -64,6 +87,8 @@ class MessagePackStreamingDecoder
     Returns one of:
     - A `MessagePackValue` if a complete value was decoded
     - `NotEnoughData` if more bytes are needed (no bytes consumed)
+    - `LimitExceeded` if the value exceeds a configured size
+      limit (no bytes consumed)
     - `InvalidData` if the format byte is invalid (0xC1).
       The invalid byte is NOT consumed. The caller must stop
       calling `next()` after receiving `InvalidData` — the
@@ -81,9 +106,9 @@ class MessagePackStreamingDecoder
     if fb <= 0x7F then
       _decode_positive_fixint()
     elseif fb <= 0x8F then
-      _decode_fixmap()
+      _decode_fixmap(fb)
     elseif fb <= 0x9F then
-      _decode_fixarray()
+      _decode_fixarray(fb)
     elseif fb <= 0xBF then
       _decode_fixstr(fb)
     elseif fb == 0xC0 then
@@ -241,6 +266,9 @@ class MessagePackStreamingDecoder
   fun ref _decode_fixstr(fb: U8): DecodeResult =>
     // 0xA0-0xBF: 1 format byte + (fb AND fixstr mask) data bytes
     let data_len = fb.usize() and _Limit.fixstr()
+    if data_len > _limits.max_str_len then
+      return LimitExceeded
+    end
     if _reader.size() < (1 + data_len) then
       return NotEnoughData
     end
@@ -276,6 +304,10 @@ class MessagePackStreamingDecoder
       else
         return NotEnoughData
       end
+
+    if data_len > _limits.max_str_len then
+      return LimitExceeded
+    end
 
     if _reader.size() < (header_size + data_len) then
       return NotEnoughData
@@ -325,6 +357,10 @@ class MessagePackStreamingDecoder
         return NotEnoughData
       end
 
+    if data_len > _limits.max_bin_len then
+      return LimitExceeded
+    end
+
     if _reader.size() < (header_size + data_len) then
       return NotEnoughData
     end
@@ -346,8 +382,12 @@ class MessagePackStreamingDecoder
   // Array format
   //
 
-  fun ref _decode_fixarray(): DecodeResult =>
-    // 0x90-0x9F: 1 byte header
+  fun ref _decode_fixarray(fb: U8): DecodeResult =>
+    // 0x90-0x9F: 1 byte header, count in low 4 bits
+    let count = (fb and 0x0F).u32()
+    if count > _limits.max_array_len then
+      return LimitExceeded
+    end
     try
       MessagePackArray(
         MessagePackDecoder.fixarray(_reader)?.u32())
@@ -366,6 +406,21 @@ class MessagePackStreamingDecoder
 
     if _reader.size() < required then return NotEnoughData end
 
+    let count: U32 =
+      try
+        if fb == _FormatName.array_16() then
+          _reader.peek_u16_be(1)?.u32()
+        else
+          _reader.peek_u32_be(1)?
+        end
+      else
+        return NotEnoughData
+      end
+
+    if count > _limits.max_array_len then
+      return LimitExceeded
+    end
+
     try
       if fb == _FormatName.array_16() then
         MessagePackArray(
@@ -383,8 +438,12 @@ class MessagePackStreamingDecoder
   // Map format
   //
 
-  fun ref _decode_fixmap(): DecodeResult =>
-    // 0x80-0x8F: 1 byte header
+  fun ref _decode_fixmap(fb: U8): DecodeResult =>
+    // 0x80-0x8F: 1 byte header, count in low 4 bits
+    let count = (fb and 0x0F).u32()
+    if count > _limits.max_map_len then
+      return LimitExceeded
+    end
     try
       MessagePackMap(
         MessagePackDecoder.fixmap(_reader)?.u32())
@@ -402,6 +461,21 @@ class MessagePackStreamingDecoder
       end
 
     if _reader.size() < required then return NotEnoughData end
+
+    let count: U32 =
+      try
+        if fb == _FormatName.map_16() then
+          _reader.peek_u16_be(1)?.u32()
+        else
+          _reader.peek_u32_be(1)?
+        end
+      else
+        return NotEnoughData
+      end
+
+    if count > _limits.max_map_len then
+      return LimitExceeded
+    end
 
     try
       if fb == _FormatName.map_16() then
@@ -433,6 +507,11 @@ class MessagePackStreamingDecoder
       elseif fb == _FormatName.fixext_8() then 10
       else 18
       end
+
+    // Data length is total minus format byte and ext_type byte
+    if (required - 2) > _limits.max_ext_len then
+      return LimitExceeded
+    end
 
     if _reader.size() < required then return NotEnoughData end
 
@@ -499,6 +578,10 @@ class MessagePackStreamingDecoder
       else
         return NotEnoughData
       end
+
+    if data_len > _limits.max_ext_len then
+      return LimitExceeded
+    end
 
     // Total: header bytes + 1 type byte + data bytes
     let total = header_size + 1 + data_len

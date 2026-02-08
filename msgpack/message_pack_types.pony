@@ -29,6 +29,13 @@ primitive InvalidData
   byte. The stream is corrupt and decoding should stop.
   """
 
+primitive LimitExceeded
+  """
+  Returned when a decoded value's size or element count exceeds
+  the configured limit. No bytes have been consumed from the
+  reader. The caller should treat this as a rejected message.
+  """
+
 class val MessagePackArray
   """
   Header for a MessagePack array. The `size` field indicates how
@@ -124,4 +131,7 @@ type MessagePackValue is
   )
 
 type DecodeResult is
-  (MessagePackValue | NotEnoughData | InvalidData)
+  ( MessagePackValue
+  | NotEnoughData
+  | InvalidData
+  | LimitExceeded )

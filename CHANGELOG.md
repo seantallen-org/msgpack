@@ -2,10 +2,7 @@
 
 All notable changes this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a CHANGELOG](http://keepachangelog.com/).
 
-## [unreleased] - unreleased
-
-### Fixed
-
+## [0.3.1] - 2026-02-08
 
 ### Added
 
@@ -13,9 +10,6 @@ All notable changes this project will be documented in this file. This project a
 - Add container depth limits to streaming decoder ([PR #72](https://github.com/seantallen-org/msgpack/pull/72))
 - Add skip method for advancing past values without decoding ([PR #73](https://github.com/seantallen-org/msgpack/pull/73))
 - Add opt-in UTF-8 validation for str format values ([PR #76](https://github.com/seantallen-org/msgpack/pull/76))
-
-### Changed
-
 
 ## [0.3.0] - 2026-02-08
 

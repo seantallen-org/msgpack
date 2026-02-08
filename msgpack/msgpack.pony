@@ -250,4 +250,49 @@ let sd = MessagePackStreamingDecoder(
 
 See `MessagePackDecodeLimits` for the full set of configurable
 limits.
+
+## UTF-8 Validation
+
+The MessagePack spec defines the str format family as UTF-8
+strings. By default, this library does not validate UTF-8 — str
+values are treated as raw byte sequences for backward
+compatibility and performance. Opt-in validation is available at
+every layer:
+
+**Validating method variants** — Append `_utf8` to any str
+encoding or decoding method. These validate UTF-8 and error on
+invalid byte sequences:
+
+```pony
+// Encode — errors if bytes are not valid UTF-8
+MessagePackEncoder.str_utf8(w, value)?
+
+// Decode — errors if decoded bytes are not valid UTF-8
+let s = MessagePackDecoder.str_utf8(r)?
+let s = MessagePackZeroCopyDecoder.str_utf8(r)?
+```
+
+**Streaming decoder** — Pass `validate_utf8' = true` to the
+constructor. Invalid str values return `InvalidUtf8` instead of
+the decoded string:
+
+```pony
+let sd = MessagePackStreamingDecoder(
+  where validate_utf8' = true)
+match sd.next()
+| let s: String val => // valid UTF-8
+| InvalidUtf8 => // invalid UTF-8, can continue decoding
+end
+```
+
+**Decode then validate** — Use `MessagePackValidateUTF8` for
+caller-side validation when you need access to the raw bytes on
+failure:
+
+```pony
+let s = MessagePackDecoder.str(r)?
+if not MessagePackValidateUTF8(s) then
+  // s still available — log, reject, or use as raw bytes
+end
+```
 """

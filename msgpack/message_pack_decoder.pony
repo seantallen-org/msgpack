@@ -352,6 +352,78 @@ primitive MessagePackDecoder
     String.from_iso_array(b.block(len)?)
 
   //
+  // str family — UTF-8 validating variants
+  //
+
+  fun str_utf8(b: Reader): String iso^ ? =>
+    """
+    Decodes a MessagePack str value using the smallest matching
+    format, then validates that the bytes are valid UTF-8.
+
+    Errors if the format byte is not a str type, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. On a UTF-8 validation error the bytes have already
+    been consumed from the reader. For the non-validating
+    variant, use `str()`. To retain access to the raw bytes on
+    validation failure, use `str()` followed by
+    `MessagePackValidateUTF8`.
+    """
+    _validate_utf8(str(b)?)?
+
+  fun fixstr_utf8(b: Reader): String iso^ ? =>
+    """
+    Decodes a MessagePack fixstr value, then validates that the
+    bytes are valid UTF-8.
+
+    Errors if the format byte does not match, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. For the non-validating variant, use `fixstr()`.
+    """
+    _validate_utf8(fixstr(b)?)?
+
+  fun str_8_utf8(b: Reader): String iso^ ? =>
+    """
+    Decodes a MessagePack str 8 value, then validates that the
+    bytes are valid UTF-8.
+
+    Errors if the format byte does not match, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. For the non-validating variant, use `str_8()`.
+    """
+    _validate_utf8(str_8(b)?)?
+
+  fun str_16_utf8(b: Reader): String iso^ ? =>
+    """
+    Decodes a MessagePack str 16 value, then validates that the
+    bytes are valid UTF-8.
+
+    Errors if the format byte does not match, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. For the non-validating variant, use `str_16()`.
+    """
+    _validate_utf8(str_16(b)?)?
+
+  fun str_32_utf8(b: Reader): String iso^ ? =>
+    """
+    Decodes a MessagePack str 32 value, then validates that the
+    bytes are valid UTF-8.
+
+    Errors if the format byte does not match, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. For the non-validating variant, use `str_32()`.
+    """
+    _validate_utf8(str_32(b)?)?
+
+  fun _validate_utf8(s: String iso): String iso^ ? =>
+    var i: USize = 0
+    while i < s.size() do
+      (let cp, let len) = s.utf32(i.isize())?
+      if (cp == 0xFFFD) and (len == 1) then error end
+      i = i + len.usize()
+    end
+    s
+
+  //
   // byte array family
   //
 

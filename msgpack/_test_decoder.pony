@@ -175,6 +175,20 @@ actor \nodoc\ _TestDecoder is TestList
     test(Property1UnitTest[
       (U64, U64)](
       _PropertySkipPositionPreserving))
+    test(_TestValidateUTF8Valid)
+    test(_TestValidateUTF8Invalid)
+    test(_TestDecodeFixstrUtf8)
+    test(_TestDecodeFixstrUtf8Invalid)
+    test(_TestDecodeStr8Utf8)
+    test(_TestDecodeStr8Utf8Invalid)
+    test(_TestDecodeStr16Utf8)
+    test(_TestDecodeStr16Utf8Invalid)
+    test(_TestDecodeStr32Utf8)
+    test(_TestDecodeStr32Utf8Invalid)
+    test(_TestDecodeCompactStrUtf8)
+    test(_TestDecodeCompactStrUtf8Invalid)
+    test(Property1UnitTest[String](
+      _PropertyCompactStrUtf8Roundtrip))
 
 class \nodoc\ _TestDecodeNil is UnitTest
   fun name(): String =>
@@ -3235,3 +3249,244 @@ class \nodoc\ _PropertySkipPositionPreserving
     MessagePackDecoder.skip(b)?
     h.assert_eq[U64](second,
       MessagePackDecoder.uint(b)?)
+
+class \nodoc\ _TestValidateUTF8Valid is UnitTest
+  fun name(): String =>
+    "msgpack/ValidateUTF8Valid"
+
+  fun ref apply(h: TestHelper) =>
+    // Empty string
+    h.assert_true(MessagePackValidateUTF8(""))
+    // ASCII
+    h.assert_true(MessagePackValidateUTF8("Hello"))
+    // Multi-byte: é (U+00E9) = 0xC3 0xA9
+    h.assert_true(MessagePackValidateUTF8(
+      String.from_array(
+        recover val [as U8: 0xC3; 0xA9] end)))
+    // Legitimate U+FFFD replacement character:
+    // 0xEF 0xBF 0xBD (3 bytes, not an error)
+    h.assert_true(MessagePackValidateUTF8(
+      String.from_array(
+        recover val [as U8: 0xEF; 0xBF; 0xBD] end)))
+    // 4-byte character: U+1F600 = 0xF0 0x9F 0x98 0x80
+    h.assert_true(MessagePackValidateUTF8(
+      String.from_array(
+        recover val
+          [as U8: 0xF0; 0x9F; 0x98; 0x80]
+        end)))
+
+class \nodoc\ _TestValidateUTF8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/ValidateUTF8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    // Invalid byte 0xFF (never valid in UTF-8)
+    h.assert_false(MessagePackValidateUTF8(
+      String.from_array(
+        recover val [as U8: 0xFF] end)))
+    // Truncated multi-byte: 0xC3 alone
+    h.assert_false(MessagePackValidateUTF8(
+      String.from_array(
+        recover val [as U8: 0xC3] end)))
+    // Overlong encoding: 0xC0 0x80
+    h.assert_false(MessagePackValidateUTF8(
+      String.from_array(
+        recover val [as U8: 0xC0; 0x80] end)))
+    // Invalid continuation byte
+    h.assert_false(MessagePackValidateUTF8(
+      String.from_array(
+        recover val [as U8: 0x80] end)))
+    // Valid ASCII followed by invalid byte
+    h.assert_false(MessagePackValidateUTF8(
+      String.from_array(
+        recover val [as U8: 'H'; 'i'; 0xFF] end)))
+
+class \nodoc\ _TestDecodeFixstrUtf8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixstrUtf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.fixstr(w, "hello")?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[String]("hello",
+      MessagePackDecoder.fixstr_utf8(b)?)
+
+class \nodoc\ _TestDecodeFixstrUtf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeFixstrUtf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.fixstr(w, invalid)?
+      for bs in w.done().values() do
+        b.append(bs)
+      end
+      MessagePackDecoder.fixstr_utf8(b)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestDecodeStr8Utf8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr8Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str_8(w, "str8")?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[String]("str8",
+      MessagePackDecoder.str_8_utf8(b)?)
+
+class \nodoc\ _TestDecodeStr8Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr8Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.str_8(w, invalid)?
+      for bs in w.done().values() do
+        b.append(bs)
+      end
+      MessagePackDecoder.str_8_utf8(b)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestDecodeStr16Utf8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr16Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str_16(w, "str16")?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[String]("str16",
+      MessagePackDecoder.str_16_utf8(b)?)
+
+class \nodoc\ _TestDecodeStr16Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr16Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.str_16(w, invalid)?
+      for bs in w.done().values() do
+        b.append(bs)
+      end
+      MessagePackDecoder.str_16_utf8(b)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestDecodeStr32Utf8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr32Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str_32(w, "str32")?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[String]("str32",
+      MessagePackDecoder.str_32_utf8(b)?)
+
+class \nodoc\ _TestDecodeStr32Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeStr32Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.str_32(w, invalid)?
+      for bs in w.done().values() do
+        b.append(bs)
+      end
+      MessagePackDecoder.str_32_utf8(b)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestDecodeCompactStrUtf8 is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeCompactStrUtf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    MessagePackEncoder.str(w, "hello")?
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+    h.assert_eq[String]("hello",
+      MessagePackDecoder.str_utf8(b)?)
+
+class \nodoc\ _TestDecodeCompactStrUtf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/DecodeCompactStrUtf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.str(w, invalid)?
+      for bs in w.done().values() do
+        b.append(bs)
+      end
+      MessagePackDecoder.str_utf8(b)?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _PropertyCompactStrUtf8Roundtrip
+  is Property1[String]
+  """
+  For any ASCII string, compact str encode with str_utf8 then
+  decode with str_utf8 returns the original string. ASCII is
+  always valid UTF-8.
+  """
+  fun name(): String =>
+    "msgpack/PropertyCompactStrUtf8Roundtrip"
+
+  fun gen(): Generator[String] =>
+    Generators.frequency[String]([
+      as WeightedGenerator[String]:
+      (5, Generators.ascii_printable(
+        0, _Limit.fixstr()))
+      (3, Generators.ascii_printable(
+        _Limit.fixstr() + 1,
+        U8.max_value().usize()))
+      (2, Generators.ascii_printable(
+        U8.max_value().usize() + 1, 300))
+    ])
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    let b: Reader ref = Reader
+
+    MessagePackEncoder.str_utf8(w, s)?
+
+    for bs in w.done().values() do
+      b.append(bs)
+    end
+
+    h.assert_eq[String](s, MessagePackDecoder.str_utf8(b)?)

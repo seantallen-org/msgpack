@@ -43,9 +43,16 @@ class MessagePackStreamingDecoder
   depth counter decrements automatically. Use `depth()` to
   inspect the current nesting level.
 
+  When `validate_utf8` is `true`, decoded str values are
+  validated for UTF-8 correctness. If a str value contains
+  invalid UTF-8 byte sequences, `next()` returns `InvalidUtf8`
+  instead of the decoded string. The bytes have been consumed
+  from the reader and decoding can continue. By default,
+  validation is off for backward compatibility.
+
   Usage:
   ```pony
-  // Default conservative limits:
+  // Default conservative limits, no UTF-8 validation:
   let decoder = MessagePackStreamingDecoder
   decoder.append(chunk1)
   match decoder.next()
@@ -61,6 +68,13 @@ class MessagePackStreamingDecoder
           max_depth' = 16)
   let decoder = MessagePackStreamingDecoder(limits)
 
+  // With UTF-8 validation:
+  let decoder = MessagePackStreamingDecoder(
+    where validate_utf8' = true)
+  match decoder.next()
+  | InvalidUtf8 => // str value had invalid UTF-8
+  end
+
   // No limits:
   let decoder = MessagePackStreamingDecoder(
     MessagePackDecodeLimits.unlimited())
@@ -73,14 +87,17 @@ class MessagePackStreamingDecoder
   """
   let _reader: ZeroCopyReader ref
   let _limits: MessagePackDecodeLimits val
+  let _validate_utf8: Bool
   let _stack: Array[USize]
 
   new create(
     limits: MessagePackDecodeLimits val
-      = MessagePackDecodeLimits)
+      = MessagePackDecodeLimits,
+    validate_utf8': Bool = false)
   =>
     _reader = ZeroCopyReader
     _limits = limits
+    _validate_utf8 = validate_utf8'
     _stack = Array[USize]
 
   fun ref append(data: ByteSeq) =>
@@ -530,7 +547,14 @@ class MessagePackStreamingDecoder
     if _reader.size() < (1 + data_len) then
       return NotEnoughData
     end
-    try MessagePackZeroCopyDecoder.fixstr(_reader)?
+    try
+      let s = MessagePackZeroCopyDecoder.fixstr(_reader)?
+      if _validate_utf8
+        and not MessagePackValidateUTF8(s)
+      then
+        return InvalidUtf8
+      end
+      s
     else
       _Unreachable()
       InvalidData
@@ -572,13 +596,19 @@ class MessagePackStreamingDecoder
     end
 
     try
-      if fb == _FormatName.str_8() then
+      let s = if fb == _FormatName.str_8() then
         MessagePackZeroCopyDecoder.str_8(_reader)?
       elseif fb == _FormatName.str_16() then
         MessagePackZeroCopyDecoder.str_16(_reader)?
       else
         MessagePackZeroCopyDecoder.str_32(_reader)?
       end
+      if _validate_utf8
+        and not MessagePackValidateUTF8(s)
+      then
+        return InvalidUtf8
+      end
+      s
     else
       _Unreachable()
       InvalidData

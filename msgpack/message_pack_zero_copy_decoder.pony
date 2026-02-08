@@ -352,6 +352,79 @@ primitive MessagePackZeroCopyDecoder
     String.from_array(b.block(len)?)
 
   //
+  // str family — UTF-8 validating variants
+  //
+
+  fun str_utf8(b: ZeroCopyReader): String val ? =>
+    """
+    Decodes a MessagePack str value using the smallest matching
+    format, then validates that the bytes are valid UTF-8.
+
+    Errors if the format byte is not a str type, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. On a UTF-8 validation error the bytes have already
+    been consumed from the reader. For the non-validating
+    variant, use `str()`. To retain access to the raw bytes on
+    validation failure, use `str()` followed by
+    `MessagePackValidateUTF8`.
+    """
+    let s = str(b)?
+    if not MessagePackValidateUTF8(s) then error end
+    s
+
+  fun fixstr_utf8(b: ZeroCopyReader): String val ? =>
+    """
+    Decodes a MessagePack fixstr value, then validates that the
+    bytes are valid UTF-8.
+
+    Errors if the format byte does not match, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. For the non-validating variant, use `fixstr()`.
+    """
+    let s = fixstr(b)?
+    if not MessagePackValidateUTF8(s) then error end
+    s
+
+  fun str_8_utf8(b: ZeroCopyReader): String val ? =>
+    """
+    Decodes a MessagePack str 8 value, then validates that the
+    bytes are valid UTF-8.
+
+    Errors if the format byte does not match, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. For the non-validating variant, use `str_8()`.
+    """
+    let s = str_8(b)?
+    if not MessagePackValidateUTF8(s) then error end
+    s
+
+  fun str_16_utf8(b: ZeroCopyReader): String val ? =>
+    """
+    Decodes a MessagePack str 16 value, then validates that the
+    bytes are valid UTF-8.
+
+    Errors if the format byte does not match, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. For the non-validating variant, use `str_16()`.
+    """
+    let s = str_16(b)?
+    if not MessagePackValidateUTF8(s) then error end
+    s
+
+  fun str_32_utf8(b: ZeroCopyReader): String val ? =>
+    """
+    Decodes a MessagePack str 32 value, then validates that the
+    bytes are valid UTF-8.
+
+    Errors if the format byte does not match, if insufficient
+    data is available, or if the decoded bytes are not valid
+    UTF-8. For the non-validating variant, use `str_32()`.
+    """
+    let s = str_32(b)?
+    if not MessagePackValidateUTF8(s) then error end
+    s
+
+  //
   // byte array family
   //
 

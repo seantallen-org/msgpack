@@ -148,6 +148,21 @@ actor \nodoc\ _TestZeroCopyDecoder is TestList
     test(Property1UnitTest[
       (U8, Array[U8] val)](
       _PropertyZCCrossDecoderBin))
+    // UTF-8 validating variants
+    test(_TestZCDecodeFixstrUtf8)
+    test(_TestZCDecodeFixstrUtf8Invalid)
+    test(_TestZCDecodeStr8Utf8)
+    test(_TestZCDecodeStr8Utf8Invalid)
+    test(_TestZCDecodeStr16Utf8)
+    test(_TestZCDecodeStr16Utf8Invalid)
+    test(_TestZCDecodeStr32Utf8)
+    test(_TestZCDecodeStr32Utf8Invalid)
+    test(_TestZCDecodeCompactStrUtf8)
+    test(_TestZCDecodeCompactStrUtf8Invalid)
+    test(Property1UnitTest[String](
+      _PropertyZCCompactStrUtf8Roundtrip))
+    test(Property1UnitTest[String](
+      _PropertyZCCrossDecoderStrUtf8))
 
 //
 // ZeroCopyReader tests
@@ -1304,3 +1319,172 @@ class \nodoc\ _PropertyZCCrossDecoderBin
       MessagePackZeroCopyDecoder.byte_array(r2)?
 
     h.assert_eq[USize](v1.size(), v2.size())
+
+class \nodoc\ _TestZCDecodeFixstrUtf8 is UnitTest
+  fun name(): String => "msgpack/ZCDecodeFixstrUtf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixstr(w, "fixstr")?
+    h.assert_eq[String]("fixstr",
+      MessagePackZeroCopyDecoder.fixstr_utf8(
+        _ZeroCopyBytes(w))?)
+
+class \nodoc\ _TestZCDecodeFixstrUtf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/ZCDecodeFixstrUtf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.fixstr(w, invalid)?
+      MessagePackZeroCopyDecoder.fixstr_utf8(
+        _ZeroCopyBytes(w))?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestZCDecodeStr8Utf8 is UnitTest
+  fun name(): String => "msgpack/ZCDecodeStr8Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_8(w, "str8")?
+    h.assert_eq[String]("str8",
+      MessagePackZeroCopyDecoder.str_8_utf8(
+        _ZeroCopyBytes(w))?)
+
+class \nodoc\ _TestZCDecodeStr8Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/ZCDecodeStr8Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.str_8(w, invalid)?
+      MessagePackZeroCopyDecoder.str_8_utf8(
+        _ZeroCopyBytes(w))?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestZCDecodeStr16Utf8 is UnitTest
+  fun name(): String => "msgpack/ZCDecodeStr16Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_16(w, "str16")?
+    h.assert_eq[String]("str16",
+      MessagePackZeroCopyDecoder.str_16_utf8(
+        _ZeroCopyBytes(w))?)
+
+class \nodoc\ _TestZCDecodeStr16Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/ZCDecodeStr16Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.str_16(w, invalid)?
+      MessagePackZeroCopyDecoder.str_16_utf8(
+        _ZeroCopyBytes(w))?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestZCDecodeStr32Utf8 is UnitTest
+  fun name(): String => "msgpack/ZCDecodeStr32Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_32(w, "str32")?
+    h.assert_eq[String]("str32",
+      MessagePackZeroCopyDecoder.str_32_utf8(
+        _ZeroCopyBytes(w))?)
+
+class \nodoc\ _TestZCDecodeStr32Utf8Invalid is UnitTest
+  fun name(): String =>
+    "msgpack/ZCDecodeStr32Utf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.str_32(w, invalid)?
+      MessagePackZeroCopyDecoder.str_32_utf8(
+        _ZeroCopyBytes(w))?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _TestZCDecodeCompactStrUtf8 is UnitTest
+  fun name(): String =>
+    "msgpack/ZCDecodeCompactStrUtf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str(w, "hello")?
+    h.assert_eq[String]("hello",
+      MessagePackZeroCopyDecoder.str_utf8(
+        _ZeroCopyBytes(w))?)
+
+class \nodoc\ _TestZCDecodeCompactStrUtf8Invalid
+  is UnitTest
+  fun name(): String =>
+    "msgpack/ZCDecodeCompactStrUtf8Invalid"
+
+  fun ref apply(h: TestHelper) =>
+    let w: Writer ref = Writer
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    try
+      MessagePackEncoder.str(w, invalid)?
+      MessagePackZeroCopyDecoder.str_utf8(
+        _ZeroCopyBytes(w))?
+      h.fail("expected error for invalid UTF-8")
+    end
+
+class \nodoc\ _PropertyZCCompactStrUtf8Roundtrip
+  is Property1[String]
+  fun name(): String =>
+    "msgpack/PropertyZCCompactStrUtf8Roundtrip"
+
+  fun gen(): Generator[String] =>
+    Generators.ascii(
+      where min = 0, max = 100)
+
+  fun property(
+    sample: String,
+    h: PropertyHelper)
+  ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_utf8(w, sample)?
+    h.assert_eq[String](sample,
+      MessagePackZeroCopyDecoder.str_utf8(
+        _ZeroCopyBytes(w))?)
+
+class \nodoc\ _PropertyZCCrossDecoderStrUtf8
+  is Property1[String]
+  fun name(): String =>
+    "msgpack/PropertyZCCrossDecoderStrUtf8"
+
+  fun gen(): Generator[String] =>
+    Generators.ascii(
+      where min = 0, max = 100)
+
+  fun property(
+    sample: String,
+    h: PropertyHelper)
+  ? =>
+    let w1: Writer ref = Writer
+    MessagePackEncoder.str_utf8(w1, sample)?
+    let bytes = _WriterBytes(w1)
+
+    let r1: Reader ref = Reader
+    r1.append(bytes)
+    let v1 = MessagePackDecoder.str_utf8(r1)?
+
+    let r2 = ZeroCopyReader
+    r2.append(bytes)
+    let v2 =
+      MessagePackZeroCopyDecoder.str_utf8(r2)?
+
+    h.assert_eq[String](consume v1, v2)

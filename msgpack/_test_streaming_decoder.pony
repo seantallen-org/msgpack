@@ -173,6 +173,14 @@ actor \nodoc\ _TestStreamingDecoder is TestList
       _PropertyStreamSkipBin16Safety))
     test(Property1UnitTest[U16](
       _PropertyStreamSkipLimitArray))
+    // UTF-8 validation tests
+    test(_TestStreamDecodeFixstrUtf8)
+    test(_TestStreamDecodeFixstrUtf8Invalid)
+    test(_TestStreamDecodeStr8Utf8)
+    test(_TestStreamDecodeStr8Utf8Invalid)
+    test(_TestStreamDecodeStrUtf8DefaultOff)
+    test(Property1UnitTest[String](
+      _PropertyStreamStrUtf8Roundtrip))
 
 //
 // Roundtrip tests
@@ -3267,4 +3275,128 @@ class \nodoc\ _PropertyStreamSkipLimitArray
           "expected None for count "
             + count.string())
       end
+    end
+
+class \nodoc\ _TestStreamDecodeFixstrUtf8 is UnitTest
+  fun name(): String =>
+    "msgpack/StreamDecodeFixstrUtf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.fixstr(w, "hello")?
+    let sd = MessagePackStreamingDecoder(
+      where validate_utf8' = true)
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | let v: String val =>
+      h.assert_eq[String]("hello", v)
+    else h.fail("expected String")
+    end
+
+class \nodoc\ _TestStreamDecodeFixstrUtf8Invalid
+  is UnitTest
+  fun name(): String =>
+    "msgpack/StreamDecodeFixstrUtf8Invalid"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    MessagePackEncoder.fixstr(w, invalid)?
+    let sd = MessagePackStreamingDecoder(
+      where validate_utf8' = true)
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | InvalidUtf8 => None
+    else h.fail("expected InvalidUtf8")
+    end
+
+class \nodoc\ _TestStreamDecodeStr8Utf8 is UnitTest
+  fun name(): String =>
+    "msgpack/StreamDecodeStr8Utf8"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    MessagePackEncoder.str_8(w, "hello")?
+    let sd = MessagePackStreamingDecoder(
+      where validate_utf8' = true)
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | let v: String val =>
+      h.assert_eq[String]("hello", v)
+    else h.fail("expected String")
+    end
+
+class \nodoc\ _TestStreamDecodeStr8Utf8Invalid
+  is UnitTest
+  fun name(): String =>
+    "msgpack/StreamDecodeStr8Utf8Invalid"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    MessagePackEncoder.str_8(w, invalid)?
+    let sd = MessagePackStreamingDecoder(
+      where validate_utf8' = true)
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | InvalidUtf8 => None
+    else h.fail("expected InvalidUtf8")
+    end
+
+class \nodoc\ _TestStreamDecodeStrUtf8DefaultOff
+  is UnitTest
+  """
+  With validate_utf8 off (the default), invalid UTF-8 strings
+  pass through without error.
+  """
+  fun name(): String =>
+    "msgpack/StreamDecodeStrUtf8DefaultOff"
+
+  fun ref apply(h: TestHelper) ? =>
+    let w: Writer ref = Writer
+    let invalid = recover val [as U8: 0xFF; 0xFE] end
+    MessagePackEncoder.fixstr(w, invalid)?
+    // Default constructor — no validation
+    let sd = MessagePackStreamingDecoder
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | let v: String val => None // expected: passes through
+    else h.fail("expected String with validation off")
+    end
+
+class \nodoc\ _PropertyStreamStrUtf8Roundtrip
+  is Property1[String]
+  """
+  For any ASCII string, compact str encode then streaming decode
+  with validate_utf8 returns the correct string.
+  """
+  fun name(): String =>
+    "msgpack/PropertyStreamStrUtf8Roundtrip"
+
+  fun gen(): Generator[String] =>
+    Generators.frequency[String]([
+      as WeightedGenerator[String]:
+      (5, Generators.ascii_printable(
+        0, _Limit.fixstr()))
+      (3, Generators.ascii_printable(
+        _Limit.fixstr() + 1,
+        U8.max_value().usize()))
+      (2, Generators.ascii_printable(
+        U8.max_value().usize() + 1, 300))
+    ])
+
+  fun ref property(arg1: String, h: PropertyHelper) ? =>
+    let s: String val = arg1.clone()
+    let w: Writer ref = Writer
+    MessagePackEncoder.str(w, s)?
+    let sd = MessagePackStreamingDecoder(
+      where validate_utf8' = true)
+    sd.append(_WriterBytes(w))
+    match sd.next()
+    | let v: String val =>
+      h.assert_eq[String](s, v)
+    else
+      h.fail(
+        "expected String for size "
+          + s.size().string())
     end

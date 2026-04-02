@@ -44,7 +44,7 @@ clean:
 realclean:
 	rm -rf build
 
-$(docs_dir): $(SOURCE_FILES)
+$(docs_dir): $(GEN_FILES) $(SOURCE_FILES)
 	rm -rf $(docs_dir)
 	$(BUILD_DOCS_WITH) --output build $(SRC_DIR)
 

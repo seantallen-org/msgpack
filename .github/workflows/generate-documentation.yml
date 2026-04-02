@@ -9,19 +9,34 @@ permissions:
   id-token: write
   packages: read
 
+concurrency:
+  group: "update-documentation"
+  cancel-in-progress: true
+
 jobs:
   generate-documentation:
     name: Generate documentation for release
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ponylang/library-documentation-action-v2:release
     steps:
-      - uses: actions/checkout@v1
-      - name: Generate documentation and upload
-        uses: docker://ghcr.io/ponylang/library-documentation-action:release
-        with:
-          site_url: "https://seantallen-org.github.io/msgpack/"
-          library_name: "msgpack"
-          docs_build_dir: "build/msgpack-docs"
-          git_user_name: "Sean T. Allen"
-          git_user_email: "sean@seantallen.com"
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Generate documentation
+        run: /entrypoint.py
         env:
-          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          INPUT_SITE_URL: "https://seantallen-org.github.io/msgpack/"
+          INPUT_LIBRARY_NAME: "msgpack"
+          INPUT_DOCS_BUILD_DIR: "build/msgpack-docs"
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'build/msgpack-docs/site/'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

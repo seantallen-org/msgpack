@@ -2,6 +2,7 @@ config ?= release
 
 PACKAGE := msgpack
 COMPILE_WITH := ponyc
+BUILD_DOCS_WITH := corral run -- pony-doc
 
 BUILD_DIR ?= build/$(config)
 SRC_DIR ?= $(PACKAGE)
@@ -43,9 +44,9 @@ clean:
 realclean:
 	rm -rf build
 
-$(docs_dir): $(GEN_FILES) $(SOURCE_FILES)
+$(docs_dir): $(SOURCE_FILES)
 	rm -rf $(docs_dir)
-	${PONYC} --docs-public --pass=docs --output build $(SRC_DIR)
+	$(BUILD_DOCS_WITH) --output build $(SRC_DIR)
 
 docs: $(docs_dir)
 
